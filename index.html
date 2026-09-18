@@ -351,17 +351,59 @@ async function loadEmployee(){
   ).join('') || '<tr><td colspan="4" style="color:var(--sub)">belum ada riwayat</td></tr>';
 }
 
-async function loadRekap(){
+async function loadRekap() {
   const tanggal = document.getElementById('filter-date').value;
-  const { data } = await api('/presensi/rekap?tanggal=' + tanggal);
-  let hadir=0, telat=0, belum=0;
-  data.forEach(r=>{ if(r.status==='belum') belum++; else { hadir++; if(r.status==='telat') telat++; } });
-  document.getElementById('sum-hadir').textContent = hadir;
-  document.getElementById('sum-telat').textContent = telat;
-  document.getElementById('sum-belum').textContent = belum;
-  document.getElementById('admin-table').innerHTML = data.map(r=>
-    `<tr><td>${r.nama}</td><td>${r.departemen}</td><td>${r.jam_masuk||'-'}</td><td>${r.jam_keluar||'-'}</td><td>${tagHtml(r.status)}</td></tr>`
-  ).join('');
+
+  try {
+    const result = await api('/presensi/rekap?tanggal=' + tanggal);
+    const data = result.data || [];
+
+    let hadir = 0;
+    let telat = 0;
+    let belum = 0;
+
+    data.forEach(r => {
+      if (r.status === 'belum') {
+        belum++;
+      } else {
+        hadir++;
+
+        if (r.status === 'telat') {
+          telat++;
+        }
+      }
+    });
+
+    document.getElementById('sum-hadir').textContent = hadir;
+    document.getElementById('sum-telat').textContent = telat;
+    document.getElementById('sum-belum').textContent = belum;
+
+    document.getElementById('admin-table').innerHTML =
+      data.map(r => `
+        <tr>
+          <td>${r.nama}</td>
+          <td>${r.departemen || '-'}</td>
+          <td>${r.jam_masuk || '-'}</td>
+          <td>${r.jam_keluar || '-'}</td>
+          <td>${tagHtml(r.status)}</td>
+        </tr>
+      `).join('') ||
+      '<tr><td colspan="5" style="color:var(--sub)">belum ada data</td></tr>';
+
+  } catch (err) {
+    console.error('ERROR REKAP:', err);
+
+    document.getElementById('admin-table').innerHTML =
+      `<tr>
+        <td colspan="5" style="color:var(--late)">
+          gagal memuat rekap: ${err.message}
+        </td>
+      </tr>`;
+
+    document.getElementById('sum-hadir').textContent = '0';
+    document.getElementById('sum-telat').textContent = '0';
+    document.getElementById('sum-belum').textContent = '0';
+  }
 }
 
 setInterval(()=>{
