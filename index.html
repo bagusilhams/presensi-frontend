@@ -1431,6 +1431,9 @@ let shiftList = [];
 function todayWIB(){
   return new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Jakarta' }).format(new Date());
 }
+function escAttr(str){
+  return JSON.stringify(str).replace(/"/g, '&quot;');
+}
 
 /* =========================
    API
@@ -2961,12 +2964,13 @@ async function loadEmployees(){
             <button
               class="btn-edit"
               onclick="
-                editEmployee(
-                  ${k.id},
-                  ${JSON.stringify(k.nama)},
-                  ${JSON.stringify(k.departemen || '')},
-                  ${JSON.stringify(k.jabatan || '')}
-                )
+  editEmployee(
+    ${k.id},
+    ${escAttr(k.nama)},
+    ${escAttr(k.departemen || '')},
+    ${escAttr(k.jabatan || '')}
+  )
+"
               "
             >
               edit
