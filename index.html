@@ -178,6 +178,17 @@ async function login(){
     errBox.classList.remove('hidden');
   }
 }
+function showView(viewId) {
+  document.getElementById('view-login').classList.add('hidden');
+  document.getElementById('view-employee').classList.add('hidden');
+  document.getElementById('view-admin').classList.add('hidden');
+
+  const view = document.getElementById(viewId);
+
+  if (view) {
+    view.classList.remove('hidden');
+  }
+}
 function logout(){
   token = null; user = null;
   localStorage.removeItem('presensi_token'); localStorage.removeItem('presensi_user');
