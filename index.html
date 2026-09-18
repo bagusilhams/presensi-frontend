@@ -1428,6 +1428,9 @@ let employeeList = [];
 
 let shiftList = [];
 
+function todayWIB(){
+  return new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Jakarta' }).format(new Date());
+}
 
 /* =========================
    API
@@ -1620,10 +1623,7 @@ function enterApp(){
       'view-admin'
     );
 
-    const today =
-      new Date()
-        .toISOString()
-        .slice(0,10);
+    const today = todayWIB();
 
     document
       .getElementById('filter-date')
@@ -2009,10 +2009,7 @@ async function loadEmployee(){
         '/presensi/saya'
       );
 
-    const today =
-      new Date()
-        .toISOString()
-        .slice(0,10);
+    const today = todayWIB();
 
     const rec =
       data.find(
@@ -2975,14 +2972,7 @@ async function loadEmployees(){
               edit
             </button>
 
-            <button
-              class="btn-delete"
-              onclick="
-                deleteEmployee(${k.id})
-              "
-            >
-              hapus
-            </button>
+            ${user.role === 'admin' ? `<button class="btn-delete" onclick="deleteEmployee(${k.id})">hapus</button>` : ''}
 
           </td>
 
@@ -3305,11 +3295,7 @@ function updateClock(){
 
   if(clock){
 
-    clock.textContent =
-      new Date()
-        .toLocaleTimeString(
-          'id-ID'
-        );
+    clock.textContent = new Date().toLocaleTimeString('id-ID', { timeZone:'Asia/Jakarta' });
 
   }
 
