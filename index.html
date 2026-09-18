@@ -200,6 +200,14 @@ async function checkIn() {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       const accuracy = position.coords.accuracy;
+      if (accuracy > 100) {
+  alert(
+    'gps belum akurat.\n\n' +
+    'akurasi saat ini: ' + Math.round(accuracy) + ' meter\n' +
+    'silakan aktifkan lokasi presisi, gps, dan coba di area terbuka.'
+  );
+  return;
+}
 
       alert(
         'GPS HP:\n' +
