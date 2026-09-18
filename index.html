@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>presensi karyawan hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F3EC; --panel:#FFFFFF; --ink:#26312F; --sub:#5C6B67;
+  --teal:#1F4B4A; --teal-d:#153534; --gold:#C9A34E; --line:#E4DCCB;
+  --ok:#2F6B4F; --late:#B5502F; --font-h:'Fraunces',serif; --font-b:'Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15201E; --panel:#1D2A28; --ink:#EDEAE2; --sub:#9AAAA6;
+    --teal:#5FA79E; --teal-d:#3F7A72; --gold:#D9B769; --line:#2E3A38;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15201E; --panel:#1D2A28; --ink:#EDEAE2; --sub:#9AAAA6;
+  --teal:#5FA79E; --teal-d:#3F7A72; --gold:#D9B769; --line:#2E3A38;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);min-height:100vh}
+h1,h2,h3{font-family:var(--font-h);font-weight:600;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+.top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px}
+.top h1{font-size:22px;color:var(--teal-d)}
+.top span{font-size:13px;color:var(--sub)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:16px}
+.field{margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px}
+select,input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:14px}
+button{cursor:pointer;border:none;border-radius:7px;padding:11px 18px;font-family:var(--font-b);font-weight:600;font-size:14px}
+.btn-primary{background:var(--teal);color:#fff;width:100%}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px}
+.status-big{text-align:center;padding:20px 0}
+.status-big .clock{font-family:var(--font-h);font-size:38px;color:var(--teal-d)}
+.status-big .label{font-size:13px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--sub);font-weight:500;font-size:12px}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.tag.ok{background:rgba(47,107,79,.13);color:var(--ok)}
+.tag.late{background:rgba(181,80,47,.13);color:var(--late)}
+.tag.pending{background:rgba(201,163,78,.18);color:#8a6a1f}
+.overflow{overflow-x:auto}
+.summary{display:flex;gap:10px;margin-bottom:14px}
+.summary .box{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.summary .box b{display:block;font-family:var(--font-h);font-size:22px;color:var(--teal-d)}
+.summary .box span{font-size:11px;color:var(--sub)}
+.hidden{display:none}
+.logout{font-size:12px;color:var(--sub);background:none;border:none;text-decoration:underline;padding:0}
+.err{color:var(--late);font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="view-login">
+    <div class="top"><h1>presensi hotel</h1></div>
+    <div class="card">
+      <div class="field">
+        <label>email</label>
+        <input type="email" id="login-email" placeholder="nama@hotel.com">
+      </div>
+      <div class="field">
+        <label>password</label>
+        <input type="password" id="login-password">
+      </div>
+      <button class="btn-primary" onclick="login()">masuk</button>
+      <div class="err hidden" id="login-err"></div>
+    </div>
+  </div>
+
+  <div id="view-employee" class="hidden">
+    <div class="top">
+      <div><h1 id="emp-name"></h1><span id="emp-role"></span></div>
+      <button class="logout" onclick="logout()">keluar</button>
+    </div>
+    <div class="card status-big">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="label" id="today-status">memuat...</div>
+    </div>
+    <div class="row" style="margin-bottom:16px">
+      <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
+      <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
+    </div>
+    <div class="card">
+      <h3 style="margin-bottom:12px;font-size:15px">riwayat presensi</h3>
+      <div class="overflow">
+        <table>
+          <thead><tr><th>tanggal</th><th>masuk</th><th>pulang</th><th>status</th></tr></thead>
+          <tbody id="emp-history"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-admin" class="hidden">
+    <div class="top">
+      <div><h1>dashboard hr</h1><span>rekap presensi seluruh karyawan</span></div>
+      <button class="logout" onclick="logout()">keluar</button>
+    </div>
+    <div class="summary">
+      <div class="box"><b id="sum-hadir">0</b><span>hadir</span></div>
+      <div class="box"><b id="sum-telat">0</b><span>telat</span></div>
+      <div class="box"><b id="sum-belum">0</b><span>belum absen</span></div>
+    </div>
+    <div class="card">
+      <div class="field"><label>filter tanggal</label><input type="date" id="filter-date" onchange="loadRekap()"></div>
+      <div class="overflow">
+        <table>
+          <thead><tr><th>karyawan</th><th>departemen</th><th>masuk</th><th>pulang</th><th>status</th></tr></thead>
+          <tbody id="admin-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://presensi-backend-production-7382.up.railway.app/api';
+let token = localStorage.getItem('presensi_token') || null;
+let user = JSON.parse(localStorage.getItem('presensi_user') || 'null');
+
+async function api(path, opts={}) {
+  const res = await fetch(API + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: 'Bearer ' + token } : {}),
+      ...(opts.headers || {})
+    }
+  });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data.error || 'terjadi kesalahan');
+  return data;
+}
+
+function showView(id){
+  ['view-login','view-employee','view-admin'].forEach(v=>{
+    document.getElementById(v).classList.toggle('hidden', v!==id);
+  });
+}
+
+async function login(){
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errBox = document.getElementById('login-err');
+  errBox.classList.add('hidden');
+  try {
+    const data = await api('/auth/login', { method:'POST', body: JSON.stringify({email, password}) });
+    token = data.token; user = data.user;
+    localStorage.setItem('presensi_token', token);
+    localStorage.setItem('presensi_user', JSON.stringify(user));
+    enterApp();
+  } catch(e){
+    errBox.textContent = e.message;
+    errBox.classList.remove('hidden');
+  }
+}
+function logout(){
+  token = null; user = null;
+  localStorage.removeItem('presensi_token'); localStorage.removeItem('presensi_user');
+  showView('view-login');
+}
+function enterApp(){
+  if (user.role === 'admin' || user.role === 'supervisor') {
+    showView('view-admin');
+    document.getElementById('filter-date').value = new Date().toISOString().slice(0,10);
+    loadRekap();
+  } else {
+    showView('view-employee');
+    document.getElementById('emp-name').textContent = user.nama;
+    document.getElementById('emp-role').textContent = user.departemen;
+    loadEmployee();
+  }
+}
+
+function tagHtml(status){
+  if(status==='tepat') return '<span class="tag ok">tepat waktu</span>';
+  if(status==='telat') return '<span class="tag late">telat</span>';
+  return '<span class="tag pending">belum absen</span>';
+}
+
+async function checkIn(){
+  try { await api('/presensi/masuk', { method:'POST', body: JSON.stringify({lokasi:null}) }); loadEmployee(); }
+  catch(e){ alert(e.message); }
+}
+async function checkOut(){
+  try { await api('/presensi/keluar', { method:'POST', body: JSON.stringify({lokasi:null}) }); loadEmployee(); }
+  catch(e){ alert(e.message); }
+}
+
+async function loadEmployee(){
+  const data = await api('/presensi/saya');
+  const today = new Date().toISOString().slice(0,10);
+  const rec = data.find(d=>d.tanggal===today);
+  document.getElementById('btn-in').disabled = !!(rec && rec.jam_masuk);
+  document.getElementById('btn-out').disabled = !(rec && rec.jam_masuk) || !!(rec && rec.jam_keluar);
+  document.getElementById('today-status').textContent =
+    !rec || !rec.jam_masuk ? 'belum absen masuk hari ini' :
+    !rec.jam_keluar ? 'sudah masuk jam ' + rec.jam_masuk :
+    'selesai — masuk ' + rec.jam_masuk + ', pulang ' + rec.jam_keluar;
+
+  document.getElementById('emp-history').innerHTML = data.map(r=>
+    `<tr><td>${r.tanggal}</td><td>${r.jam_masuk||'-'}</td><td>${r.jam_keluar||'-'}</td><td>${tagHtml(r.status)}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="color:var(--sub)">belum ada riwayat</td></tr>';
+}
+
+async function loadRekap(){
+  const tanggal = document.getElementById('filter-date').value;
+  const { data } = await api('/presensi/rekap?tanggal=' + tanggal);
+  let hadir=0, telat=0, belum=0;
+  data.forEach(r=>{ if(r.status==='belum') belum++; else { hadir++; if(r.status==='telat') telat++; } });
+  document.getElementById('sum-hadir').textContent = hadir;
+  document.getElementById('sum-telat').textContent = telat;
+  document.getElementById('sum-belum').textContent = belum;
+  document.getElementById('admin-table').innerHTML = data.map(r=>
+    `<tr><td>${r.nama}</td><td>${r.departemen}</td><td>${r.jam_masuk||'-'}</td><td>${r.jam_keluar||'-'}</td><td>${tagHtml(r.status)}</td></tr>`
+  ).join('');
+}
+
+setInterval(()=>{
+  const c = document.getElementById('clock');
+  if(c) c.textContent = new Date().toLocaleTimeString('id-ID');
+}, 1000);
+
+if (token && user) enterApp();
+</script>
+</body>
+</html>
