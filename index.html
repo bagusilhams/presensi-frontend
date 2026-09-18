@@ -219,9 +219,10 @@ async function checkIn() {
         alert(result.message || 'absen masuk berhasil');
         loadEmployee();
         loadRekap();
-      } catch (err) {
-        alert(err.message || 'gagal absen masuk');
-      }
+      catch (err) {
+  console.error('ERROR ABSEN:', err);
+  alert('ERROR: ' + (err.message || JSON.stringify(err)));
+}
     },
     (error) => {
       if (error.code === 1) {
