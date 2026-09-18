@@ -523,7 +523,53 @@ tbody tr:hover{
   background:rgba(201,163,78,.18);
   color:var(--pending);
 }
+/* =========================
+   jadwal & shift
+========================= */
 
+.schedule-card{
+  margin-top:18px;
+}
+
+.schedule-form{
+  display:grid;
+  grid-template-columns:180px 1fr 220px auto;
+  gap:12px;
+  align-items:end;
+}
+
+.schedule-table{
+  margin-top:20px;
+}
+
+.btn-delete{
+  background:rgba(181,80,47,.12);
+  color:var(--late);
+  padding:7px 11px;
+  font-size:11px;
+}
+
+.btn-delete:hover{
+  background:rgba(181,80,47,.2);
+}
+
+.schedule-message{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--sub);
+}
+
+@media(max-width:900px){
+  .schedule-form{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  .schedule-form{
+    grid-template-columns:1fr;
+  }
+}
 /* =========================
    responsive
 ========================= */
@@ -1053,6 +1099,114 @@ tbody tr:hover{
   </div>
 
 </div>
+
+</div>
+<!-- =========================
+     JADWAL & SHIFT
+========================= -->
+
+<div class="card schedule-card">
+
+  <div class="section-title">
+    pengaturan jadwal & shift
+  </div>
+
+  <div class="schedule-form">
+
+    <div class="field">
+
+      <label>tanggal</label>
+
+      <input
+        type="date"
+        id="schedule-date"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>karyawan</label>
+
+      <select id="schedule-employee">
+
+        <option value="">
+          pilih karyawan
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>shift</label>
+
+      <select id="schedule-shift">
+
+        <option value="">
+          pilih shift
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      class="btn-primary"
+      onclick="saveSchedule()"
+    >
+      simpan jadwal
+    </button>
+
+  </div>
+
+
+  <div
+    id="schedule-message"
+    class="schedule-message"
+  ></div>
+
+
+  <div class="overflow schedule-table">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>karyawan</th>
+          <th>departemen</th>
+          <th>shift</th>
+          <th>jam kerja</th>
+          <th>aksi</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="schedule-table-body">
+
+        <tr>
+          <td
+            colspan="5"
+            style="
+              color:var(--sub);
+              text-align:center;
+              padding:30px
+            "
+          >
+            pilih tanggal untuk melihat jadwal
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
 
 </div>
 
@@ -2139,6 +2293,336 @@ function renderTable(){
       `;
 
     }).join('');
+}
+/* =========================
+   JADWAL & SHIFT
+========================= */
+
+let employeeList = [];
+let shiftList = [];
+
+
+async function loadScheduleData(){
+
+  try{
+
+    const employees =
+      await api('/karyawan');
+
+    employeeList =
+      employees.data || employees || [];
+
+    const employeeSelect =
+      document.getElementById(
+        'schedule-employee'
+      );
+
+    employeeSelect.innerHTML =
+      `
+        <option value="">
+          pilih karyawan
+        </option>
+      `;
+
+    employeeList.forEach(k => {
+
+      employeeSelect.innerHTML += `
+        <option value="${k.id}">
+          ${k.nama} - ${k.nip}
+        </option>
+      `;
+
+    });
+
+
+    /*
+      shift belum punya route khusus,
+      jadi sementara ambil dari data debug
+      tidak boleh dipakai lagi.
+
+      kita buat route shift di backend.
+    */
+
+  }catch(err){
+
+    console.error(
+      'ERROR LOAD KARYAWAN:',
+      err
+    );
+
+  }
+
+}
+
+
+async function loadShifts(){
+
+  try{
+
+    const result =
+      await api('/presensi/shift');
+
+    shiftList =
+      result.data || [];
+
+    const select =
+      document.getElementById(
+        'schedule-shift'
+      );
+
+    select.innerHTML =
+      `
+        <option value="">
+          pilih shift
+        </option>
+      `;
+
+    shiftList.forEach(s => {
+
+      select.innerHTML += `
+        <option value="${s.id}">
+          ${s.nama_shift}
+          (${s.jam_mulai} - ${s.jam_selesai})
+        </option>
+      `;
+
+    });
+
+  }catch(err){
+
+    console.error(
+      'ERROR LOAD SHIFT:',
+      err
+    );
+
+  }
+
+}
+
+
+async function loadSchedule(){
+
+  const tanggal =
+    document.getElementById(
+      'schedule-date'
+    ).value;
+
+  if(!tanggal){
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/presensi/jadwal?tanggal=' +
+        tanggal
+      );
+
+    const data =
+      result.data || [];
+
+    const tbody =
+      document.getElementById(
+        'schedule-table-body'
+      );
+
+    if(!data.length){
+
+      tbody.innerHTML = `
+        <tr>
+          <td
+            colspan="5"
+            style="
+              color:var(--sub);
+              text-align:center;
+              padding:30px
+            "
+          >
+            belum ada jadwal pada tanggal ini
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    tbody.innerHTML =
+      data.map(j => `
+
+        <tr>
+
+          <td>
+
+            <div class="employee-name">
+              ${j.nama}
+            </div>
+
+            <div class="employee-nip">
+              ${j.nip}
+            </div>
+
+          </td>
+
+          <td>
+            ${j.departemen || '-'}
+          </td>
+
+          <td>
+            ${j.nama_shift}
+          </td>
+
+          <td>
+            ${j.jam_mulai} -
+            ${j.jam_selesai}
+          </td>
+
+          <td>
+
+            <button
+              class="btn-delete"
+              onclick="deleteSchedule(${j.id})"
+            >
+              hapus
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join('');
+
+  }catch(err){
+
+    console.error(
+      'ERROR LOAD JADWAL:',
+      err
+    );
+
+  }
+
+}
+
+
+async function saveSchedule(){
+
+  const karyawan_id =
+    document.getElementById(
+      'schedule-employee'
+    ).value;
+
+  const shift_id =
+    document.getElementById(
+      'schedule-shift'
+    ).value;
+
+  const tanggal =
+    document.getElementById(
+      'schedule-date'
+    ).value;
+
+  const message =
+    document.getElementById(
+      'schedule-message'
+    );
+
+
+  if(
+    !karyawan_id ||
+    !shift_id ||
+    !tanggal
+  ){
+
+    message.textContent =
+      'karyawan, shift, dan tanggal wajib dipilih';
+
+    return;
+  }
+
+
+  try{
+
+    const result =
+      await api(
+        '/presensi/jadwal',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            karyawan_id:Number(karyawan_id),
+            shift_id:Number(shift_id),
+            tanggal
+          })
+        }
+      );
+
+    message.textContent =
+      result.message ||
+      'jadwal berhasil disimpan';
+
+    loadSchedule();
+
+    loadRekap();
+
+  }catch(err){
+
+    message.textContent =
+      'gagal menyimpan: ' +
+      err.message;
+
+  }
+
+}
+
+
+async function deleteSchedule(id){
+
+  if(
+    !confirm(
+      'hapus jadwal ini?'
+    )
+  ){
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/presensi/jadwal/' +
+        id,
+        {
+          method:'DELETE'
+        }
+      );
+
+    document
+      .getElementById(
+        'schedule-message'
+      )
+      .textContent =
+      result.message ||
+      'jadwal berhasil dihapus';
+
+    loadSchedule();
+
+    loadRekap();
+
+  }catch(err){
+
+    document
+      .getElementById(
+        'schedule-message'
+      )
+      .textContent =
+      'gagal menghapus: ' +
+      err.message;
+
+  }
+
 }
 
 
