@@ -988,12 +988,13 @@ tbody tr:hover{
     <div class="filter-grid">
 
       <div class="field">
-        <<label>tanggal</label>
+  <label>tanggal</label>
 
-<input
-  type="date"
-  id="schedule-date"
-  onchange="loadSchedule()"
+  <input
+    type="date"
+    id="filter-date"
+  >
+</div>
 >
 
       </div>
@@ -1117,10 +1118,11 @@ tbody tr:hover{
 
       <label>tanggal</label>
 
-      <input
-        type="date"
-        id="schedule-date"
-      >
+<input
+  type="date"
+  id="schedule-date"
+  onchange="loadSchedule()"
+>
 
     </div>
 
