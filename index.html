@@ -541,6 +541,17 @@ tbody tr:hover{
 .schedule-table{
   margin-top:20px;
 }
+.btn-edit{
+  background:rgba(31,75,74,.12);
+  color:var(--teal);
+  padding:7px 11px;
+  font-size:11px;
+  margin-right:5px;
+}
+
+.btn-edit:hover{
+  background:rgba(31,75,74,.2);
+}
 
 .btn-delete{
   background:rgba(181,80,47,.12);
@@ -2486,15 +2497,20 @@ async function loadSchedule(){
           </td>
 
           <td>
+  <button
+    class="btn-edit"
+    onclick="editSchedule(${j.id}, ${j.karyawan_id}, ${j.shift_id})"
+  >
+    edit
+  </button>
 
-            <button
-              class="btn-delete"
-              onclick="deleteSchedule(${j.id})"
-            >
-              hapus
-            </button>
-
-          </td>
+  <button
+    class="btn-delete"
+    onclick="deleteSchedule(${j.id})"
+  >
+    hapus
+  </button>
+</td>
 
         </tr>
 
@@ -2583,6 +2599,29 @@ async function saveSchedule(){
 }
 
 
+function editSchedule(id, karyawanId, shiftId){
+
+  document.getElementById(
+    'schedule-employee'
+  ).value = karyawanId;
+
+  document.getElementById(
+    'schedule-shift'
+  ).value = shiftId;
+
+  document.getElementById(
+    'schedule-message'
+  ).textContent =
+    'jadwal dipilih untuk diedit. ubah shift lalu klik simpan jadwal.';
+
+  document.getElementById(
+    'schedule-employee'
+  ).scrollIntoView({
+    behavior:'smooth',
+    block:'center'
+  });
+
+}
 async function deleteSchedule(id){
 
   if(
