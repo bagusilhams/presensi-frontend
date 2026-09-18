@@ -3,415 +3,2191 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>presensi karyawan hotel</title>
+<title>presensi hotel</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --bg:#F7F3EC; --panel:#FFFFFF; --ink:#26312F; --sub:#5C6B67;
-  --teal:#1F4B4A; --teal-d:#153534; --gold:#C9A34E; --line:#E4DCCB;
-  --ok:#2F6B4F; --late:#B5502F; --font-h:'Fraunces',serif; --font-b:'Inter',system-ui,sans-serif;
+  --bg:#f5f1e8;
+  --panel:#ffffff;
+  --ink:#26312f;
+  --sub:#687572;
+  --teal:#1f4b4a;
+  --teal-d:#153534;
+  --gold:#c9a34e;
+  --line:#e3dccd;
+  --ok:#2f6b4f;
+  --late:#b5502f;
+  --pending:#8a6a1f;
+  --shadow:0 8px 30px rgba(38,49,47,.06);
+  --font-h:'Fraunces',serif;
+  --font-b:'Inter',system-ui,sans-serif;
 }
+
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#15201E; --panel:#1D2A28; --ink:#EDEAE2; --sub:#9AAAA6;
-    --teal:#5FA79E; --teal-d:#3F7A72; --gold:#D9B769; --line:#2E3A38;
+    --bg:#15201e;
+    --panel:#1d2a28;
+    --ink:#edeae2;
+    --sub:#9aaaa6;
+    --teal:#5fa79e;
+    --teal-d:#8bc1ba;
+    --gold:#d9b769;
+    --line:#2e3a38;
+    --shadow:none;
   }
 }
-:root[data-theme="dark"]{
-  --bg:#15201E; --panel:#1D2A28; --ink:#EDEAE2; --sub:#9AAAA6;
-  --teal:#5FA79E; --teal-d:#3F7A72; --gold:#D9B769; --line:#2E3A38;
+
+*{
+  box-sizing:border-box;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);min-height:100vh}
-h1,h2,h3{font-family:var(--font-h);font-weight:600;margin:0}
-.wrap{max-width:760px;margin:0 auto;padding:28px 20px 60px}
-.top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px}
-.top h1{font-size:22px;color:var(--teal-d)}
-.top span{font-size:13px;color:var(--sub)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:16px}
-.field{margin-bottom:14px}
-label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px}
-select,input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:14px}
-button{cursor:pointer;border:none;border-radius:7px;padding:11px 18px;font-family:var(--font-b);font-weight:600;font-size:14px}
-.btn-primary{background:var(--teal);color:#fff;width:100%}
-.btn-primary:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;gap:10px}
-.status-big{text-align:center;padding:20px 0}
-.status-big .clock{font-family:var(--font-h);font-size:38px;color:var(--teal-d)}
-.status-big .label{font-size:13px;color:var(--sub);margin-top:4px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--sub);font-weight:500;font-size:12px}
-.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.tag.ok{background:rgba(47,107,79,.13);color:var(--ok)}
-.tag.late{background:rgba(181,80,47,.13);color:var(--late)}
-.tag.pending{background:rgba(201,163,78,.18);color:#8a6a1f}
-.overflow{overflow-x:auto}
-.summary{display:flex;gap:10px;margin-bottom:14px}
-.summary .box{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
-.summary .box b{display:block;font-family:var(--font-h);font-size:22px;color:var(--teal-d)}
-.summary .box span{font-size:11px;color:var(--sub)}
-.hidden{display:none}
-.logout{font-size:12px;color:var(--sub);background:none;border:none;text-decoration:underline;padding:0}
-.err{color:var(--late);font-size:13px;margin-top:8px}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-b);
+  min-height:100vh;
+}
+
+button,
+input,
+select{
+  font-family:var(--font-b);
+}
+
+.hidden{
+  display:none !important;
+}
+
+.wrap{
+  max-width:1250px;
+  margin:0 auto;
+  padding:30px 24px 60px;
+}
+
+/* =========================
+   login
+========================= */
+
+#view-login{
+  max-width:430px;
+  margin:70px auto;
+}
+
+.login-title{
+  margin-bottom:22px;
+}
+
+.login-title h1{
+  font-family:var(--font-h);
+  color:var(--teal-d);
+  font-size:30px;
+  margin:0 0 6px;
+}
+
+.login-title span{
+  color:var(--sub);
+  font-size:13px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:var(--shadow);
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  color:var(--sub);
+  margin-bottom:7px;
+}
+
+input,
+select{
+  width:100%;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--bg);
+  color:var(--ink);
+  font-size:14px;
+  outline:none;
+}
+
+input:focus,
+select:focus{
+  border-color:var(--teal);
+}
+
+button{
+  cursor:pointer;
+  border:none;
+  border-radius:8px;
+  padding:11px 17px;
+  font-size:13px;
+  font-weight:600;
+}
+
+.btn-primary{
+  background:var(--teal);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  background:var(--teal-d);
+}
+
+.btn-primary:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.btn-refresh{
+  background:var(--teal);
+  color:#fff;
+}
+
+.err{
+  color:var(--late);
+  font-size:13px;
+  margin-top:10px;
+}
+
+/* =========================
+   employee
+========================= */
+
+.employee-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.employee-top h1{
+  font-family:var(--font-h);
+  color:var(--teal-d);
+  margin:0;
+  font-size:25px;
+}
+
+.employee-top span{
+  color:var(--sub);
+  font-size:13px;
+}
+
+.logout{
+  background:none;
+  color:var(--sub);
+  padding:4px;
+  text-decoration:underline;
+}
+
+.status-big{
+  text-align:center;
+}
+
+.clock{
+  font-family:var(--font-h);
+  color:var(--teal-d);
+  font-size:42px;
+}
+
+.status-label{
+  color:var(--sub);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.employee-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.employee-buttons button{
+  width:100%;
+}
+
+/* =========================
+   admin header
+========================= */
+
+.admin-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:25px;
+}
+
+.admin-title h1{
+  font-family:var(--font-h);
+  font-size:32px;
+  color:var(--teal-d);
+  margin:0 0 6px;
+}
+
+.admin-title p{
+  color:var(--sub);
+  font-size:13px;
+  margin:0;
+}
+
+.admin-date{
+  text-align:right;
+  color:var(--sub);
+  font-size:12px;
+}
+
+.admin-date strong{
+  display:block;
+  color:var(--ink);
+  font-size:14px;
+  margin-top:3px;
+}
+
+/* =========================
+   summary
+========================= */
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.summary-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+
+.summary-card .label{
+  color:var(--sub);
+  font-size:12px;
+  margin-bottom:9px;
+}
+
+.summary-card .number{
+  font-family:var(--font-h);
+  color:var(--teal-d);
+  font-size:32px;
+  line-height:1;
+}
+
+.summary-card .small{
+  color:var(--sub);
+  font-size:11px;
+  margin-top:8px;
+}
+
+.summary-card.late .number{
+  color:var(--late);
+}
+
+.summary-card.pending .number{
+  color:var(--gold);
+}
+
+/* =========================
+   overview
+========================= */
+
+.overview{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.section-title{
+  font-family:var(--font-h);
+  font-size:17px;
+  margin-bottom:17px;
+}
+
+.attendance-percent{
+  display:flex;
+  align-items:end;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.attendance-percent strong{
+  font-family:var(--font-h);
+  color:var(--teal-d);
+  font-size:35px;
+}
+
+.attendance-percent span{
+  color:var(--sub);
+  font-size:12px;
+  margin-bottom:6px;
+}
+
+.progress{
+  height:10px;
+  background:var(--bg);
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  background:var(--teal);
+  border-radius:20px;
+  transition:width .3s ease;
+}
+
+.progress-info{
+  color:var(--sub);
+  font-size:12px;
+}
+
+.status-list{
+  display:grid;
+  gap:12px;
+}
+
+.status-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+}
+
+.status-row span:last-child{
+  font-weight:700;
+}
+
+/* =========================
+   filter
+========================= */
+
+.filter-card{
+  margin-bottom:18px;
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:180px 1fr 180px auto;
+  gap:12px;
+  align-items:end;
+}
+
+.filter-title{
+  font-family:var(--font-h);
+  font-size:17px;
+  margin-bottom:15px;
+}
+
+.search-wrap{
+  min-width:0;
+}
+
+/* =========================
+   table
+========================= */
+
+.table-card{
+  padding:0;
+  overflow:hidden;
+}
+
+.table-head{
+  padding:20px 22px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.table-head h2{
+  font-family:var(--font-h);
+  font-size:18px;
+  margin:0;
+}
+
+.table-head span{
+  color:var(--sub);
+  font-size:12px;
+}
+
+.overflow{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+  min-width:950px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+
+th{
+  color:var(--sub);
+  font-weight:600;
+  font-size:11px;
+  background:var(--bg);
+}
+
+tbody tr:hover{
+  background:rgba(31,75,74,.025);
+}
+
+.employee-name{
+  font-weight:600;
+}
+
+.employee-nip{
+  color:var(--sub);
+  font-size:10px;
+  margin-top:3px;
+}
+
+.shift-name{
+  font-weight:600;
+}
+
+.shift-time{
+  color:var(--sub);
+  font-size:10px;
+  margin-top:3px;
+}
+
+.work-time{
+  font-weight:600;
+}
+
+.late-minutes{
+  color:var(--late);
+  font-weight:700;
+}
+
+.on-time{
+  color:var(--ok);
+  font-weight:700;
+}
+
+/* =========================
+   tags
+========================= */
+
+.tag{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:700;
+}
+
+.tag.ok{
+  background:rgba(47,107,79,.13);
+  color:var(--ok);
+}
+
+.tag.late{
+  background:rgba(181,80,47,.13);
+  color:var(--late);
+}
+
+.tag.pending{
+  background:rgba(201,163,78,.18);
+  color:var(--pending);
+}
+
+/* =========================
+   responsive
+========================= */
+
+@media(max-width:900px){
+  .summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .overview{
+    grid-template-columns:1fr;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  .wrap{
+    padding:20px 14px 40px;
+  }
+
+  .admin-header{
+    flex-direction:column;
+  }
+
+  .admin-date{
+    text-align:left;
+  }
+
+  .summary{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .summary-card{
+    padding:16px;
+  }
+
+  .summary-card .number{
+    font-size:27px;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .employee-buttons{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
 
-  <div id="view-login">
-    <div class="top"><h1>presensi hotel</h1></div>
-    <div class="card">
-      <div class="field">
-        <label>email</label>
-        <input type="email" id="login-email" placeholder="nama@hotel.com">
-      </div>
-      <div class="field">
-        <label>password</label>
-        <input type="password" id="login-password">
-      </div>
-      <button class="btn-primary" onclick="login()">masuk</button>
-      <div class="err hidden" id="login-err"></div>
-    </div>
+<!-- =========================
+     LOGIN
+========================= -->
+
+<div id="view-login">
+
+  <div class="login-title">
+    <h1>presensi hotel</h1>
+    <span>sistem presensi karyawan</span>
   </div>
 
-  <div id="view-employee" class="hidden">
-    <div class="top">
-      <div><h1 id="emp-name"></h1><span id="emp-role"></span></div>
-      <button class="logout" onclick="logout()">keluar</button>
-    </div>
-    <div class="card status-big">
-      <div class="clock" id="clock">--:--:--</div>
-      <div class="label" id="today-status">memuat...</div>
-    </div>
-    <div class="row" style="margin-bottom:16px">
-      <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
-      <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:12px;font-size:15px">riwayat presensi</h3>
-      <div class="overflow">
-        <table>
-          <thead><tr><th>tanggal</th><th>masuk</th><th>pulang</th><th>status</th></tr></thead>
-          <tbody id="emp-history"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <div class="card">
 
-  <div id="view-admin" class="hidden">
-    <div class="top">
-      <div><h1>dashboard hr</h1><span>rekap presensi seluruh karyawan</span></div>
-      <button class="logout" onclick="logout()">keluar</button>
+    <div class="field">
+      <label>email</label>
+      <input
+        type="email"
+        id="login-email"
+        placeholder="nama@hotel.com"
+      >
     </div>
-    <div class="summary">
-      <div class="box"><b id="sum-hadir">0</b><span>hadir</span></div>
-      <div class="box"><b id="sum-telat">0</b><span>telat</span></div>
-      <div class="box"><b id="sum-belum">0</b><span>belum absen</span></div>
+
+    <div class="field">
+      <label>password</label>
+      <input
+        type="password"
+        id="login-password"
+      >
     </div>
-    <div class="card">
-      <div class="field"><label>filter tanggal</label><input type="date" id="filter-date" onchange="loadRekap()"></div>
-      <div class="overflow">
-        <table>
-          <thead><tr><th>karyawan</th><th>departemen</th><th>masuk</th><th>pulang</th><th>status</th></tr></thead>
-          <tbody id="admin-table"></tbody>
-        </table>
-      </div>
-    </div>
+
+    <button
+      class="btn-primary"
+      style="width:100%"
+      onclick="login()"
+    >
+      masuk
+    </button>
+
+    <div
+      class="err hidden"
+      id="login-err"
+    ></div>
+
   </div>
 
 </div>
 
+
+<!-- =========================
+     EMPLOYEE
+========================= -->
+
+<div id="view-employee" class="hidden">
+
+  <div class="employee-top">
+
+    <div>
+      <h1 id="emp-name"></h1>
+      <span id="emp-role"></span>
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()"
+    >
+      keluar
+    </button>
+
+  </div>
+
+  <div class="card status-big">
+
+    <div
+      class="clock"
+      id="clock"
+    >
+      --:--:--
+    </div>
+
+    <div
+      class="status-label"
+      id="today-status"
+    >
+      memuat...
+    </div>
+
+  </div>
+
+  <div class="employee-buttons">
+
+    <button
+      class="btn-primary"
+      id="btn-in"
+      onclick="checkIn()"
+    >
+      absen masuk
+    </button>
+
+    <button
+      class="btn-primary"
+      id="btn-out"
+      onclick="checkOut()"
+    >
+      absen pulang
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div class="section-title">
+      riwayat presensi
+    </div>
+
+    <div class="overflow">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>tanggal</th>
+            <th>masuk</th>
+            <th>pulang</th>
+            <th>status</th>
+          </tr>
+        </thead>
+
+        <tbody id="emp-history"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     ADMIN
+========================= -->
+
+<div id="view-admin" class="hidden">
+
+  <div class="admin-header">
+
+    <div class="admin-title">
+
+      <h1>dashboard hr</h1>
+
+      <p>
+        monitoring presensi dan jam kerja karyawan
+      </p>
+
+    </div>
+
+    <div class="admin-date">
+
+      data tanggal
+
+      <strong id="dashboard-date">
+        -
+      </strong>
+
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()"
+    >
+      keluar
+    </button>
+
+  </div>
+
+
+  <!-- SUMMARY -->
+
+  <div class="summary">
+
+    <div class="summary-card">
+
+      <div class="label">
+        total karyawan
+      </div>
+
+      <div
+        class="number"
+        id="sum-total"
+      >
+        0
+      </div>
+
+      <div class="small">
+        karyawan aktif
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <div class="label">
+        hadir
+      </div>
+
+      <div
+        class="number"
+        id="sum-hadir"
+      >
+        0
+      </div>
+
+      <div
+        class="small"
+        id="sum-hadir-percent"
+      >
+        0%
+      </div>
+
+    </div>
+
+
+    <div class="summary-card late">
+
+      <div class="label">
+        telat
+      </div>
+
+      <div
+        class="number"
+        id="sum-telat"
+      >
+        0
+      </div>
+
+      <div class="small">
+        berdasarkan jam shift
+      </div>
+
+    </div>
+
+
+    <div class="summary-card pending">
+
+      <div class="label">
+        belum absen
+      </div>
+
+      <div
+        class="number"
+        id="sum-belum"
+      >
+        0
+      </div>
+
+      <div class="small">
+        belum melakukan presensi
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- OVERVIEW -->
+
+  <div class="overview">
+
+    <div class="card">
+
+      <div class="section-title">
+        tingkat kehadiran
+      </div>
+
+      <div class="attendance-percent">
+
+        <strong id="attendance-percent">
+          0%
+        </strong>
+
+        <span>
+          dari seluruh karyawan
+        </span>
+
+      </div>
+
+      <div class="progress">
+
+        <div
+          class="progress-bar"
+          id="progress-bar"
+        ></div>
+
+      </div>
+
+      <div
+        class="progress-info"
+        id="attendance-info"
+      >
+        belum ada data
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="section-title">
+        ringkasan status
+      </div>
+
+      <div class="status-list">
+
+        <div class="status-row">
+          <span>tepat waktu</span>
+          <span
+            id="status-tepat"
+            class="on-time"
+          >
+            0
+          </span>
+        </div>
+
+        <div class="status-row">
+          <span>telat</span>
+          <span
+            id="status-telat"
+            class="late-minutes"
+          >
+            0
+          </span>
+        </div>
+
+        <div class="status-row">
+          <span>belum absen</span>
+          <span id="status-belum">
+            0
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- FILTER -->
+
+  <div class="card filter-card">
+
+    <div class="filter-title">
+      filter presensi
+    </div>
+
+    <div class="filter-grid">
+
+      <div class="field">
+        <label>tanggal</label>
+
+        <input
+          type="date"
+          id="filter-date"
+          onchange="loadRekap()"
+        >
+
+      </div>
+
+
+      <div class="field search-wrap">
+
+        <label>cari karyawan</label>
+
+        <input
+          type="text"
+          id="search-name"
+          placeholder="ketik nama atau NIP..."
+          oninput="renderTable()"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>status</label>
+
+        <select
+          id="filter-status"
+          onchange="renderTable()"
+        >
+
+          <option value="semua">
+            semua status
+          </option>
+
+          <option value="tepat">
+            tepat waktu
+          </option>
+
+          <option value="telat">
+            telat
+          </option>
+
+          <option value="belum">
+            belum absen
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="btn-refresh"
+        onclick="loadRekap()"
+      >
+        refresh
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- TABLE -->
+
+  <div class="card table-card">
+
+    <div class="table-head">
+
+      <h2>
+        rekap presensi
+      </h2>
+
+      <span id="table-count">
+        0 karyawan
+      </span>
+
+    </div>
+
+    <div class="overflow">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>karyawan</th>
+            <th>shift</th>
+            <th>jadwal kerja</th>
+            <th>jam masuk</th>
+            <th>jam pulang</th>
+            <th>durasi kerja</th>
+            <th>keterlambatan</th>
+            <th>status</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="admin-table"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+
 <script>
-const API = 'https://presensi-backend-production-7382.up.railway.app/api';
-let token = localStorage.getItem('presensi_token') || null;
-let user = JSON.parse(localStorage.getItem('presensi_user') || 'null');
+
+const API =
+  'https://presensi-backend-production-7382.up.railway.app/api';
+
+let token =
+  localStorage.getItem('presensi_token') || null;
+
+let user =
+  JSON.parse(
+    localStorage.getItem('presensi_user') || 'null'
+  );
+
+let rekapData = [];
+
+
+/* =========================
+   API
+========================= */
 
 async function api(path, options = {}) {
-  const res = await fetch(API + path, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    }
-  });
 
-  const text = await res.text();
+  const res = await fetch(
+    API + path,
+    {
+      ...options,
+
+      headers:{
+        'Content-Type':'application/json',
+
+        ...(options.headers || {}),
+
+        ...(token
+          ? {
+              Authorization:
+              `Bearer ${token}`
+            }
+          : {})
+      }
+    }
+  );
+
+  const text =
+    await res.text();
 
   let data;
-  try {
+
+  try{
     data = JSON.parse(text);
-  } catch {
-    data = { message: text };
+  }catch{
+    data = {
+      message:text
+    };
   }
 
-  if (!res.ok) {
-    const error = new Error(
-      data.error ||
-      data.message ||
-      `HTTP ${res.status}`
-    );
+  if(!res.ok){
 
-    error.status = res.status;
+    const error =
+      new Error(
+        data.error ||
+        data.message ||
+        `HTTP ${res.status}`
+      );
+
+    error.status =
+      res.status;
+
     throw error;
   }
 
   return data;
 }
 
+
+/* =========================
+   LOGIN
+========================= */
+
 async function login(){
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errBox = document.getElementById('login-err');
-  errBox.classList.add('hidden');
-  try {
-    const data = await api('/auth/login', { method:'POST', body: JSON.stringify({email, password}) });
-    token = data.token; user = data.user;
-    localStorage.setItem('presensi_token', token);
-    localStorage.setItem('presensi_user', JSON.stringify(user));
-    enterApp();
-  } catch(e){
-    errBox.textContent = e.message;
-    errBox.classList.remove('hidden');
-  }
-}
-function showView(viewId) {
-  document.getElementById('view-login').classList.add('hidden');
-  document.getElementById('view-employee').classList.add('hidden');
-  document.getElementById('view-admin').classList.add('hidden');
 
-  const view = document.getElementById(viewId);
+  const email =
+    document
+      .getElementById('login-email')
+      .value
+      .trim();
 
-  if (view) {
-    view.classList.remove('hidden');
-  }
-}
-function logout(){
-  token = null; user = null;
-  localStorage.removeItem('presensi_token'); localStorage.removeItem('presensi_user');
-  showView('view-login');
-}
-function enterApp(){
-  if (user.role === 'admin' || user.role === 'supervisor') {
-    showView('view-admin');
-    document.getElementById('filter-date').value = new Date().toISOString().slice(0,10);
-    loadRekap();
-  } else {
-    showView('view-employee');
-    document.getElementById('emp-name').textContent = user.nama;
-    document.getElementById('emp-role').textContent = user.departemen;
-    loadEmployee();
-  }
-}
+  const password =
+    document
+      .getElementById('login-password')
+      .value;
 
-function tagHtml(status){
-  if(status==='tepat') return '<span class="tag ok">tepat waktu</span>';
-  if(status==='telat') return '<span class="tag late">telat</span>';
-  return '<span class="tag pending">belum absen</span>';
-}
+  const errBox =
+    document.getElementById(
+      'login-err'
+    );
 
-async function checkIn() {
-  if (!navigator.geolocation) {
-    alert('gps tidak tersedia di perangkat ini');
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
-      if (accuracy > 100) {
-  alert(
-    'gps belum akurat.\n\n' +
-    'akurasi saat ini: ' + Math.round(accuracy) + ' meter\n' +
-    'silakan aktifkan lokasi presisi, gps, dan coba di area terbuka.'
+  errBox.classList.add(
+    'hidden'
   );
-  return;
-}
 
-      alert(
-        'GPS HP:\n' +
-        'Latitude: ' + lat + '\n' +
-        'Longitude: ' + lng + '\n' +
-        'Akurasi: ' + Math.round(accuracy) + ' meter'
+  try{
+
+    const data =
+      await api(
+        '/auth/login',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            email,
+            password
+          })
+        }
       );
 
-      console.log('GPS HP:', lat, lng);
-      console.log('AKURASI:', accuracy);
+    token =
+      data.token;
 
-      try {
-        const result = await api('/presensi/masuk', {
-          method: 'POST',
-          body: JSON.stringify({
-            lokasi: {
-              lat: lat,
-              lng: lng,
-              accuracy: accuracy
-            }
-          })
-        });
+    user =
+      data.user;
 
-        alert(result.message || 'absen masuk berhasil');
-        loadEmployee();
-        loadRekap();
+    localStorage.setItem(
+      'presensi_token',
+      token
+    );
 
-      } catch (err) {
-        console.error('ERROR ABSEN:', err);
-        alert('ERROR: ' + (err.message || JSON.stringify(err)));
-      }
-    },
-    (error) => {
-      if (error.code === 1) {
-        alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
-      } else if (error.code === 2) {
-        alert('lokasi tidak dapat ditemukan');
-      } else if (error.code === 3) {
-        alert('pengambilan lokasi terlalu lama');
-      } else {
-        alert('gagal mendapatkan lokasi');
-      }
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 30000,
-      maximumAge: 0
-    }
+    localStorage.setItem(
+      'presensi_user',
+      JSON.stringify(user)
+    );
+
+    enterApp();
+
+  }catch(e){
+
+    errBox.textContent =
+      e.message;
+
+    errBox.classList.remove(
+      'hidden'
+    );
+
+  }
+}
+
+
+/* =========================
+   VIEW
+========================= */
+
+function showView(viewId){
+
+  [
+    'view-login',
+    'view-employee',
+    'view-admin'
+  ].forEach(id => {
+
+    document
+      .getElementById(id)
+      .classList.add('hidden');
+
+  });
+
+  document
+    .getElementById(viewId)
+    .classList.remove('hidden');
+}
+
+
+function logout(){
+
+  token = null;
+  user = null;
+
+  localStorage.removeItem(
+    'presensi_token'
+  );
+
+  localStorage.removeItem(
+    'presensi_user'
+  );
+
+  showView(
+    'view-login'
   );
 }
-async function checkOut() {
-  if (!navigator.geolocation) {
-    alert('gps tidak tersedia di perangkat ini');
+
+
+function enterApp(){
+
+  if(
+    user.role === 'admin' ||
+    user.role === 'supervisor'
+  ){
+
+    showView(
+      'view-admin'
+    );
+
+    const today =
+      new Date()
+        .toISOString()
+        .slice(0,10);
+
+    document
+      .getElementById('filter-date')
+      .value = today;
+
+    loadRekap();
+
+  }else{
+
+    showView(
+      'view-employee'
+    );
+
+    document
+      .getElementById('emp-name')
+      .textContent =
+      user.nama;
+
+    document
+      .getElementById('emp-role')
+      .textContent =
+      user.departemen;
+
+    loadEmployee();
+
+  }
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+function tagHtml(status){
+
+  if(status === 'tepat'){
+
+    return `
+      <span class="tag ok">
+        tepat waktu
+      </span>
+    `;
+
+  }
+
+  if(status === 'telat'){
+
+    return `
+      <span class="tag late">
+        telat
+      </span>
+    `;
+
+  }
+
+  return `
+    <span class="tag pending">
+      belum absen
+    </span>
+  `;
+}
+
+
+/* =========================
+   TIME HELPERS
+========================= */
+
+function timeToMinutes(time){
+
+  if(!time) return null;
+
+  const parts =
+    time.split(':');
+
+  return (
+    Number(parts[0]) * 60 +
+    Number(parts[1])
+  );
+}
+
+
+function calculateLate(
+  jamMasuk,
+  jamMulai
+){
+
+  if(
+    !jamMasuk ||
+    !jamMulai
+  ){
+
+    return null;
+  }
+
+  const masuk =
+    timeToMinutes(jamMasuk);
+
+  const mulai =
+    timeToMinutes(jamMulai);
+
+  if(
+    masuk === null ||
+    mulai === null
+  ){
+
+    return null;
+  }
+
+  const late =
+    masuk - mulai;
+
+  return late > 0
+    ? late
+    : 0;
+}
+
+
+function calculateWorkDuration(
+  jamMasuk,
+  jamKeluar
+){
+
+  if(
+    !jamMasuk ||
+    !jamKeluar
+  ){
+
+    return '-';
+  }
+
+  let masuk =
+    timeToMinutes(jamMasuk);
+
+  let keluar =
+    timeToMinutes(jamKeluar);
+
+  if(
+    masuk === null ||
+    keluar === null
+  ){
+
+    return '-';
+  }
+
+  /* shift malam */
+
+  if(keluar < masuk){
+
+    keluar += 24 * 60;
+  }
+
+  const total =
+    keluar - masuk;
+
+  const hours =
+    Math.floor(
+      total / 60
+    );
+
+  const minutes =
+    total % 60;
+
+  return `${hours}j ${minutes}m`;
+}
+
+
+/* =========================
+   ABSEN MASUK
+========================= */
+
+async function checkIn(){
+
+  if(!navigator.geolocation){
+
+    alert(
+      'gps tidak tersedia di perangkat ini'
+    );
+
     return;
   }
 
   navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
 
-      console.log('lokasi:', lat, lng);
-      console.log('akurasi:', accuracy, 'meter');
+    async(position)=>{
 
-      try {
-        const result = await api('/presensi/keluar', {
-          method: 'POST',
-          body: JSON.stringify({
-            lokasi: {
-              lat: lat,
-              lng: lng,
-              accuracy: accuracy
+      const lat =
+        position.coords.latitude;
+
+      const lng =
+        position.coords.longitude;
+
+      const accuracy =
+        position.coords.accuracy;
+
+      if(accuracy > 100){
+
+        alert(
+          'gps belum akurat.\n\n' +
+          'akurasi saat ini: ' +
+          Math.round(accuracy) +
+          ' meter\n' +
+          'silakan aktifkan lokasi presisi, gps, dan coba di area terbuka.'
+        );
+
+        return;
+      }
+
+      try{
+
+        const result =
+          await api(
+            '/presensi/masuk',
+            {
+              method:'POST',
+
+              body:JSON.stringify({
+                lokasi:{
+                  lat,
+                  lng,
+                  accuracy
+                }
+              })
             }
-          })
-        });
+          );
 
-        alert(result.message || 'absen pulang berhasil');
+        alert(
+          result.message ||
+          'absen masuk berhasil'
+        );
+
         loadEmployee();
-        loadRekap();
-      } catch (err) {
-        alert(err.message || 'gagal absen pulang');
+
+      }catch(err){
+
+        alert(
+          'ERROR: ' +
+          err.message
+        );
+
       }
+
     },
-    (error) => {
-      if (error.code === 1) {
-        alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
-      } else if (error.code === 2) {
-        alert('lokasi tidak dapat ditemukan');
-      } else if (error.code === 3) {
-        alert('pengambilan lokasi terlalu lama');
-      } else {
-        alert('gagal mendapatkan lokasi');
-      }
-    },
+
+    locationError,
+
     {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0
+      enableHighAccuracy:true,
+      timeout:30000,
+      maximumAge:0
     }
+
   );
 }
 
-async function loadEmployee(){
-  const data = await api('/presensi/saya');
-  const today = new Date().toISOString().slice(0,10);
-  const rec = data.find(d=>d.tanggal===today);
-  document.getElementById('btn-in').disabled = !!(rec && rec.jam_masuk);
-  document.getElementById('btn-out').disabled = !(rec && rec.jam_masuk) || !!(rec && rec.jam_keluar);
-  document.getElementById('today-status').textContent =
-    !rec || !rec.jam_masuk ? 'belum absen masuk hari ini' :
-    !rec.jam_keluar ? 'sudah masuk jam ' + rec.jam_masuk :
-    'selesai — masuk ' + rec.jam_masuk + ', pulang ' + rec.jam_keluar;
 
-  document.getElementById('emp-history').innerHTML = data.map(r=>
-    `<tr><td>${r.tanggal}</td><td>${r.jam_masuk||'-'}</td><td>${r.jam_keluar||'-'}</td><td>${tagHtml(r.status)}</td></tr>`
-  ).join('') || '<tr><td colspan="4" style="color:var(--sub)">belum ada riwayat</td></tr>';
+/* =========================
+   ABSEN PULANG
+========================= */
+
+async function checkOut(){
+
+  if(!navigator.geolocation){
+
+    alert(
+      'gps tidak tersedia di perangkat ini'
+    );
+
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    async(position)=>{
+
+      const lat =
+        position.coords.latitude;
+
+      const lng =
+        position.coords.longitude;
+
+      const accuracy =
+        position.coords.accuracy;
+
+      try{
+
+        const result =
+          await api(
+            '/presensi/keluar',
+            {
+              method:'POST',
+
+              body:JSON.stringify({
+                lokasi:{
+                  lat,
+                  lng,
+                  accuracy
+                }
+              })
+            }
+          );
+
+        alert(
+          result.message ||
+          'absen pulang berhasil'
+        );
+
+        loadEmployee();
+
+      }catch(err){
+
+        alert(
+          err.message ||
+          'gagal absen pulang'
+        );
+
+      }
+
+    },
+
+    locationError,
+
+    {
+      enableHighAccuracy:true,
+      timeout:30000,
+      maximumAge:0
+    }
+
+  );
 }
 
-async function loadRekap() {
-  const tanggal = document.getElementById('filter-date').value;
 
-  try {
-    const result = await api('/presensi/rekap?tanggal=' + tanggal);
-    const data = result.data || [];
+function locationError(error){
 
-    let hadir = 0;
-    let telat = 0;
-    let belum = 0;
+  if(error.code === 1){
 
-    data.forEach(r => {
-      if (r.status === 'belum') {
-        belum++;
-      } else {
-        hadir++;
+    alert(
+      'izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi'
+    );
 
-        if (r.status === 'telat') {
-          telat++;
-        }
-      }
-    });
+  }else if(error.code === 2){
 
-    document.getElementById('sum-hadir').textContent = hadir;
-    document.getElementById('sum-telat').textContent = telat;
-    document.getElementById('sum-belum').textContent = belum;
+    alert(
+      'lokasi tidak dapat ditemukan'
+    );
 
-    document.getElementById('admin-table').innerHTML =
-      data.map(r => `
-        <tr>
-          <td>${r.nama}</td>
-          <td>${r.departemen || '-'}</td>
-          <td>${r.jam_masuk || '-'}</td>
-          <td>${r.jam_keluar || '-'}</td>
-          <td>${tagHtml(r.status)}</td>
-        </tr>
-      `).join('') ||
-      '<tr><td colspan="5" style="color:var(--sub)">belum ada data</td></tr>';
+  }else if(error.code === 3){
 
-  } catch (err) {
-    console.error('ERROR REKAP:', err);
+    alert(
+      'pengambilan lokasi terlalu lama'
+    );
 
-    document.getElementById('admin-table').innerHTML =
-      `<tr>
-        <td colspan="5" style="color:var(--late)">
-          gagal memuat rekap: ${err.message}
-        </td>
-      </tr>`;
+  }else{
 
-    document.getElementById('sum-hadir').textContent = '0';
-    document.getElementById('sum-telat').textContent = '0';
-    document.getElementById('sum-belum').textContent = '0';
+    alert(
+      'gagal mendapatkan lokasi'
+    );
+
   }
 }
 
-setInterval(()=>{
-  const c = document.getElementById('clock');
-  if(c) c.textContent = new Date().toLocaleTimeString('id-ID');
-}, 1000);
 
-if (token && user) enterApp();
+/* =========================
+   EMPLOYEE
+========================= */
+
+async function loadEmployee(){
+
+  try{
+
+    const data =
+      await api(
+        '/presensi/saya'
+      );
+
+    const today =
+      new Date()
+        .toISOString()
+        .slice(0,10);
+
+    const rec =
+      data.find(
+        d => d.tanggal === today
+      );
+
+    document
+      .getElementById('btn-in')
+      .disabled =
+      !!(
+        rec &&
+        rec.jam_masuk
+      );
+
+    document
+      .getElementById('btn-out')
+      .disabled =
+      !(
+        rec &&
+        rec.jam_masuk
+      ) ||
+      !!(
+        rec &&
+        rec.jam_keluar
+      );
+
+    document
+      .getElementById(
+        'today-status'
+      )
+      .textContent =
+
+      !rec ||
+      !rec.jam_masuk
+
+        ? 'belum absen masuk hari ini'
+
+        : !rec.jam_keluar
+
+          ? 'sudah masuk jam ' +
+            rec.jam_masuk
+
+          : 'selesai — masuk ' +
+            rec.jam_masuk +
+            ', pulang ' +
+            rec.jam_keluar;
+
+
+    document
+      .getElementById(
+        'emp-history'
+      )
+      .innerHTML =
+
+      data.map(r => `
+
+        <tr>
+
+          <td>${r.tanggal}</td>
+
+          <td>
+            ${r.jam_masuk || '-'}
+          </td>
+
+          <td>
+            ${r.jam_keluar || '-'}
+          </td>
+
+          <td>
+            ${tagHtml(r.status)}
+          </td>
+
+        </tr>
+
+      `).join('')
+
+      ||
+
+      `
+        <tr>
+          <td colspan="4"
+              style="color:var(--sub)">
+            belum ada riwayat
+          </td>
+        </tr>
+      `;
+
+  }catch(err){
+
+    console.error(
+      'ERROR EMPLOYEE:',
+      err
+    );
+
+  }
+}
+
+
+/* =========================
+   LOAD REKAP
+========================= */
+
+async function loadRekap(){
+
+  const tanggal =
+    document
+      .getElementById(
+        'filter-date'
+      )
+      .value;
+
+  try{
+
+    const result =
+      await api(
+        '/presensi/rekap?tanggal=' +
+        tanggal
+      );
+
+    rekapData =
+      result.data || [];
+
+    document
+      .getElementById(
+        'dashboard-date'
+      )
+      .textContent =
+      tanggal;
+
+    updateSummary();
+
+    renderTable();
+
+  }catch(err){
+
+    console.error(
+      'ERROR REKAP:',
+      err
+    );
+
+    document
+      .getElementById(
+        'admin-table'
+      )
+      .innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="8"
+            style="color:var(--late)"
+          >
+            gagal memuat rekap:
+            ${err.message}
+          </td>
+
+        </tr>
+      `;
+
+  }
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+function updateSummary(){
+
+  const total =
+    rekapData.length;
+
+  const hadir =
+    rekapData.filter(
+      r =>
+        r.status === 'tepat' ||
+        r.status === 'telat'
+    ).length;
+
+  const tepat =
+    rekapData.filter(
+      r =>
+        r.status === 'tepat'
+    ).length;
+
+  const telat =
+    rekapData.filter(
+      r =>
+        r.status === 'telat'
+    ).length;
+
+  const belum =
+    rekapData.filter(
+      r =>
+        r.status === 'belum'
+    ).length;
+
+  const percent =
+    total
+      ? Math.round(
+          (hadir / total) * 100
+        )
+      : 0;
+
+  document
+    .getElementById(
+      'sum-total'
+    )
+    .textContent =
+    total;
+
+  document
+    .getElementById(
+      'sum-hadir'
+    )
+    .textContent =
+    hadir;
+
+  document
+    .getElementById(
+      'sum-telat'
+    )
+    .textContent =
+    telat;
+
+  document
+    .getElementById(
+      'sum-belum'
+    )
+    .textContent =
+    belum;
+
+  document
+    .getElementById(
+      'sum-hadir-percent'
+    )
+    .textContent =
+    percent + '% kehadiran';
+
+
+  document
+    .getElementById(
+      'attendance-percent'
+    )
+    .textContent =
+    percent + '%';
+
+  document
+    .getElementById(
+      'progress-bar'
+    )
+    .style.width =
+    percent + '%';
+
+  document
+    .getElementById(
+      'attendance-info'
+    )
+    .textContent =
+    hadir +
+    ' dari ' +
+    total +
+    ' karyawan hadir hari ini';
+
+
+  document
+    .getElementById(
+      'status-tepat'
+    )
+    .textContent =
+    tepat;
+
+  document
+    .getElementById(
+      'status-telat'
+    )
+    .textContent =
+    telat;
+
+  document
+    .getElementById(
+      'status-belum'
+    )
+    .textContent =
+    belum;
+}
+
+
+/* =========================
+   RENDER TABLE
+========================= */
+
+function renderTable(){
+
+  const search =
+    document
+      .getElementById(
+        'search-name'
+      )
+      .value
+      .toLowerCase()
+      .trim();
+
+  const statusFilter =
+    document
+      .getElementById(
+        'filter-status'
+      )
+      .value;
+
+
+  const filtered =
+    rekapData.filter(r => {
+
+      const nama =
+        (r.nama || '')
+          .toLowerCase();
+
+      const nip =
+        (r.nip || '')
+          .toLowerCase();
+
+      const cocokNama =
+        !search ||
+        nama.includes(search) ||
+        nip.includes(search);
+
+      const cocokStatus =
+        statusFilter === 'semua' ||
+        r.status === statusFilter;
+
+      return (
+        cocokNama &&
+        cocokStatus
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      'table-count'
+    )
+    .textContent =
+    filtered.length +
+    ' karyawan';
+
+
+  if(!filtered.length){
+
+    document
+      .getElementById(
+        'admin-table'
+      )
+      .innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="8"
+            style="
+              color:var(--sub);
+              text-align:center;
+              padding:30px
+            "
+          >
+            tidak ada data
+          </td>
+
+        </tr>
+
+      `;
+
+    return;
+  }
+
+
+  document
+    .getElementById(
+      'admin-table'
+    )
+    .innerHTML =
+
+    filtered.map(r => {
+
+      const late =
+        calculateLate(
+          r.jam_masuk,
+          r.jam_mulai
+        );
+
+      const work =
+        calculateWorkDuration(
+          r.jam_masuk,
+          r.jam_keluar
+        );
+
+
+      let lateHtml = '-';
+
+      if(
+        r.jam_masuk &&
+        r.jam_mulai
+      ){
+
+        if(late > 0){
+
+          lateHtml = `
+            <span class="late-minutes">
+              ${late} menit
+            </span>
+          `;
+
+        }else{
+
+          lateHtml = `
+            <span class="on-time">
+              tepat waktu
+            </span>
+          `;
+
+        }
+
+      }
+
+
+      return `
+
+        <tr>
+
+          <td>
+
+            <div class="employee-name">
+              ${r.nama || '-'}
+            </div>
+
+            <div class="employee-nip">
+              ${r.nip || '-'}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <div class="shift-name">
+              ${r.nama_shift || '-'}
+            </div>
+
+          </td>
+
+
+          <td>
+
+            <div>
+              ${r.jam_mulai || '-'}
+              -
+              ${r.jam_selesai || '-'}
+            </div>
+
+            <div class="shift-time">
+              jam kerja
+            </div>
+
+          </td>
+
+
+          <td>
+            ${r.jam_masuk || '-'}
+          </td>
+
+
+          <td>
+            ${r.jam_keluar || '-'}
+          </td>
+
+
+          <td>
+
+            <span class="work-time">
+              ${work}
+            </span>
+
+          </td>
+
+
+          <td>
+            ${lateHtml}
+          </td>
+
+
+          <td>
+            ${tagHtml(r.status)}
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join('');
+}
+
+
+/* =========================
+   CLOCK
+========================= */
+
+function updateClock(){
+
+  const clock =
+    document
+      .getElementById(
+        'clock'
+      );
+
+  if(clock){
+
+    clock.textContent =
+      new Date()
+        .toLocaleTimeString(
+          'id-ID'
+        );
+
+  }
+
+}
+
+setInterval(
+  updateClock,
+  1000
+);
+
+updateClock();
+
+
+/* =========================
+   AUTO LOGIN
+========================= */
+
+if(
+  token &&
+  user
+){
+
+  enterApp();
+
+}
+
 </script>
+
 </body>
 </html>
