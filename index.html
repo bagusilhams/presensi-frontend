@@ -189,13 +189,109 @@ function tagHtml(status){
   return '<span class="tag pending">belum absen</span>';
 }
 
-async function checkIn(){
-  try { await api('/presensi/masuk', { method:'POST', body: JSON.stringify({lokasi:null}) }); loadEmployee(); }
-  catch(e){ alert(e.message); }
+async function checkIn() {
+  if (!navigator.geolocation) {
+    alert('gps tidak tersedia di perangkat ini');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      console.log('lokasi:', lat, lng);
+      console.log('akurasi:', accuracy, 'meter');
+
+      try {
+        const result = await api('/presensi/masuk', {
+          method: 'POST',
+          body: JSON.stringify({
+            lokasi: {
+              lat: lat,
+              lng: lng,
+              accuracy: accuracy
+            }
+          })
+        });
+
+        alert(result.message || 'absen masuk berhasil');
+        loadEmployee();
+        loadRekap();
+      } catch (err) {
+        alert(err.message || 'gagal absen masuk');
+      }
+    },
+    (error) => {
+      if (error.code === 1) {
+        alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
+      } else if (error.code === 2) {
+        alert('lokasi tidak dapat ditemukan');
+      } else if (error.code === 3) {
+        alert('pengambilan lokasi terlalu lama');
+      } else {
+        alert('gagal mendapatkan lokasi');
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
 }
-async function checkOut(){
-  try { await api('/presensi/keluar', { method:'POST', body: JSON.stringify({lokasi:null}) }); loadEmployee(); }
-  catch(e){ alert(e.message); }
+async function checkOut() {
+  if (!navigator.geolocation) {
+    alert('gps tidak tersedia di perangkat ini');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      console.log('lokasi:', lat, lng);
+      console.log('akurasi:', accuracy, 'meter');
+
+      try {
+        const result = await api('/presensi/keluar', {
+          method: 'POST',
+          body: JSON.stringify({
+            lokasi: {
+              lat: lat,
+              lng: lng,
+              accuracy: accuracy
+            }
+          })
+        });
+
+        alert(result.message || 'absen pulang berhasil');
+        loadEmployee();
+        loadRekap();
+      } catch (err) {
+        alert(err.message || 'gagal absen pulang');
+      }
+    },
+    (error) => {
+      if (error.code === 1) {
+        alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
+      } else if (error.code === 2) {
+        alert('lokasi tidak dapat ditemukan');
+      } else if (error.code === 3) {
+        alert('pengambilan lokasi terlalu lama');
+      } else {
+        alert('gagal mendapatkan lokasi');
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
 }
 
 async function loadEmployee(){
