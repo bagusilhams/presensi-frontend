@@ -195,14 +195,17 @@ async function checkIn() {
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
+ navigator.geolocation.getCurrentPosition(
+  async (position) => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
 
-      console.log('lokasi:', lat, lng);
-      console.log('akurasi:', accuracy, 'meter');
+    console.log('GPS HP:', lat, lng);
+    console.log('AKURASI:', accuracy);
+
+    console.log('lokasi:', lat, lng);
+    console.log('akurasi:', accuracy, 'meter');
 
       try {
         const result = await api('/presensi/masuk', {
