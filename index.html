@@ -523,6 +523,7 @@ tbody tr:hover{
   background:rgba(201,163,78,.18);
   color:var(--pending);
 }
+
 /* =========================
    jadwal & shift
 ========================= */
@@ -541,6 +542,7 @@ tbody tr:hover{
 .schedule-table{
   margin-top:20px;
 }
+
 .btn-edit{
   background:rgba(31,75,74,.12);
   color:var(--teal);
@@ -570,22 +572,45 @@ tbody tr:hover{
   color:var(--sub);
 }
 
-@media(max-width:900px){
-  .schedule-form{
-    grid-template-columns:1fr 1fr;
-  }
+/* =========================
+   data karyawan
+========================= */
+
+.employee-crud-card{
+  margin-top:18px;
 }
 
-@media(max-width:600px){
-  .schedule-form{
-    grid-template-columns:1fr;
-  }
+.employee-crud-form{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  align-items:end;
 }
+
+.employee-crud-form .field{
+  margin-bottom:0;
+}
+
+.employee-crud-form .btn-primary{
+  width:100%;
+}
+
+.employee-message{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--sub);
+}
+
+.employee-table{
+  margin-top:20px;
+}
+
 /* =========================
    responsive
 ========================= */
 
 @media(max-width:900px){
+
   .summary{
     grid-template-columns:repeat(2,1fr);
   }
@@ -597,9 +622,19 @@ tbody tr:hover{
   .filter-grid{
     grid-template-columns:1fr 1fr;
   }
+
+  .schedule-form{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .employee-crud-form{
+    grid-template-columns:1fr 1fr;
+  }
+
 }
 
 @media(max-width:600px){
+
   .wrap{
     padding:20px 14px 40px;
   }
@@ -632,6 +667,15 @@ tbody tr:hover{
   .employee-buttons{
     grid-template-columns:1fr;
   }
+
+  .schedule-form{
+    grid-template-columns:1fr;
+  }
+
+  .employee-crud-form{
+    grid-template-columns:1fr;
+  }
+
 }
 </style>
 </head>
@@ -655,6 +699,7 @@ tbody tr:hover{
 
     <div class="field">
       <label>email</label>
+
       <input
         type="email"
         id="login-email"
@@ -664,6 +709,7 @@ tbody tr:hover{
 
     <div class="field">
       <label>password</label>
+
       <input
         type="password"
         id="login-password"
@@ -839,7 +885,6 @@ tbody tr:hover{
 
     </div>
 
-
     <div class="summary-card">
 
       <div class="label">
@@ -862,7 +907,6 @@ tbody tr:hover{
 
     </div>
 
-
     <div class="summary-card late">
 
       <div class="label">
@@ -881,7 +925,6 @@ tbody tr:hover{
       </div>
 
     </div>
-
 
     <div class="summary-card pending">
 
@@ -956,6 +999,7 @@ tbody tr:hover{
 
         <div class="status-row">
           <span>tepat waktu</span>
+
           <span
             id="status-tepat"
             class="on-time"
@@ -966,6 +1010,7 @@ tbody tr:hover{
 
         <div class="status-row">
           <span>telat</span>
+
           <span
             id="status-telat"
             class="late-minutes"
@@ -976,6 +1021,7 @@ tbody tr:hover{
 
         <div class="status-row">
           <span>belum absen</span>
+
           <span id="status-belum">
             0
           </span>
@@ -999,17 +1045,15 @@ tbody tr:hover{
     <div class="filter-grid">
 
       <div class="field">
-  <label>tanggal</label>
 
-  <input
-    type="date"
-    id="filter-date"
-  >
-</div>
->
+        <label>tanggal</label>
+
+        <input
+          type="date"
+          id="filter-date"
+        >
 
       </div>
-
 
       <div class="field search-wrap">
 
@@ -1023,7 +1067,6 @@ tbody tr:hover{
         >
 
       </div>
-
 
       <div class="field">
 
@@ -1054,7 +1097,6 @@ tbody tr:hover{
 
       </div>
 
-
       <button
         class="btn-refresh"
         onclick="loadRekap()"
@@ -1067,7 +1109,7 @@ tbody tr:hover{
   </div>
 
 
-  <!-- TABLE -->
+  <!-- REKAP -->
 
   <div class="card table-card">
 
@@ -1110,116 +1152,259 @@ tbody tr:hover{
 
   </div>
 
-</div>
 
-</div>
-<!-- =========================
-     JADWAL & SHIFT
-========================= -->
+  <!-- =========================
+       JADWAL & SHIFT
+  ========================= -->
 
-<div class="card schedule-card">
+  <div class="card schedule-card">
 
-  <div class="section-title">
-    pengaturan jadwal & shift
+    <div class="section-title">
+      pengaturan jadwal & shift
+    </div>
+
+    <div class="schedule-form">
+
+      <div class="field">
+
+        <label>tanggal</label>
+
+        <input
+          type="date"
+          id="schedule-date"
+          onchange="loadSchedule()"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>karyawan</label>
+
+        <select id="schedule-employee">
+
+          <option value="">
+            pilih karyawan
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="field">
+
+        <label>shift</label>
+
+        <select id="schedule-shift">
+
+          <option value="">
+            pilih shift
+          </option>
+
+        </select>
+
+      </div>
+
+      <button
+        class="btn-primary"
+        onclick="saveSchedule()"
+      >
+        simpan jadwal
+      </button>
+
+    </div>
+
+    <div
+      id="schedule-message"
+      class="schedule-message"
+    ></div>
+
+    <div class="overflow schedule-table">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>karyawan</th>
+            <th>departemen</th>
+            <th>shift</th>
+            <th>jam kerja</th>
+            <th>aksi</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="schedule-table-body">
+
+          <tr>
+
+            <td
+              colspan="5"
+              style="
+                color:var(--sub);
+                text-align:center;
+                padding:30px
+              "
+            >
+              pilih tanggal untuk melihat jadwal
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
   </div>
 
-  <div class="schedule-form">
 
-    <div class="field">
+  <!-- =========================
+       DATA KARYAWAN
+  ========================= -->
 
-      <label>tanggal</label>
+  <div class="card employee-crud-card">
 
-<input
-  type="date"
-  id="schedule-date"
-  onchange="loadSchedule()"
->
-
+    <div class="section-title">
+      data karyawan
     </div>
 
-
-    <div class="field">
-
-      <label>karyawan</label>
-
-      <select id="schedule-employee">
-
-        <option value="">
-          pilih karyawan
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <div class="field">
-
-      <label>shift</label>
-
-      <select id="schedule-shift">
-
-        <option value="">
-          pilih shift
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <button
-      class="btn-primary"
-      onclick="saveSchedule()"
+    <div
+      id="employee-crud-form"
+      class="employee-crud-form"
     >
-      simpan jadwal
-    </button>
+
+      <div class="field">
+
+        <label>nip</label>
+
+        <input
+          type="text"
+          id="employee-nip"
+          placeholder="contoh: K005"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>nama</label>
+
+        <input
+          type="text"
+          id="employee-name"
+          placeholder="nama karyawan"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>email</label>
+
+        <input
+          type="email"
+          id="employee-email"
+          placeholder="nama@hotel.com"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>password</label>
+
+        <input
+          type="password"
+          id="employee-password"
+          placeholder="password"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>departemen</label>
+
+        <input
+          type="text"
+          id="employee-department"
+          placeholder="food and beverage"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>jabatan</label>
+
+        <input
+          type="text"
+          id="employee-position"
+          placeholder="staff"
+        >
+
+      </div>
+
+      <button
+        class="btn-primary"
+        onclick="saveEmployee()"
+      >
+        tambah karyawan
+      </button>
+
+    </div>
+
+    <div
+      id="employee-message"
+      class="employee-message"
+    ></div>
+
+    <div class="overflow employee-table">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>nip</th>
+            <th>nama</th>
+            <th>email</th>
+            <th>departemen</th>
+            <th>jabatan</th>
+            <th>aksi</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="employee-table-body">
+
+          <tr>
+
+            <td
+              colspan="6"
+              style="
+                color:var(--sub);
+                text-align:center;
+                padding:30px
+              "
+            >
+              memuat data...
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
 
   </div>
 
-
-  <div
-    id="schedule-message"
-    class="schedule-message"
-  ></div>
-
-
-  <div class="overflow schedule-table">
-
-    <table>
-
-      <thead>
-
-        <tr>
-          <th>karyawan</th>
-          <th>departemen</th>
-          <th>shift</th>
-          <th>jam kerja</th>
-          <th>aksi</th>
-        </tr>
-
-      </thead>
-
-      <tbody id="schedule-table-body">
-
-        <tr>
-          <td
-            colspan="5"
-            style="
-              color:var(--sub);
-              text-align:center;
-              padding:30px
-            "
-          >
-            pilih tanggal untuk melihat jadwal
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
+</div>
 
 </div>
 
@@ -1239,32 +1424,37 @@ let user =
 
 let rekapData = [];
 
+let employeeList = [];
+
+let shiftList = [];
+
 
 /* =========================
    API
 ========================= */
 
-async function api(path, options = {}) {
+async function api(path, options = {}){
 
-  const res = await fetch(
-    API + path,
-    {
-      ...options,
+  const res =
+    await fetch(
+      API + path,
+      {
+        ...options,
 
-      headers:{
-        'Content-Type':'application/json',
+        headers:{
+          'Content-Type':'application/json',
 
-        ...(options.headers || {}),
+          ...(options.headers || {}),
 
-        ...(token
-          ? {
-              Authorization:
-              `Bearer ${token}`
-            }
-          : {})
+          ...(token
+            ? {
+                Authorization:
+                `Bearer ${token}`
+              }
+            : {})
+        }
       }
-    }
-  );
+    );
 
   const text =
     await res.text();
@@ -1272,11 +1462,16 @@ async function api(path, options = {}) {
   let data;
 
   try{
-    data = JSON.parse(text);
+
+    data =
+      JSON.parse(text);
+
   }catch{
+
     data = {
       message:text
     };
+
   }
 
   if(!res.ok){
@@ -1397,6 +1592,7 @@ function showView(viewId){
 function logout(){
 
   token = null;
+
   user = null;
 
   localStorage.removeItem(
@@ -1433,10 +1629,19 @@ function enterApp(){
       .getElementById('filter-date')
       .value = today;
 
+    document
+      .getElementById('schedule-date')
+      .value = today;
+
     loadRekap();
+
     loadScheduleData();
+
     loadShifts();
+
     loadSchedule();
+
+    loadEmployees();
 
   }else{
 
@@ -1574,8 +1779,6 @@ function calculateWorkDuration(
 
     return '-';
   }
-
-  /* shift malam */
 
   if(keluar < masuk){
 
@@ -1789,6 +1992,7 @@ function locationError(error){
     );
 
   }
+
 }
 
 
@@ -1856,7 +2060,6 @@ async function loadEmployee(){
             ', pulang ' +
             rec.jam_keluar;
 
-
     document
       .getElementById(
         'emp-history'
@@ -1889,10 +2092,14 @@ async function loadEmployee(){
 
       `
         <tr>
-          <td colspan="4"
-              style="color:var(--sub)">
+
+          <td
+            colspan="4"
+            style="color:var(--sub)"
+          >
             belum ada riwayat
           </td>
+
         </tr>
       `;
 
@@ -1919,6 +2126,10 @@ async function loadRekap(){
         'filter-date'
       )
       .value;
+
+  if(!tanggal){
+    return;
+  }
 
   try{
 
@@ -2048,7 +2259,6 @@ function updateSummary(){
     .textContent =
     percent + '% kehadiran';
 
-
   document
     .getElementById(
       'attendance-percent'
@@ -2072,7 +2282,6 @@ function updateSummary(){
     ' dari ' +
     total +
     ' karyawan hadir hari ini';
-
 
   document
     .getElementById(
@@ -2119,7 +2328,6 @@ function renderTable(){
       )
       .value;
 
-
   const filtered =
     rekapData.filter(r => {
 
@@ -2147,7 +2355,6 @@ function renderTable(){
 
     });
 
-
   document
     .getElementById(
       'table-count'
@@ -2155,7 +2362,6 @@ function renderTable(){
     .textContent =
     filtered.length +
     ' karyawan';
-
 
   if(!filtered.length){
 
@@ -2185,7 +2391,6 @@ function renderTable(){
     return;
   }
 
-
   document
     .getElementById(
       'admin-table'
@@ -2205,7 +2410,6 @@ function renderTable(){
           r.jam_masuk,
           r.jam_keluar
         );
-
 
       let lateHtml = '-';
 
@@ -2234,7 +2438,6 @@ function renderTable(){
 
       }
 
-
       return `
 
         <tr>
@@ -2251,7 +2454,6 @@ function renderTable(){
 
           </td>
 
-
           <td>
 
             <div class="shift-name">
@@ -2259,7 +2461,6 @@ function renderTable(){
             </div>
 
           </td>
-
 
           <td>
 
@@ -2275,16 +2476,13 @@ function renderTable(){
 
           </td>
 
-
           <td>
             ${r.jam_masuk || '-'}
           </td>
 
-
           <td>
             ${r.jam_keluar || '-'}
           </td>
-
 
           <td>
 
@@ -2294,11 +2492,9 @@ function renderTable(){
 
           </td>
 
-
           <td>
             ${lateHtml}
           </td>
-
 
           <td>
             ${tagHtml(r.status)}
@@ -2310,13 +2506,11 @@ function renderTable(){
 
     }).join('');
 }
+
+
 /* =========================
    JADWAL & SHIFT
 ========================= */
-
-let employeeList = [];
-let shiftList = [];
-
 
 async function loadScheduleData(){
 
@@ -2325,8 +2519,15 @@ async function loadScheduleData(){
     const employees =
       await api('/karyawan');
 
+    const data =
+      employees.data ||
+      employees ||
+      [];
+
     employeeList =
-      employees.data || employees || [];
+      data.filter(
+        k => k.role === 'karyawan'
+      );
 
     const employeeSelect =
       document.getElementById(
@@ -2350,15 +2551,6 @@ async function loadScheduleData(){
 
     });
 
-
-    /*
-      shift belum punya route khusus,
-      jadi sementara ambil dari data debug
-      tidak boleh dipakai lagi.
-
-      kita buat route shift di backend.
-    */
-
   }catch(err){
 
     console.error(
@@ -2372,7 +2564,6 @@ async function loadScheduleData(){
 
 
 async function loadShifts(){
-  
 
   try{
 
@@ -2425,7 +2616,6 @@ async function loadSchedule(){
     ).value;
 
   if(!tanggal){
-
     return;
   }
 
@@ -2448,7 +2638,9 @@ async function loadSchedule(){
     if(!data.length){
 
       tbody.innerHTML = `
+
         <tr>
+
           <td
             colspan="5"
             style="
@@ -2459,12 +2651,13 @@ async function loadSchedule(){
           >
             belum ada jadwal pada tanggal ini
           </td>
+
         </tr>
+
       `;
 
       return;
     }
-
 
     tbody.innerHTML =
       data.map(j => `
@@ -2497,20 +2690,30 @@ async function loadSchedule(){
           </td>
 
           <td>
-  <button
-    class="btn-edit"
-    onclick="editSchedule(${j.id}, ${j.karyawan_id}, ${j.shift_id})"
-  >
-    edit
-  </button>
 
-  <button
-    class="btn-delete"
-    onclick="deleteSchedule(${j.id})"
-  >
-    hapus
-  </button>
-</td>
+            <button
+              class="btn-edit"
+              onclick="
+                editSchedule(
+                  ${j.id},
+                  ${j.karyawan_id},
+                  ${j.shift_id}
+                )
+              "
+            >
+              edit
+            </button>
+
+            <button
+              class="btn-delete"
+              onclick="
+                deleteSchedule(${j.id})
+              "
+            >
+              hapus
+            </button>
+
+          </td>
 
         </tr>
 
@@ -2550,7 +2753,6 @@ async function saveSchedule(){
       'schedule-message'
     );
 
-
   if(
     !karyawan_id ||
     !shift_id ||
@@ -2562,7 +2764,6 @@ async function saveSchedule(){
 
     return;
   }
-
 
   try{
 
@@ -2599,15 +2800,21 @@ async function saveSchedule(){
 }
 
 
-function editSchedule(id, karyawanId, shiftId){
+function editSchedule(
+  id,
+  karyawanId,
+  shiftId
+){
 
   document.getElementById(
     'schedule-employee'
-  ).value = karyawanId;
+  ).value =
+    karyawanId;
 
   document.getElementById(
     'schedule-shift'
-  ).value = shiftId;
+  ).value =
+    shiftId;
 
   document.getElementById(
     'schedule-message'
@@ -2622,6 +2829,8 @@ function editSchedule(id, karyawanId, shiftId){
   });
 
 }
+
+
 async function deleteSchedule(id){
 
   if(
@@ -2661,6 +2870,417 @@ async function deleteSchedule(id){
     document
       .getElementById(
         'schedule-message'
+      )
+      .textContent =
+      'gagal menghapus: ' +
+      err.message;
+
+  }
+
+}
+
+
+/* =========================
+   CRUD KARYAWAN
+========================= */
+
+async function loadEmployees(){
+
+  try{
+
+    const result =
+      await api('/karyawan');
+
+    const data =
+      result.data ||
+      result ||
+      [];
+
+    const employees =
+      data.filter(
+        k => k.role === 'karyawan'
+      );
+
+    const tbody =
+      document.getElementById(
+        'employee-table-body'
+      );
+
+    if(!employees.length){
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="6"
+            style="
+              color:var(--sub);
+              text-align:center;
+              padding:30px
+            "
+          >
+            belum ada data karyawan
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+    }
+
+    tbody.innerHTML =
+      employees.map(k => `
+
+        <tr>
+
+          <td>
+            ${k.nip}
+          </td>
+
+          <td>
+
+            <div class="employee-name">
+              ${k.nama}
+            </div>
+
+          </td>
+
+          <td>
+            ${k.email}
+          </td>
+
+          <td>
+            ${k.departemen || '-'}
+          </td>
+
+          <td>
+            ${k.jabatan || '-'}
+          </td>
+
+          <td>
+
+            <button
+              class="btn-edit"
+              onclick="
+                editEmployee(
+                  ${k.id},
+                  ${JSON.stringify(k.nama)},
+                  ${JSON.stringify(k.departemen || '')},
+                  ${JSON.stringify(k.jabatan || '')}
+                )
+              "
+            >
+              edit
+            </button>
+
+            <button
+              class="btn-delete"
+              onclick="
+                deleteEmployee(${k.id})
+              "
+            >
+              hapus
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join('');
+
+  }catch(err){
+
+    console.error(
+      'ERROR LOAD DATA KARYAWAN:',
+      err
+    );
+
+    document
+      .getElementById(
+        'employee-table-body'
+      )
+      .innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="6"
+            style="
+              color:var(--late);
+              text-align:center;
+              padding:30px
+            "
+          >
+            gagal memuat data:
+            ${err.message}
+          </td>
+
+        </tr>
+
+      `;
+
+  }
+
+}
+
+
+async function saveEmployee(){
+
+  const nip =
+    document
+      .getElementById(
+        'employee-nip'
+      )
+      .value
+      .trim();
+
+  const nama =
+    document
+      .getElementById(
+        'employee-name'
+      )
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById(
+        'employee-email'
+      )
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById(
+        'employee-password'
+      )
+      .value;
+
+  const departemen =
+    document
+      .getElementById(
+        'employee-department'
+      )
+      .value
+      .trim();
+
+  const jabatan =
+    document
+      .getElementById(
+        'employee-position'
+      )
+      .value
+      .trim();
+
+  const message =
+    document.getElementById(
+      'employee-message'
+    );
+
+  if(
+    !nip ||
+    !nama ||
+    !email ||
+    !password
+  ){
+
+    message.textContent =
+      'nip, nama, email, dan password wajib diisi';
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/karyawan',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            nip,
+            nama,
+            email,
+            password,
+            departemen,
+            jabatan
+          })
+        }
+      );
+
+    message.textContent =
+      result.message ||
+      'karyawan berhasil ditambahkan';
+
+    document.getElementById(
+      'employee-nip'
+    ).value = '';
+
+    document.getElementById(
+      'employee-name'
+    ).value = '';
+
+    document.getElementById(
+      'employee-email'
+    ).value = '';
+
+    document.getElementById(
+      'employee-password'
+    ).value = '';
+
+    document.getElementById(
+      'employee-department'
+    ).value = '';
+
+    document.getElementById(
+      'employee-position'
+    ).value = '';
+
+    loadEmployees();
+
+    loadScheduleData();
+
+  }catch(err){
+
+    message.textContent =
+      'gagal menambahkan: ' +
+      err.message;
+
+  }
+
+}
+
+
+async function editEmployee(
+  id,
+  nama,
+  departemen,
+  jabatan
+){
+
+  const newNama =
+    prompt(
+      'nama karyawan:',
+      nama
+    );
+
+  if(newNama === null){
+    return;
+  }
+
+  const newDepartemen =
+    prompt(
+      'departemen:',
+      departemen
+    );
+
+  if(newDepartemen === null){
+    return;
+  }
+
+  const newJabatan =
+    prompt(
+      'jabatan:',
+      jabatan
+    );
+
+  if(newJabatan === null){
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/karyawan/' + id,
+        {
+          method:'PUT',
+
+          body:JSON.stringify({
+            nama:newNama.trim(),
+            departemen:newDepartemen.trim(),
+            jabatan:newJabatan.trim()
+          })
+        }
+      );
+
+    document
+      .getElementById(
+        'employee-message'
+      )
+      .textContent =
+      result.message ||
+      'data karyawan diperbarui';
+
+    loadEmployees();
+
+    loadScheduleData();
+
+    loadSchedule();
+
+    loadRekap();
+
+  }catch(err){
+
+    document
+      .getElementById(
+        'employee-message'
+      )
+      .textContent =
+      'gagal mengedit: ' +
+      err.message;
+
+  }
+
+}
+
+
+async function deleteEmployee(id){
+
+  if(
+    !confirm(
+      'hapus karyawan ini?'
+    )
+  ){
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/karyawan/' + id,
+        {
+          method:'DELETE'
+        }
+      );
+
+    document
+      .getElementById(
+        'employee-message'
+      )
+      .textContent =
+      result.message ||
+      'karyawan dihapus';
+
+    loadEmployees();
+
+    loadScheduleData();
+
+    loadSchedule();
+
+    loadRekap();
+
+  }catch(err){
+
+    document
+      .getElementById(
+        'employee-message'
       )
       .textContent =
       'gagal menghapus: ' +
