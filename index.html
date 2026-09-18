@@ -207,7 +207,7 @@ async function checkIn() {
     console.log('lokasi:', lat, lng);
     console.log('akurasi:', accuracy, 'meter');
 
-      try {
+           try {
         const result = await api('/presensi/masuk', {
           method: 'POST',
           body: JSON.stringify({
@@ -222,10 +222,11 @@ async function checkIn() {
         alert(result.message || 'absen masuk berhasil');
         loadEmployee();
         loadRekap();
-      catch (err) {
-  console.error('ERROR ABSEN:', err);
-  alert('ERROR: ' + (err.message || JSON.stringify(err)));
-}
+
+      } catch (err) {
+        console.error('ERROR ABSEN:', err);
+        alert('ERROR: ' + (err.message || JSON.stringify(err)));
+      }
     },
     (error) => {
       if (error.code === 1) {
