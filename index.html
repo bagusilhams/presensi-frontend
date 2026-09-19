@@ -702,6 +702,66 @@ tbody tr:last-child td{
 .btn-delete:hover{
   background:#fde8e6;
 }
+/* =========================
+   izin / cuti / sakit
+========================= */
+
+.leave-form{
+  display:grid;
+  grid-template-columns:160px 1fr 1fr;
+  gap:10px;
+  align-items:end;
+}
+
+.leave-form .field{
+  margin-bottom:0;
+}
+
+.leave-form .full{
+  grid-column:1 / -1;
+}
+
+.leave-message{
+  margin-top:10px;
+  color:var(--sub);
+  font-size:11px;
+}
+
+.leave-table{
+  margin-top:18px;
+}
+
+.btn-approve{
+  padding:6px 9px;
+  background:var(--ok-soft);
+  color:var(--ok);
+  border:1px solid #d5eadf;
+  font-size:10.5px;
+}
+
+.btn-reject{
+  padding:6px 9px;
+  background:var(--danger-soft);
+  color:var(--danger);
+  border:1px solid #f4d6d3;
+  font-size:10.5px;
+}
+
+@media(max-width:1000px){
+  .leave-form{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:650px){
+  .leave-form{
+    grid-template-columns:1fr;
+  }
+
+  .leave-form .full{
+    grid-column:auto;
+  }
+}
 
 /* =========================
    responsive
@@ -954,6 +1014,123 @@ tbody tr:last-child td{
   </div>
 
 </div>
+<!-- =========================
+     IZIN / SAKIT / CUTI
+========================= -->
+
+<div class="card">
+
+  <div class="section-title">
+    pengajuan izin / sakit / cuti
+  </div>
+
+  <div class="leave-form">
+
+    <div class="field">
+
+      <label>jenis</label>
+
+      <select id="izin-jenis">
+
+        <option value="">
+          pilih jenis
+        </option>
+
+        <option value="izin">
+          izin
+        </option>
+
+        <option value="sakit">
+          sakit
+        </option>
+
+        <option value="cuti">
+          cuti
+        </option>
+
+      </select>
+
+    </div>
+
+    <div class="field">
+
+      <label>tanggal mulai</label>
+
+      <input
+        type="date"
+        id="izin-mulai"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>tanggal selesai</label>
+
+      <input
+        type="date"
+        id="izin-selesai"
+      >
+
+    </div>
+
+    <div class="field full">
+
+      <label>keterangan</label>
+
+      <input
+        type="text"
+        id="izin-keterangan"
+        placeholder="contoh: ada keperluan keluarga"
+      >
+
+    </div>
+
+    <button
+      class="btn-primary"
+      onclick="ajukanIzin()"
+    >
+      ajukan
+    </button>
+
+  </div>
+
+  <div
+    id="izin-message"
+    class="leave-message"
+  ></div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="section-title">
+    riwayat pengajuan
+  </div>
+
+  <div class="overflow leave-table">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>jenis</th>
+          <th>tanggal</th>
+          <th>keterangan</th>
+          <th>status</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="izin-history"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
 
 
 <!-- =========================
@@ -1133,6 +1310,34 @@ tbody tr:last-child td{
           <div id="employee-message" class="employee-message"></div>
           <div class="overflow employee-table"><table><thead><tr><th>NIP</th><th>Nama</th><th>Email</th><th>Departemen</th><th>Jabatan</th><th>Aksi</th></tr></thead><tbody id="employee-table-body"><tr><td colspan="6" class="empty-state">Memuat Data...</td></tr></tbody></table></div>
         </div>
+        <div class="card">
+
+  <div class="section-title">
+    pengajuan karyawan
+  </div>
+
+  <div class="overflow">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>karyawan</th>
+          <th>jenis</th>
+          <th>tanggal</th>
+          <th>keterangan</th>
+          <th>status</th>
+          <th>aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="admin-izin-table"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
       </section>
 
       <footer class="dashboard-footer">Presensi Hotel &nbsp;•&nbsp; Sistem Monitoring Karyawan</footer>
@@ -1383,7 +1588,8 @@ function enterApp(){
     loadSchedule();
 
     loadEmployees();
-
+    loadIzinAdmin();
+    
   }else{
 
     showView(
@@ -1850,7 +2056,204 @@ async function loadEmployee(){
 
   }
 }
+/* =========================
+   IZIN / SAKIT / CUTI
+========================= */
 
+function izinStatusHtml(status){
+
+  if(status === 'disetujui'){
+
+    return `
+      <span class="tag ok">
+        disetujui
+      </span>
+    `;
+
+  }
+
+  if(status === 'ditolak'){
+
+    return `
+      <span class="tag late">
+        ditolak
+      </span>
+    `;
+
+  }
+
+  return `
+    <span class="tag pending">
+      menunggu
+    </span>
+  `;
+}
+
+
+async function ajukanIzin(){
+
+  const jenis =
+    document.getElementById(
+      'izin-jenis'
+    ).value;
+
+  const tanggal_mulai =
+    document.getElementById(
+      'izin-mulai'
+    ).value;
+
+  const tanggal_selesai =
+    document.getElementById(
+      'izin-selesai'
+    ).value;
+
+  const keterangan =
+    document.getElementById(
+      'izin-keterangan'
+    ).value.trim();
+
+  const message =
+    document.getElementById(
+      'izin-message'
+    );
+
+  if(
+    !jenis ||
+    !tanggal_mulai ||
+    !tanggal_selesai
+  ){
+
+    message.textContent =
+      'jenis dan tanggal wajib diisi';
+
+    return;
+  }
+
+  if(tanggal_mulai > tanggal_selesai){
+
+    message.textContent =
+      'tanggal selesai tidak boleh sebelum tanggal mulai';
+
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/izin',
+        {
+          method:'POST',
+
+          body:JSON.stringify({
+            jenis,
+            tanggal_mulai,
+            tanggal_selesai,
+            keterangan
+          })
+        }
+      );
+
+    message.textContent =
+      result.message ||
+      'pengajuan berhasil dibuat';
+
+    document.getElementById(
+      'izin-jenis'
+    ).value = '';
+
+    document.getElementById(
+      'izin-mulai'
+    ).value = '';
+
+    document.getElementById(
+      'izin-selesai'
+    ).value = '';
+
+    document.getElementById(
+      'izin-keterangan'
+    ).value = '';
+
+    loadIzinSaya();
+
+  }catch(err){
+
+    message.textContent =
+      'gagal mengajukan: ' +
+      err.message;
+
+  }
+}
+
+
+async function loadIzinSaya(){
+
+  try{
+
+    const data =
+      await api('/izin/saya');
+
+    const tbody =
+      document.getElementById(
+        'izin-history'
+      );
+
+    if(!data.length){
+
+      tbody.innerHTML = `
+        <tr>
+          <td
+            colspan="4"
+            style="
+              color:var(--sub);
+              text-align:center;
+              padding:30px
+            "
+          >
+            belum ada pengajuan
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+    tbody.innerHTML =
+      data.map(r => `
+
+        <tr>
+
+          <td>
+            ${r.jenis}
+          </td>
+
+          <td>
+            ${r.tanggal_mulai}
+            -
+            ${r.tanggal_selesai}
+          </td>
+
+          <td>
+            ${r.keterangan || '-'}
+          </td>
+
+          <td>
+            ${izinStatusHtml(r.status)}
+          </td>
+
+        </tr>
+
+      `).join('');
+
+  }catch(err){
+
+    console.error(
+      'ERROR IZIN:',
+      err
+    );
+
+  }
+}
 
 /* =========================
    LOAD REKAP
@@ -2780,7 +3183,140 @@ async function loadEmployees(){
 
 }
 
+async function loadIzinAdmin(){
 
+  try{
+
+    const data =
+      await api('/izin');
+
+    const tbody =
+      document.getElementById(
+        'admin-izin-table'
+      );
+
+    if(!data.length){
+
+      tbody.innerHTML = `
+        <tr>
+          <td
+            colspan="6"
+            class="empty-state"
+          >
+            belum ada pengajuan
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+    tbody.innerHTML =
+      data.map(i => `
+
+        <tr>
+
+          <td>
+            ${i.nama || '-'}
+          </td>
+
+          <td>
+            ${i.jenis || '-'}
+          </td>
+
+          <td>
+            ${i.tanggal_mulai}
+            -
+            ${i.tanggal_selesai}
+          </td>
+
+          <td>
+            ${i.keterangan || '-'}
+          </td>
+
+          <td>
+            ${i.status}
+          </td>
+
+          <td>
+
+            ${
+              i.status === 'pending'
+              ? `
+                <button
+                  class="btn-edit"
+                  onclick="updateIzin(${i.id}, 'disetujui')"
+                >
+                  setujui
+                </button>
+
+                <button
+                  class="btn-delete"
+                  onclick="updateIzin(${i.id}, 'ditolak')"
+                >
+                  tolak
+                </button>
+              `
+              : '-'
+            }
+
+          </td>
+
+        </tr>
+
+      `).join('');
+
+  }catch(err){
+
+    console.error(
+      'ERROR LOAD IZIN ADMIN:',
+      err
+    );
+
+  }
+
+}
+async function updateIzin(id, status){
+
+  const text =
+    status === 'disetujui'
+      ? 'setujui pengajuan ini?'
+      : 'tolak pengajuan ini?';
+
+  if(!confirm(text)){
+    return;
+  }
+
+  try{
+
+    const result =
+      await api(
+        '/izin/' + id,
+        {
+          method:'PUT',
+          body:JSON.stringify({
+            status
+          })
+        }
+      );
+
+    alert(
+      result.message ||
+      'status pengajuan diperbarui'
+    );
+
+    loadIzinAdmin();
+
+  }catch(err){
+
+    alert(
+      'gagal memperbarui: ' +
+      err.message
+    );
+
+  }
+
+}
 async function saveEmployee(){
 
   const nip =
@@ -3030,6 +3566,8 @@ async function deleteEmployee(id){
     loadSchedule();
 
     loadRekap();
+    
+loadIzinSaya();
 
   }catch(err){
 
