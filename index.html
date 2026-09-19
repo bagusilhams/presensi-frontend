@@ -787,6 +787,28 @@ tbody tr:last-child td{
     padding:18px;
   }
 }
+
+/* =========================
+   dashboard redesign
+========================= */
+.admin-shell{display:flex;min-height:calc(100vh - 56px);gap:0}
+#view-admin{margin:0 -32px -60px}
+.sidebar{width:240px;background:#173f37;color:#fff;padding:22px 16px;display:flex;flex-direction:column;min-height:calc(100vh - 56px);position:sticky;top:0;align-self:flex-start}
+.brand-box{display:flex;align-items:center;gap:11px;padding:4px 8px 25px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand-mark{width:38px;height:38px;border-radius:9px;background:#fff;color:#176b5b;display:grid;place-items:center;font-weight:800;font-size:13px}
+.brand-box strong{display:block;font-size:14px;letter-spacing:.1px}.brand-box span{display:block;color:#b9d0cb;font-size:10px;margin-top:3px}
+.sidebar-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#9bb9b3;margin:24px 10px 9px;font-weight:700}
+.side-nav{display:grid;gap:4px}.side-nav a{display:flex;align-items:center;gap:11px;padding:10px 11px;color:#d7e5e2;text-decoration:none;border-radius:7px;font-size:12px;font-weight:600}.side-nav a:hover,.side-nav a.active{background:#24574d;color:#fff}.nav-icon{width:18px;text-align:center;font-size:15px}
+.sidebar-spacer{flex:1}.sidebar-user{display:flex;gap:10px;align-items:center;padding:13px 8px;border-top:1px solid rgba(255,255,255,.12)}.avatar{width:32px;height:32px;border-radius:50%;background:#d9eee9;color:#176b5b;display:grid;place-items:center;font-size:10px;font-weight:800}.sidebar-user-info strong{display:block;font-size:11px}.sidebar-user-info span{display:block;color:#a9c2bd;font-size:9px;margin-top:3px}.sidebar-logout{width:100%;border:1px solid rgba(255,255,255,.16);background:transparent;color:#d7e5e2;text-align:left;padding:9px 11px;font-size:11px}.sidebar-logout:hover{background:#24574d}
+.dashboard-main{flex:1;min-width:0;padding:0 30px 55px;background:#f5f7f6}.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:26px 0 22px;border-bottom:1px solid #dfe6e3;margin-bottom:20px}.breadcrumb{font-size:10px;color:#7b8985;margin-bottom:6px}.topbar h1{font-size:24px;margin:0;color:#20312d;letter-spacing:-.4px}.topbar p{margin:5px 0 0;color:#7a8582;font-size:11px}.topbar-right{display:flex;align-items:center;gap:12px}.live-date{text-align:right}.live-date span{display:block;color:#8a9491;font-size:9px;text-transform:uppercase;letter-spacing:.07em}.live-date strong{display:block;margin-top:3px;color:#263c36;font-size:12px}.top-refresh{height:38px}
+.summary-new{grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:14px}.summary-card{border-radius:9px;padding:17px 18px;min-height:116px}.summary-top{display:flex;justify-content:space-between;align-items:center;color:#75817d;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.045em}.summary-icon{width:27px;height:27px;border-radius:7px;display:grid;place-items:center;background:#edf5f2;color:#176b5b;font-size:12px}.summary-card .number{font-size:29px;margin-top:13px}.summary-card .small{margin-top:7px}.late-card .summary-icon{background:#fdf0f0;color:#b54747}.pending-card .summary-icon{background:#fff7e7;color:#a36b16}.present-card .summary-icon{background:#edf8f2;color:#16734a}
+.dashboard-grid{display:grid;grid-template-columns:1.45fr .75fr;gap:14px;margin-bottom:14px}.attendance-card,.status-card{margin-bottom:0}.panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:20px}.panel-heading h2,.section-heading-main h2{margin:0;font-size:14px;color:#263631}.panel-heading span{display:block;margin-top:4px;color:#8a9491;font-size:10px}.panel-heading.simple{margin-bottom:13px}.big-percent{font-size:27px;font-weight:800;color:#176b5b}.attendance-track{height:10px;background:#e7eeeb;border-radius:10px;overflow:hidden}.attendance-track .progress-bar{background:#176b5b}.attendance-meta{display:flex;justify-content:space-between;gap:10px;margin-top:8px;color:#7e8985;font-size:10px}.mini-chart{margin-top:22px;display:grid;gap:10px}.chart-row{display:grid;grid-template-columns:90px 1fr 25px;gap:9px;align-items:center;font-size:10px;color:#66736f}.chart-row>div{height:7px;background:#eef2f0;border-radius:5px;overflow:hidden}.chart-row i{display:block;height:100%;width:0;background:#4c8b7e;border-radius:5px;transition:width .3s}.chart-row:nth-child(2) i{background:#b96363}.chart-row:nth-child(3) i{background:#c79745}.chart-row b{text-align:right;color:#30413c;font-size:10px}.status-list-new{margin-top:4px}.status-list-new .status-row{padding:14px 0}.status-row span{display:flex;align-items:center;gap:8px}.dot{display:inline-block;width:7px;height:7px;border-radius:50%}.dot.green{background:#39896d}.dot.red{background:#bb5c5c}.dot.yellow{background:#c79443}.status-note{margin-top:17px;padding:10px;background:#f5f8f7;border:1px solid #e5ece9;border-radius:6px;color:#84908c;font-size:9px;line-height:1.5}
+.quick-actions{display:flex;align-items:center;gap:8px;padding:12px 15px;background:#fff;border:1px solid #e0e6e3;border-radius:8px;margin-bottom:25px}.quick-title{font-size:10px;font-weight:700;color:#586761;margin-right:auto}.quick-actions button{padding:8px 11px;background:#f8faf9;border:1px solid #dfe6e3;color:#40534d;font-size:10px}.quick-actions button:hover{background:#eef5f2}.quick-actions span{margin-right:5px;color:#176b5b}
+.dashboard-section{scroll-margin-top:20px;margin-top:24px}.section-heading-main{display:flex;justify-content:space-between;align-items:end;margin-bottom:11px}.section-heading-main p{margin:4px 0 0;color:#89938f;font-size:10px}.filter-new{padding:16px 18px}.filter-new .filter-title{font-size:12px;margin-bottom:12px}.filter-new .field{margin-bottom:0}.filter-new .btn-primary{height:42px}.table-card{border-radius:9px}.table-head{background:#fff;padding:16px 18px}.table-head h2{font-size:12px}.table-head span{display:block;margin-top:4px}.table-head>strong{font-size:10px;color:#65736e;background:#f3f7f5;border:1px solid #e0e9e5;border-radius:5px;padding:6px 8px}.empty-state{color:var(--sub);text-align:center;padding:30px!important}.schedule-card,.employee-crud-card{margin-top:0}.employee-form-title{margin-bottom:15px}.employee-form-title h3{margin:0;font-size:13px;color:#263631}.employee-form-title span{display:block;color:#8a9491;font-size:10px;margin-top:4px}.dashboard-footer{text-align:center;color:#9aa39f;font-size:9px;padding:28px 0 0}.btn-primary{border:1px solid var(--brand)}
+@media(max-width:1050px){.sidebar{width:205px}.dashboard-main{padding:0 20px 50px}.summary-new{grid-template-columns:repeat(2,1fr)}.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:760px){#view-admin{margin:0 -14px -45px}.admin-shell{display:block}.sidebar{position:static;width:100%;min-height:auto;padding:12px 14px}.brand-box{padding-bottom:12px}.sidebar-label,.sidebar-spacer,.sidebar-user,.sidebar-logout{display:none}.side-nav{display:flex;overflow-x:auto;padding-top:10px}.side-nav a{white-space:nowrap}.dashboard-main{padding:0 14px 45px}.topbar{align-items:flex-start;flex-direction:column}.topbar-right{width:100%;justify-content:space-between}.summary-new{grid-template-columns:1fr 1fr}.quick-actions{flex-wrap:wrap}.quick-title{width:100%;margin-right:0}.filter-grid{grid-template-columns:1fr}.filter-new .btn-primary{width:100%}}
+@media(max-width:480px){.summary-new{grid-template-columns:1fr}.summary-card .number{font-size:26px}.topbar h1{font-size:21px}}
+
 </style>
 </head>
 
@@ -940,584 +962,185 @@ tbody tr:last-child td{
 
 <div id="view-admin" class="hidden">
 
-  <div class="admin-header">
+  <div class="admin-shell">
 
-    <div class="admin-title">
-
-      <h1>Dashboard Hr</h1>
-
-      <p>
-        Monitoring Presensi Dan Jam Kerja Karyawan
-      </p>
-
-    </div>
-
-    <div class="admin-date">
-
-      Data Tanggal
-
-      <strong id="dashboard-date">
-        -
-      </strong>
-
-    </div>
-
-    <button
-      class="logout"
-      onclick="logout()"
-    >
-      Keluar
-    </button>
-
-  </div>
-
-
-  <!-- SUMMARY -->
-
-  <div class="summary">
-
-    <div class="summary-card">
-
-      <div class="label">
-        Total Karyawan
+    <aside class="sidebar">
+      <div class="brand-box">
+        <div class="brand-mark">PH</div>
+        <div>
+          <strong>Presensi Hotel</strong>
+          <span>Human Resources</span>
+        </div>
       </div>
 
-      <div
-        class="number"
-        id="sum-total"
-      >
-        0
+      <div class="sidebar-label">Menu Utama</div>
+      <nav class="side-nav">
+        <a href="#dashboard-section" class="active" onclick="setActiveNav(this)">
+          <span class="nav-icon">▦</span> Dashboard
+        </a>
+        <a href="#rekap-section" onclick="setActiveNav(this)">
+          <span class="nav-icon">▤</span> Rekap Presensi
+        </a>
+        <a href="#schedule-section" onclick="setActiveNav(this)">
+          <span class="nav-icon">◫</span> Jadwal & Shift
+        </a>
+        <a href="#employees-section" onclick="setActiveNav(this)">
+          <span class="nav-icon">♙</span> Data Karyawan
+        </a>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="sidebar-user">
+        <div class="avatar" id="admin-avatar">HR</div>
+        <div class="sidebar-user-info">
+          <strong id="admin-user-name">Administrator</strong>
+          <span id="admin-user-role">Human Resources</span>
+        </div>
       </div>
 
-      <div class="small">
-        Karyawan Aktif
-      </div>
+      <button class="sidebar-logout" onclick="logout()">
+        <span>↪</span> Keluar
+      </button>
+    </aside>
 
-    </div>
+    <main class="dashboard-main">
 
-    <div class="summary-card">
+      <header class="topbar">
+        <div>
+          <div class="breadcrumb">Human Resources / Dashboard</div>
+          <h1>Dashboard Presensi</h1>
+          <p>Monitoring Kehadiran Dan Jam Kerja Karyawan</p>
+        </div>
+        <div class="topbar-right">
+          <div class="live-date">
+            <span>Data Hari Ini</span>
+            <strong id="dashboard-date">-</strong>
+          </div>
+          <button class="btn-refresh top-refresh" onclick="loadRekap()">↻ Refresh</button>
+        </div>
+      </header>
 
-      <div class="label">
-        Hadir
-      </div>
-
-      <div
-        class="number"
-        id="sum-hadir"
-      >
-        0
-      </div>
-
-      <div
-        class="small"
-        id="sum-hadir-percent"
-      >
-        0%
-      </div>
-
-    </div>
-
-    <div class="summary-card late">
-
-      <div class="label">
-        Telat
-      </div>
-
-      <div
-        class="number"
-        id="sum-telat"
-      >
-        0
-      </div>
-
-      <div class="small">
-        berdasarkan jam shift
-      </div>
-
-    </div>
-
-    <div class="summary-card pending">
-
-      <div class="label">
-        belum absen
-      </div>
-
-      <div
-        class="number"
-        id="sum-belum"
-      >
-        0
-      </div>
-
-      <div class="small">
-        belum melakukan presensi
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- OVERVIEW -->
-
-  <div class="overview">
-
-    <div class="card">
-
-      <div class="section-title">
-        tingkat kehadiran
-      </div>
-
-      <div class="attendance-percent">
-
-        <strong id="attendance-percent">
-          0%
-        </strong>
-
-        <span>
-          dari seluruh karyawan
-        </span>
-
-      </div>
-
-      <div class="progress">
-
-        <div
-          class="progress-bar"
-          id="progress-bar"
-        ></div>
-
-      </div>
-
-      <div
-        class="progress-info"
-        id="attendance-info"
-      >
-        belum ada data
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="section-title">
-        ringkasan status
-      </div>
-
-      <div class="status-list">
-
-        <div class="status-row">
-          <span>tepat waktu</span>
-
-          <span
-            id="status-tepat"
-            class="on-time"
-          >
-            0
-          </span>
+      <section id="dashboard-section">
+        <div class="summary summary-new">
+          <div class="summary-card total-card">
+            <div class="summary-top"><span>Total Karyawan</span><span class="summary-icon">♙</span></div>
+            <div class="number" id="sum-total">0</div>
+            <div class="small">Karyawan Aktif</div>
+          </div>
+          <div class="summary-card present-card">
+            <div class="summary-top"><span>Hadir</span><span class="summary-icon">✓</span></div>
+            <div class="number" id="sum-hadir">0</div>
+            <div class="small" id="sum-hadir-percent">0% kehadiran</div>
+          </div>
+          <div class="summary-card late-card late">
+            <div class="summary-top"><span>Terlambat</span><span class="summary-icon">◷</span></div>
+            <div class="number" id="sum-telat">0</div>
+            <div class="small">Berdasarkan Jam Shift</div>
+          </div>
+          <div class="summary-card pending-card pending">
+            <div class="summary-top"><span>Belum Absen</span><span class="summary-icon">!</span></div>
+            <div class="number" id="sum-belum">0</div>
+            <div class="small">Belum Melakukan Presensi</div>
+          </div>
         </div>
 
-        <div class="status-row">
-          <span>telat</span>
+        <div class="dashboard-grid">
+          <div class="card attendance-card">
+            <div class="panel-heading">
+              <div><h2>Tingkat Kehadiran</h2><span>Perbandingan kehadiran karyawan hari ini</span></div>
+              <div class="big-percent" id="attendance-percent">0%</div>
+            </div>
+            <div class="attendance-track"><div class="progress-bar" id="progress-bar"></div></div>
+            <div class="attendance-meta">
+              <span id="attendance-info">Belum Ada Data</span>
+              <span>Target Kehadiran 100%</span>
+            </div>
+            <div class="mini-chart" id="status-chart">
+              <div class="chart-row"><span>Tepat Waktu</span><div><i id="bar-tepat"></i></div><b id="chart-tepat">0</b></div>
+              <div class="chart-row"><span>Terlambat</span><div><i id="bar-telat"></i></div><b id="chart-telat">0</b></div>
+              <div class="chart-row"><span>Belum Absen</span><div><i id="bar-belum"></i></div><b id="chart-belum">0</b></div>
+            </div>
+          </div>
 
-          <span
-            id="status-telat"
-            class="late-minutes"
-          >
-            0
-          </span>
+          <div class="card status-card">
+            <div class="panel-heading simple"><div><h2>Status Hari Ini</h2><span>Ringkasan presensi</span></div></div>
+            <div class="status-list status-list-new">
+              <div class="status-row"><span><i class="dot green"></i>Tepat Waktu</span><strong id="status-tepat">0</strong></div>
+              <div class="status-row"><span><i class="dot red"></i>Terlambat</span><strong id="status-telat">0</strong></div>
+              <div class="status-row"><span><i class="dot yellow"></i>Belum Absen</span><strong id="status-belum">0</strong></div>
+            </div>
+            <div class="status-note">Data diperbarui saat tombol refresh ditekan.</div>
+          </div>
         </div>
 
-        <div class="status-row">
-          <span>belum absen</span>
+        <div class="quick-actions">
+          <div class="quick-title">Akses Cepat</div>
+          <button onclick="document.getElementById('rekap-section').scrollIntoView({behavior:'smooth'})"><span>▤</span> Lihat Rekap</button>
+          <button onclick="document.getElementById('schedule-section').scrollIntoView({behavior:'smooth'})"><span>◫</span> Atur Jadwal</button>
+          <button onclick="document.getElementById('employees-section').scrollIntoView({behavior:'smooth'})"><span>♙</span> Kelola Karyawan</button>
+        </div>
+      </section>
 
-          <span id="status-belum">
-            0
-          </span>
+      <section id="rekap-section" class="dashboard-section">
+        <div class="section-heading-main">
+          <div><h2>Rekap Presensi</h2><p>Daftar kehadiran karyawan berdasarkan tanggal yang dipilih.</p></div>
         </div>
 
-      </div>
+        <div class="card filter-card filter-new">
+          <div class="filter-title">Filter Data</div>
+          <div class="filter-grid">
+            <div class="field"><label>Tanggal</label><input type="date" id="filter-date"></div>
+            <div class="field search-wrap"><label>Cari Karyawan</label><input type="text" id="search-name" placeholder="Ketik nama atau NIP..." oninput="renderTable()"></div>
+            <div class="field"><label>Status</label><select id="filter-status" onchange="renderTable()"><option value="semua">Semua Status</option><option value="tepat">Tepat Waktu</option><option value="telat">Telat</option><option value="belum">Belum Absen</option></select></div>
+            <button class="btn-primary" onclick="loadRekap()">Terapkan</button>
+          </div>
+        </div>
 
-    </div>
+        <div class="card table-card">
+          <div class="table-head"><div><h2>Daftar Presensi Karyawan</h2><span>Monitoring masuk, pulang, shift, dan keterlambatan</span></div><strong id="table-count">0 Karyawan</strong></div>
+          <div class="overflow"><table><thead><tr><th>Karyawan</th><th>Shift</th><th>Jadwal Kerja</th><th>Jam Masuk</th><th>Jam Pulang</th><th>Durasi Kerja</th><th>Keterlambatan</th><th>Status</th></tr></thead><tbody id="admin-table"></tbody></table></div>
+        </div>
+      </section>
 
+      <section id="schedule-section" class="dashboard-section">
+        <div class="section-heading-main"><div><h2>Jadwal & Shift</h2><p>Atur jadwal kerja karyawan untuk setiap tanggal.</p></div></div>
+        <div class="card schedule-card">
+          <div class="schedule-form">
+            <div class="field"><label>Tanggal</label><input type="date" id="schedule-date" onchange="loadSchedule()"></div>
+            <div class="field"><label>Karyawan</label><select id="schedule-employee"><option value="">Pilih Karyawan</option></select></div>
+            <div class="field"><label>Shift</label><select id="schedule-shift"><option value="">Pilih Shift</option></select></div>
+            <button class="btn-primary" onclick="saveSchedule()">Simpan Jadwal</button>
+          </div>
+          <div id="schedule-message" class="schedule-message"></div>
+          <div class="overflow schedule-table"><table><thead><tr><th>Karyawan</th><th>Departemen</th><th>Shift</th><th>Jam Kerja</th><th>Aksi</th></tr></thead><tbody id="schedule-table-body"><tr><td colspan="5" class="empty-state">Pilih Tanggal Untuk Melihat Jadwal</td></tr></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="employees-section" class="dashboard-section">
+        <div class="section-heading-main"><div><h2>Data Karyawan</h2><p>Kelola data karyawan yang terdaftar pada sistem presensi.</p></div></div>
+        <div class="card employee-crud-card">
+          <div class="employee-form-title"><div><h3>Tambah Karyawan</h3><span>Isi data karyawan baru di bawah ini.</span></div></div>
+          <div id="employee-crud-form" class="employee-crud-form">
+            <div class="field"><label>NIP</label><input type="text" id="employee-nip" placeholder="Contoh: K005"></div>
+            <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
+            <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
+            <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
+            <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
+            <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
+            <button class="btn-primary" onclick="saveEmployee()">+ Tambah Karyawan</button>
+          </div>
+          <div id="employee-message" class="employee-message"></div>
+          <div class="overflow employee-table"><table><thead><tr><th>NIP</th><th>Nama</th><th>Email</th><th>Departemen</th><th>Jabatan</th><th>Aksi</th></tr></thead><tbody id="employee-table-body"><tr><td colspan="6" class="empty-state">Memuat Data...</td></tr></tbody></table></div>
+        </div>
+      </section>
+
+      <footer class="dashboard-footer">Presensi Hotel &nbsp;•&nbsp; Sistem Monitoring Karyawan</footer>
+    </main>
   </div>
-
-
-  <!-- FILTER -->
-
-  <div class="card filter-card">
-
-    <div class="filter-title">
-      filter presensi
-    </div>
-
-    <div class="filter-grid">
-
-      <div class="field">
-
-        <label>tanggal</label>
-
-        <input
-          type="date"
-          id="filter-date"
-        >
-
-      </div>
-
-      <div class="field search-wrap">
-
-        <label>cari karyawan</label>
-
-        <input
-          type="text"
-          id="search-name"
-          placeholder="ketik nama atau NIP..."
-          oninput="renderTable()"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>status</label>
-
-        <select
-          id="filter-status"
-          onchange="renderTable()"
-        >
-
-          <option value="semua">
-            semua status
-          </option>
-
-          <option value="tepat">
-            tepat waktu
-          </option>
-
-          <option value="telat">
-            telat
-          </option>
-
-          <option value="belum">
-            belum absen
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        class="btn-refresh"
-        onclick="loadRekap()"
-      >
-        refresh
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- REKAP -->
-
-  <div class="card table-card">
-
-    <div class="table-head">
-
-      <h2>
-        rekap presensi
-      </h2>
-
-      <span id="table-count">
-        0 karyawan
-      </span>
-
-    </div>
-
-    <div class="overflow">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>karyawan</th>
-            <th>shift</th>
-            <th>jadwal kerja</th>
-            <th>jam masuk</th>
-            <th>jam pulang</th>
-            <th>durasi kerja</th>
-            <th>keterlambatan</th>
-            <th>status</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="admin-table"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       JADWAL & SHIFT
-  ========================= -->
-
-  <div class="card schedule-card">
-
-    <div class="section-title">
-      pengaturan jadwal & shift
-    </div>
-
-    <div class="schedule-form">
-
-      <div class="field">
-
-        <label>tanggal</label>
-
-        <input
-          type="date"
-          id="schedule-date"
-          onchange="loadSchedule()"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>karyawan</label>
-
-        <select id="schedule-employee">
-
-          <option value="">
-            pilih karyawan
-          </option>
-
-        </select>
-
-      </div>
-
-      <div class="field">
-
-        <label>shift</label>
-
-        <select id="schedule-shift">
-
-          <option value="">
-            pilih shift
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        class="btn-primary"
-        onclick="saveSchedule()"
-      >
-        simpan jadwal
-      </button>
-
-    </div>
-
-    <div
-      id="schedule-message"
-      class="schedule-message"
-    ></div>
-
-    <div class="overflow schedule-table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>karyawan</th>
-            <th>departemen</th>
-            <th>shift</th>
-            <th>jam kerja</th>
-            <th>aksi</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="schedule-table-body">
-
-          <tr>
-
-            <td
-              colspan="5"
-              style="
-                color:var(--sub);
-                text-align:center;
-                padding:30px
-              "
-            >
-              pilih tanggal untuk melihat jadwal
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       DATA KARYAWAN
-  ========================= -->
-
-  <div class="card employee-crud-card">
-
-    <div class="section-title">
-      data karyawan
-    </div>
-
-    <div
-      id="employee-crud-form"
-      class="employee-crud-form"
-    >
-
-      <div class="field">
-
-        <label>nip</label>
-
-        <input
-          type="text"
-          id="employee-nip"
-          placeholder="contoh: K005"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>nama</label>
-
-        <input
-          type="text"
-          id="employee-name"
-          placeholder="nama karyawan"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>email</label>
-
-        <input
-          type="email"
-          id="employee-email"
-          placeholder="nama@hotel.com"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>password</label>
-
-        <input
-          type="password"
-          id="employee-password"
-          placeholder="password"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>departemen</label>
-
-        <input
-          type="text"
-          id="employee-department"
-          placeholder="food and beverage"
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>jabatan</label>
-
-        <input
-          type="text"
-          id="employee-position"
-          placeholder="staff"
-        >
-
-      </div>
-
-      <button
-        class="btn-primary"
-        onclick="saveEmployee()"
-      >
-        tambah karyawan
-      </button>
-
-    </div>
-
-    <div
-      id="employee-message"
-      class="employee-message"
-    ></div>
-
-    <div class="overflow employee-table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>nip</th>
-            <th>nama</th>
-            <th>email</th>
-            <th>departemen</th>
-            <th>jabatan</th>
-            <th>aksi</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="employee-table-body">
-
-          <tr>
-
-            <td
-              colspan="6"
-              style="
-                color:var(--sub);
-                text-align:center;
-                padding:30px
-              "
-            >
-              memuat data...
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
 </div>
 
 </div>
-
 
 <script>
 
@@ -1543,6 +1166,11 @@ function todayWIB(){
 }
 function escAttr(str){
   return JSON.stringify(str).replace(/"/g, '&quot;');
+}
+
+function setActiveNav(el){
+  document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
+  if(el) el.classList.add('active');
 }
 
 /* =========================
@@ -2413,6 +2041,29 @@ function updateSummary(){
     )
     .textContent =
     belum;
+
+  const max = total || 1;
+  const barTepat = document.getElementById('bar-tepat');
+  const barTelat = document.getElementById('bar-telat');
+  const barBelum = document.getElementById('bar-belum');
+  if(barTepat) barTepat.style.width = ((tepat / max) * 100) + '%';
+  if(barTelat) barTelat.style.width = ((telat / max) * 100) + '%';
+  if(barBelum) barBelum.style.width = ((belum / max) * 100) + '%';
+  const chartTepat = document.getElementById('chart-tepat');
+  const chartTelat = document.getElementById('chart-telat');
+  const chartBelum = document.getElementById('chart-belum');
+  if(chartTepat) chartTepat.textContent = tepat;
+  if(chartTelat) chartTelat.textContent = telat;
+  if(chartBelum) chartBelum.textContent = belum;
+
+  if(user){
+    const name = document.getElementById('admin-user-name');
+    const role = document.getElementById('admin-user-role');
+    const avatar = document.getElementById('admin-avatar');
+    if(name) name.textContent = user.nama || 'Administrator';
+    if(role) role.textContent = user.role === 'supervisor' ? 'Supervisor' : 'Human Resources';
+    if(avatar) avatar.textContent = (user.nama || 'HR').slice(0,2).toUpperCase();
+  }
 }
 
 
