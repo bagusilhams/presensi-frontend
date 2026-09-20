@@ -593,9 +593,8 @@ tbody tr:last-child td{ border-bottom:none; }
 
 const API = 'https://presensi-backend-production-7382.up.railway.app/api';
 
-let token = localStorage.getItem('presensi_token') || null;
-let user = JSON.parse(localStorage.getItem('presensi_user') || 'null');
-
+let token = null;
+let user = null;
 let rekapData = [];
 let employeeList = [];
 let shiftList = [];
@@ -642,8 +641,6 @@ async function login(){
     const data = await api('/auth/login', { method:'POST', body:JSON.stringify({ email, password }) });
     token = data.token;
     user = data.user;
-    localStorage.setItem('presensi_token', token);
-    localStorage.setItem('presensi_user', JSON.stringify(user));
     enterApp();
   }catch(e){
     errBox.textContent = e.message;
@@ -1173,7 +1170,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 /* AUTO LOGIN */
-if(token && user) enterApp();
+
 
 </script>
 
