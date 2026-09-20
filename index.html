@@ -273,6 +273,17 @@ tbody tr:last-child td{ border-bottom:none; }
   .summary-card .number{ font-size:26px; }
   .topbar h1{ font-size:21px; }
 }
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(20,25,22,.5);
+  display:flex; align-items:center; justify-content:center; z-index:999; padding:20px;
+}
+.modal-box{
+  background:var(--panel); border-radius:10px; padding:24px; width:100%; max-width:380px;
+  box-shadow:0 10px 40px rgba(0,0,0,.2);
+}
+.modal-box h3{ margin:0 0 16px; font-size:15px; color:var(--ink); }
+.modal-actions{ display:flex; gap:10px; margin-top:6px; }
+.modal-actions button{ flex:1; }
 </style>
 </head>
 
@@ -587,6 +598,36 @@ tbody tr:last-child td{ border-bottom:none; }
   </div>
 </div>
 
+</div>
+<div id="edit-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>edit karyawan</h3>
+    <div class="field">
+      <label>nama</label>
+      <input type="text" id="edit-nama">
+    </div>
+    <div class="field">
+      <label>departemen</label>
+      <select id="edit-departemen">
+        <option value="front office">front office</option>
+        <option value="housekeeping">housekeeping</option>
+        <option value="food and beverage">food and beverage</option>
+        <option value="security">security</option>
+        <option value="engineering">engineering</option>
+        <option value="human resources">human resources</option>
+        <option value="sales and marketing">sales and marketing</option>
+        <option value="accounting">accounting</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>jabatan</label>
+      <input type="text" id="edit-jabatan">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-refresh" onclick="closeEditModal()">batal</button>
+      <button class="btn-primary" onclick="submitEditEmployee()">simpan</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1128,25 +1169,40 @@ async function saveEmployee(){
   }catch(err){ message.textContent = 'gagal menambahkan: ' + err.message; }
 }
 
-async function editEmployee(id, nama, departemen, jabatan){
-  const newNama = prompt('nama karyawan:', nama);
-  if(newNama === null) return;
-  const newDepartemen = prompt('departemen:', departemen);
-  if(newDepartemen === null) return;
-  const newJabatan = prompt('jabatan:', jabatan);
-  if(newJabatan === null) return;
+let editingId = null;
+
+function editEmployee(id, nama, departemen, jabatan){
+  editingId = id;
+  document.getElementById('edit-nama').value = nama;
+  document.getElementById('edit-departemen').value = departemen;
+  document.getElementById('edit-jabatan').value = jabatan;
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal(){
+  document.getElementById('edit-modal').classList.add('hidden');
+  editingId = null;
+}
+
+async function submitEditEmployee(){
+  const nama = document.getElementById('edit-nama').value.trim();
+  const departemen = document.getElementById('edit-departemen').value;
+  const jabatan = document.getElementById('edit-jabatan').value.trim();
 
   try{
-    const result = await api('/karyawan/' + id, {
+    const result = await api('/karyawan/' + editingId, {
       method:'PUT',
-      body:JSON.stringify({ nama:newNama.trim(), departemen:newDepartemen.trim(), jabatan:newJabatan.trim() })
+      body:JSON.stringify({ nama, departemen, jabatan })
     });
     document.getElementById('employee-message').textContent = result.message || 'data karyawan diperbarui';
+    closeEditModal();
     loadEmployees();
     loadScheduleData();
     loadSchedule();
     loadRekap();
-  }catch(err){ document.getElementById('employee-message').textContent = 'gagal mengedit: ' + err.message; }
+  }catch(err){
+    alert('gagal mengedit: ' + err.message);
+  }
 }
 
 async function deleteEmployee(id){
