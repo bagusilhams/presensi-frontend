@@ -602,8 +602,8 @@ tbody tr:last-child td{ border-bottom:none; }
           <div id="employee-message" class="employee-message"></div>
           <div class="overflow employee-table">
             <table>
-              <thead><tr><th>NIP</th><th>Nama</th><th>Email</th><th>Departemen</th><th>Jabatan</th><th>Aksi</th></tr></thead>
-              <tbody id="employee-table-body"><tr><td colspan="6" class="empty-state">Memuat Data...</td></tr></tbody>
+              <thead><tr><th>NIP</th><th>Nama</th><th>Email</th><th>Departemen</th><th>Jabatan</th><th>Role</th><th>Aksi</th></tr></thead>
+              <tbody id="employee-table-body"><tr><td colspan="7" class="empty-state">Memuat Data...</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -1102,27 +1102,28 @@ async function loadEmployees(){
   try{
     const result = await api('/karyawan');
     const data = result.data || result || [];
-    const employees = data.filter(k => k.role === 'karyawan');
+    const employees = data.filter(k => k.role !== 'admin');
     const tbody = document.getElementById('employee-table-body');
 
     if(!employees.length){
-      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">belum ada data karyawan</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-state">belum ada data karyawan</td></tr>`;
       return;
     }
 
     tbody.innerHTML = employees.map(k => `
-      <tr>
-        <td>${k.nip}</td>
-        <td><div class="employee-name">${k.nama}</div></td>
-        <td>${k.email}</td>
-        <td>${k.departemen || '-'}</td>
-        <td>${k.jabatan || '-'}</td>
-        <td>
-          <button class="btn-edit" onclick="editEmployee(${k.id}, ${escAttr(k.nama)}, ${escAttr(k.departemen || '')}, ${escAttr(k.jabatan || '')})">edit</button>
-          ${user.role === 'admin' ? `<button class="btn-delete" onclick="deleteEmployee(${k.id})">hapus</button>` : ''}
-        </td>
-      </tr>
-    `).join('');
+  <tr>
+    <td>${k.nip}</td>
+    <td><div class="employee-name">${k.nama}</div></td>
+    <td>${k.email}</td>
+    <td>${k.departemen || '-'}</td>
+    <td>${k.jabatan || '-'}</td>
+    <td>${k.role}</td>
+    <td>
+      <button class="btn-edit" onclick="editEmployee(${k.id}, ${escAttr(k.nama)}, ${escAttr(k.departemen || '')}, ${escAttr(k.jabatan || '')})">edit</button>
+      ${user.role === 'admin' ? `<button class="btn-delete" onclick="deleteEmployee(${k.id})">hapus</button>` : ''}
+    </td>
+  </tr>
+`).join('');
   }catch(err){
     console.error('ERROR LOAD DATA KARYAWAN:', err);
     document.getElementById('employee-table-body').innerHTML =
