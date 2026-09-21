@@ -570,8 +570,26 @@ tbody tr:last-child td{ border-bottom:none; }
             <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
             <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
             <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
-            <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
-            <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
+            <div class="field">
+  <label>Departemen</label>
+  <select id="employee-department">
+    <option value="front office">front office</option>
+    <option value="housekeeping">housekeeping</option>
+    <option value="food and beverage">food and beverage</option>
+    <option value="security">security</option>
+    <option value="engineering">engineering</option>
+    <option value="human resources">human resources</option>
+    <option value="sales and marketing">sales and marketing</option>
+    <option value="accounting">accounting</option>
+  </select>
+</div>
+            <div class="field">
+  <label>Jabatan</label>
+  <select id="employee-position">
+    <option value="staff">staff</option>
+    <option value="supervisor">supervisor</option>
+  </select>
+</div>
             <div class="field" id="employee-role-field">
               <label>role</label>
               <select id="employee-role">
