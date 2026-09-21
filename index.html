@@ -563,15 +563,25 @@ tbody tr:last-child td{ border-bottom:none; }
         <div class="section-heading-main"><div><h2>Data Karyawan</h2><p>Kelola data karyawan yang terdaftar pada sistem presensi.</p></div></div>
 
         <div class="card employee-crud-card">
-          <div class="employee-form-title"><div><h3>Tambah Karyawan</h3><span>Isi data karyawan baru di bawah ini.</span></div></div>
-          <div id="employee-crud-form" class="employee-crud-form">
-            <div class="field"><label>NIP</label><input type="text" id="employee-nip" placeholder="Contoh: K005"></div>
-            <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
-            <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
-            <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
-            <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
-            <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
-            <button class="btn-primary" onclick="saveEmployee()">+ Tambah Karyawan</button>
+  <div class="employee-form-title"><div><h3>Tambah Karyawan</h3><span>Isi data karyawan baru di bawah ini.</span></div></div>
+  <div id="employee-crud-form" class="employee-crud-form">
+    <div class="field"><label>NIP</label><input type="text" id="employee-nip" placeholder="Contoh: K005"></div>
+    <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
+    <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
+    <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
+    <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
+    <div class="field" id="employee-role-field">
+      <label>role</label>
+      <select id="employee-role">
+        <option value="karyawan">karyawan</option>
+        <option value="supervisor">supervisor</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="saveEmployee()">+ Tambah Karyawan</button>
+  </div>
+  ...
+</div>
           </div>
           <div id="employee-message" class="employee-message"></div>
           <div class="overflow employee-table">
@@ -717,6 +727,8 @@ function enterApp(){
     loadSchedule();
     loadEmployees();
     loadIzinAdmin();
+    document.getElementById('employee-role-field').style.display =
+  user.role === 'admin' ? 'block' : 'none';
   }else{
     showView('view-employee');
     document.getElementById('emp-name').textContent = user.nama;
@@ -1145,6 +1157,7 @@ async function saveEmployee(){
   const password = document.getElementById('employee-password').value;
   const departemen = document.getElementById('employee-department').value.trim();
   const jabatan = document.getElementById('employee-position').value.trim();
+  const role = document.getElementById('employee-role') ? document.getElementById('employee-role').value : 'karyawan';
   const message = document.getElementById('employee-message');
 
   if(!nip || !nama || !email || !password){
@@ -1155,7 +1168,7 @@ async function saveEmployee(){
   try{
     const result = await api('/karyawan', {
       method:'POST',
-      body:JSON.stringify({ nip, nama, email, password, departemen, jabatan })
+      body:JSON.stringify({ nip, nama, email, password, departemen, jabatan, role })
     });
     message.textContent = result.message || 'karyawan berhasil ditambahkan';
     document.getElementById('employee-nip').value = '';
@@ -1166,7 +1179,9 @@ async function saveEmployee(){
     document.getElementById('employee-position').value = '';
     loadEmployees();
     loadScheduleData();
-  }catch(err){ message.textContent = 'gagal menambahkan: ' + err.message; }
+  }catch(err){
+    message.textContent = 'gagal menambahkan: ' + err.message;
+  }
 }
 
 let editingId = null;
