@@ -75,7 +75,7 @@ button:active{ transform:translateY(1px); }
 .employee-buttons{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
 .employee-buttons button{ width:100%; height:44px; }
 
-/* section title (dipakai di view-employee) */
+/* section title */
 .section-title{ margin-bottom:17px; color:var(--ink); font-size:14px; font-weight:700; }
 
 /* table umum */
@@ -109,7 +109,7 @@ tbody tr:last-child td{ border-bottom:none; }
 .btn-approve{ padding:6px 9px; background:var(--ok-soft); color:var(--ok); border:1px solid #d5eadf; font-size:10.5px; }
 .btn-reject{ padding:6px 9px; background:var(--danger-soft); color:var(--danger); border:1px solid #f4d6d3; font-size:10.5px; }
 
-/* action buttons kecil (dipakai jadwal & karyawan) */
+/* action buttons kecil */
 .btn-edit{ padding:6px 9px; margin-right:4px; background:var(--brand-soft); color:var(--brand-dark); border:1px solid #d8ebe6; font-size:10.5px; }
 .btn-edit:hover{ background:#e1f1ed; }
 .btn-delete{ padding:6px 9px; background:var(--danger-soft); color:var(--danger); border:1px solid #f4d6d3; font-size:10.5px; }
@@ -117,9 +117,7 @@ tbody tr:last-child td{ border-bottom:none; }
 
 .empty-state{ color:var(--sub); text-align:center; padding:30px!important; }
 
-/* =========================
-   dashboard admin (sidebar layout)
-========================= */
+/* dashboard admin (sidebar layout) */
 .admin-shell{ display:flex; min-height:100vh; }
 #view-admin{ margin:0; }
 .sidebar{
@@ -153,6 +151,8 @@ tbody tr:last-child td{ border-bottom:none; }
 .live-date span{ display:block; color:#8a9491; font-size:9px; text-transform:uppercase; letter-spacing:.07em; }
 .live-date strong{ display:block; margin-top:3px; color:#263c36; font-size:12px; }
 .top-refresh{ height:38px; }
+.top-logout{ height:38px; background:#fff; color:#454b53; border:1px solid var(--line); }
+.top-logout:hover{ background:#f5f6f7; }
 
 .summary{ display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:14px; }
 .summary-card{ position:relative; background:var(--panel); border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); padding:17px 18px; min-height:116px; }
@@ -435,12 +435,13 @@ tbody tr:last-child td{ border-bottom:none; }
           <p>Monitoring Kehadiran Dan Jam Kerja Karyawan</p>
         </div>
         <div class="topbar-right">
-  <div class="live-date">
-    <span>Data Hari Ini</span>
-    <strong id="dashboard-date">-</strong>
-  </div>
-  <button class="btn-refresh top-refresh" onclick="loadRekap()">↻ Refresh</button>
-</div>
+          <div class="live-date">
+            <span>Data Hari Ini</span>
+            <strong id="dashboard-date">-</strong>
+          </div>
+          <button class="btn-refresh top-refresh" onclick="loadRekap()">↻ Refresh</button>
+          <button class="top-logout" onclick="logout()">keluar</button>
+        </div>
       </header>
 
       <section id="dashboard-section">
@@ -563,25 +564,22 @@ tbody tr:last-child td{ border-bottom:none; }
         <div class="section-heading-main"><div><h2>Data Karyawan</h2><p>Kelola data karyawan yang terdaftar pada sistem presensi.</p></div></div>
 
         <div class="card employee-crud-card">
-  <div class="employee-form-title"><div><h3>Tambah Karyawan</h3><span>Isi data karyawan baru di bawah ini.</span></div></div>
-  <div id="employee-crud-form" class="employee-crud-form">
-    <div class="field"><label>NIP</label><input type="text" id="employee-nip" placeholder="Contoh: K005"></div>
-    <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
-    <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
-    <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
-    <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
-    <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
-    <div class="field" id="employee-role-field">
-      <label>role</label>
-      <select id="employee-role">
-        <option value="karyawan">karyawan</option>
-        <option value="supervisor">supervisor</option>
-      </select>
-    </div>
-    <button class="btn-primary" onclick="saveEmployee()">+ Tambah Karyawan</button>
-  </div>
-  ...
-</div>
+          <div class="employee-form-title"><div><h3>Tambah Karyawan</h3><span>Isi data karyawan baru di bawah ini.</span></div></div>
+          <div id="employee-crud-form" class="employee-crud-form">
+            <div class="field"><label>NIP</label><input type="text" id="employee-nip" placeholder="Contoh: K005"></div>
+            <div class="field"><label>Nama</label><input type="text" id="employee-name" placeholder="Nama karyawan"></div>
+            <div class="field"><label>Email</label><input type="email" id="employee-email" placeholder="nama@hotel.com"></div>
+            <div class="field"><label>Password</label><input type="password" id="employee-password" placeholder="Password"></div>
+            <div class="field"><label>Departemen</label><input type="text" id="employee-department" placeholder="Food And Beverage"></div>
+            <div class="field"><label>Jabatan</label><input type="text" id="employee-position" placeholder="Staff"></div>
+            <div class="field" id="employee-role-field">
+              <label>role</label>
+              <select id="employee-role">
+                <option value="karyawan">karyawan</option>
+                <option value="supervisor">supervisor</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="saveEmployee()">+ Tambah Karyawan</button>
           </div>
           <div id="employee-message" class="employee-message"></div>
           <div class="overflow employee-table">
@@ -609,6 +607,8 @@ tbody tr:last-child td{ border-bottom:none; }
 </div>
 
 </div>
+
+<!-- MODAL EDIT KARYAWAN -->
 <div id="edit-modal" class="modal-overlay hidden">
   <div class="modal-box">
     <h3>edit karyawan</h3>
@@ -649,6 +649,7 @@ let user = null;
 let rekapData = [];
 let employeeList = [];
 let shiftList = [];
+let editingId = null;
 
 function todayWIB(){
   return new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Jakarta' }).format(new Date());
@@ -710,8 +711,6 @@ function showView(viewId){
 function logout(){
   token = null;
   user = null;
-  localStorage.removeItem('presensi_token');
-  localStorage.removeItem('presensi_user');
   showView('view-login');
 }
 
@@ -727,8 +726,7 @@ function enterApp(){
     loadSchedule();
     loadEmployees();
     loadIzinAdmin();
-    document.getElementById('employee-role-field').style.display =
-  user.role === 'admin' ? 'block' : 'none';
+    document.getElementById('employee-role-field').style.display = user.role === 'admin' ? 'block' : 'none';
   }else{
     showView('view-employee');
     document.getElementById('emp-name').textContent = user.nama;
@@ -1184,8 +1182,6 @@ async function saveEmployee(){
   }
 }
 
-let editingId = null;
-
 function editEmployee(id, nama, departemen, jabatan){
   editingId = id;
   document.getElementById('edit-nama').value = nama;
@@ -1240,8 +1236,7 @@ function updateClock(){
 setInterval(updateClock, 1000);
 updateClock();
 
-/* AUTO LOGIN */
-
+/* tidak ada auto-login: selalu mulai dari halaman login */
 
 </script>
 
