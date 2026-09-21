@@ -407,11 +407,11 @@ tbody tr:last-child td{ border-bottom:none; }
 
       <div class="sidebar-label">Menu Utama</div>
       <nav class="side-nav">
-        <a href="#dashboard-section" class="active" onclick="setActiveNav(this)"><span class="nav-icon">▦</span> Dashboard</a>
-        <a href="#rekap-section" onclick="setActiveNav(this)"><span class="nav-icon">▤</span> Rekap Presensi</a>
-        <a href="#schedule-section" onclick="setActiveNav(this)"><span class="nav-icon">◫</span> Jadwal &amp; Shift</a>
-        <a href="#employees-section" onclick="setActiveNav(this)"><span class="nav-icon">♙</span> Data Karyawan</a>
-      </nav>
+  <a href="#" class="active" onclick="showSection('dashboard-section', this); return false;"><span class="nav-icon">▦</span> Dashboard</a>
+  <a href="#" onclick="showSection('rekap-section', this); return false;"><span class="nav-icon">▤</span> Rekap Presensi</a>
+  <a href="#" onclick="showSection('schedule-section', this); return false;"><span class="nav-icon">◫</span> Jadwal &amp; Shift</a>
+  <a href="#" onclick="showSection('employees-section', this); return false;"><span class="nav-icon">♙</span> Data Karyawan</a>
+</nav>
 
       <div class="sidebar-spacer"></div>
 
@@ -511,14 +511,14 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
 
         <div class="quick-actions">
-          <div class="quick-title">Akses Cepat</div>
-          <button onclick="document.getElementById('rekap-section').scrollIntoView({behavior:'smooth'})"><span>▤</span> Lihat Rekap</button>
-          <button onclick="document.getElementById('schedule-section').scrollIntoView({behavior:'smooth'})"><span>◫</span> Atur Jadwal</button>
-          <button onclick="document.getElementById('employees-section').scrollIntoView({behavior:'smooth'})"><span>♙</span> Kelola Karyawan</button>
-        </div>
+  <div class="quick-title">Akses Cepat</div>
+  <button onclick="showSection('rekap-section')"><span>▤</span> Lihat Rekap</button>
+  <button onclick="showSection('schedule-section')"><span>◫</span> Atur Jadwal</button>
+  <button onclick="showSection('employees-section')"><span>♙</span> Kelola Karyawan</button>
+</div>
       </section>
 
-      <section id="rekap-section" class="dashboard-section">
+      <section id="rekap-section" class="dashboard-section hidden">
         <div class="section-heading-main">
           <div><h2>Rekap Presensi</h2><p>Daftar kehadiran karyawan berdasarkan tanggal yang dipilih.</p></div>
         </div>
@@ -554,7 +554,7 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
       </section>
 
-      <section id="schedule-section" class="dashboard-section">
+      <section id="schedule-section" class="dashboard-section hidden">
         <div class="section-heading-main"><div><h2>Jadwal &amp; Shift</h2><p>Atur jadwal kerja karyawan untuk setiap tanggal.</p></div></div>
         <div class="card schedule-card">
           <div class="schedule-form">
@@ -573,7 +573,7 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
       </section>
 
-      <section id="employees-section" class="dashboard-section">
+      <section id="employees-section" class="dashboard-section hidden">
         <div class="section-heading-main"><div><h2>Data Karyawan</h2><p>Kelola data karyawan yang terdaftar pada sistem presensi.</p></div></div>
 
         <div class="card employee-crud-card">
@@ -687,6 +687,21 @@ function todayWIB(){
 }
 function escAttr(str){
   return JSON.stringify(str).replace(/"/g, '&quot;');
+}
+function showSection(sectionId, navEl){
+  ['dashboard-section','rekap-section','schedule-section','employees-section'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById(sectionId).classList.remove('hidden');
+
+  if(navEl){
+    setActiveNav(navEl);
+  }else{
+    document.querySelectorAll('.side-nav a').forEach((a, i) => {
+      const ids = ['dashboard-section','rekap-section','schedule-section','employees-section'];
+      a.classList.toggle('active', ids[i] === sectionId);
+    });
+  }
 }
 function setActiveNav(el){
   document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
