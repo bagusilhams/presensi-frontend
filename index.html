@@ -1177,7 +1177,10 @@ async function loadEmployees(){
     <td>${k.jabatan || '-'}</td>
     <td>${k.role}</td>
     <td>
-      <button class="btn-edit" onclick="editEmployee(${k.id}, ${escAttr(k.nama)}, ${escAttr(k.departemen || '')}, ${escAttr(k.jabatan || '')})">edit</button>
+      ${(user.role === 'supervisor' && k.id === user.id)
+  ? ''
+  : `<button class="btn-edit" onclick="editEmployee(${k.id}, ${escAttr(k.nama)}, ${escAttr(k.departemen || '')}, ${escAttr(k.jabatan || '')})">edit</button>`
+}
       ${user.role === 'admin' ? `<button class="btn-delete" onclick="deleteEmployee(${k.id})">hapus</button>` : ''}
     </td>
   </tr>
