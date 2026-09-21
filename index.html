@@ -1177,7 +1177,7 @@ async function loadEmployees(){
     <td>${k.jabatan || '-'}</td>
     <td>${k.role}</td>
     <td>
-      ${(user.role === 'supervisor' && k.id === user.id)
+      ${(user.role === 'supervisor' && k.role !== 'karyawan')
   ? ''
   : `<button class="btn-edit" onclick="editEmployee(${k.id}, ${escAttr(k.nama)}, ${escAttr(k.departemen || '')}, ${escAttr(k.jabatan || '')})">edit</button>`
 }
