@@ -761,6 +761,8 @@ function enterApp(){
     if(user.role === 'supervisor'){
   document.getElementById('spv-presensi-card').style.display = 'block';
   loadSpvStatus();
+}else{
+  document.getElementById('spv-presensi-card').style.display = 'none';
 }
   }else{
     showView('view-employee');
