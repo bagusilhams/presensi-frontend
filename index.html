@@ -273,6 +273,15 @@ tbody tr:last-child td{ border-bottom:none; }
   .summary-card .number{ font-size:26px; }
   .topbar h1{ font-size:21px; }
 }
+
+/* SP & lemburan */
+.feature-form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end}
+.feature-form .field{margin-bottom:0}
+.feature-form .full{grid-column:1/-1}
+.feature-message{margin-top:10px;color:var(--sub);font-size:11px}
+.status-approved{color:var(--ok);font-weight:700}
+.status-rejected{color:var(--danger);font-weight:700}
+
 .modal-overlay{
   position:fixed; inset:0; background:rgba(20,25,22,.5);
   display:flex; align-items:center; justify-content:center; z-index:999; padding:20px;
@@ -387,6 +396,38 @@ tbody tr:last-child td{ border-bottom:none; }
     </div>
   </div>
 
+  <div class="card">
+    <div class="section-title">pengajuan lemburan</div>
+    <div class="feature-form">
+      <div class="field"><label>tanggal</label><input type="date" id="emp-lembur-tanggal"></div>
+      <div class="field"><label>jam mulai</label><input type="time" id="emp-lembur-mulai"></div>
+      <div class="field"><label>jam selesai</label><input type="time" id="emp-lembur-selesai"></div>
+      <div class="field full"><label>alasan</label><input type="text" id="emp-lembur-alasan" placeholder="alasan lembur"></div>
+      <button class="btn-primary" onclick="ajukanLembur()">ajukan lembur</button>
+    </div>
+    <div id="emp-lembur-message" class="feature-message"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">riwayat lemburan</div>
+    <div class="overflow leave-table">
+      <table>
+        <thead><tr><th>tanggal</th><th>jam</th><th>jumlah</th><th>alasan</th><th>status</th><th>aksi</th></tr></thead>
+        <tbody id="emp-lembur-history"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">surat peringatan</div>
+    <div class="overflow leave-table">
+      <table>
+        <thead><tr><th>jenis</th><th>tanggal</th><th>alasan</th><th>keterangan</th></tr></thead>
+        <tbody id="emp-sp-history"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 
@@ -411,6 +452,8 @@ tbody tr:last-child td{ border-bottom:none; }
   <a href="#" onclick="showSection('rekap-section', this); return false;"><span class="nav-icon">▤</span> Rekap Presensi</a>
   <a href="#" onclick="showSection('schedule-section', this); return false;"><span class="nav-icon">◫</span> Jadwal &amp; Shift</a>
   <a href="#" onclick="showSection('employees-section', this); return false;"><span class="nav-icon">♙</span> Data Karyawan</a>
+  <a href="#" onclick="showSection('sp-section', this); return false;"><span class="nav-icon">!</span> Surat Peringatan</a>
+  <a href="#" onclick="showSection('lembur-section', this); return false;"><span class="nav-icon">◷</span> Lemburan</a>
 </nav>
 
       <div class="sidebar-spacer"></div>
@@ -515,6 +558,8 @@ tbody tr:last-child td{ border-bottom:none; }
   <button onclick="showSection('rekap-section')"><span>▤</span> Lihat Rekap</button>
   <button onclick="showSection('schedule-section')"><span>◫</span> Atur Jadwal</button>
   <button onclick="showSection('employees-section')"><span>♙</span> Kelola Karyawan</button>
+  <button onclick="showSection('sp-section')"><span>!</span> Kelola SP</button>
+  <button onclick="showSection('lembur-section')"><span>◷</span> Kelola Lemburan</button>
 </div>
       </section>
 
@@ -632,6 +677,45 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
       </section>
 
+
+      <section id="sp-section" class="dashboard-section hidden">
+        <div class="section-heading-main"><div><h2>Surat Peringatan</h2><p>Kelola surat peringatan karyawan.</p></div></div>
+        <div class="card">
+          <div class="section-title">tambah surat peringatan</div>
+          <div class="feature-form">
+            <div class="field"><label>karyawan</label><select id="sp-karyawan"><option value="">pilih karyawan</option></select></div>
+            <div class="field"><label>jenis</label><select id="sp-jenis"><option value="SP1">SP1</option><option value="SP2">SP2</option><option value="SP3">SP3</option></select></div>
+            <div class="field"><label>tanggal</label><input type="date" id="sp-tanggal"></div>
+            <div class="field full"><label>alasan</label><input type="text" id="sp-alasan" placeholder="alasan pemberian SP"></div>
+            <div class="field full"><label>keterangan</label><input type="text" id="sp-keterangan" placeholder="keterangan tambahan (opsional)"></div>
+            <button class="btn-primary" onclick="tambahSP()">simpan SP</button>
+          </div>
+          <div id="sp-message" class="feature-message"></div>
+        </div>
+        <div class="card">
+          <div class="section-title">riwayat surat peringatan</div>
+          <div class="overflow">
+            <table>
+              <thead><tr><th>karyawan</th><th>jenis</th><th>tanggal</th><th>alasan</th><th>keterangan</th><th>aksi</th></tr></thead>
+              <tbody id="admin-sp-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="lembur-section" class="dashboard-section hidden">
+        <div class="section-heading-main"><div><h2>Lemburan</h2><p>Kelola pengajuan dan persetujuan lembur karyawan.</p></div></div>
+        <div class="card">
+          <div class="section-title">daftar pengajuan lembur</div>
+          <div class="overflow">
+            <table>
+              <thead><tr><th>karyawan</th><th>tanggal</th><th>jam</th><th>jumlah</th><th>alasan</th><th>status</th><th>aksi</th></tr></thead>
+              <tbody id="admin-lembur-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <footer class="dashboard-footer">Presensi Hotel &nbsp;•&nbsp; Sistem Monitoring Karyawan</footer>
     </main>
   </div>
@@ -689,19 +773,22 @@ function escAttr(str){
   return JSON.stringify(str).replace(/"/g, '&quot;');
 }
 function showSection(sectionId, navEl){
-  ['dashboard-section','rekap-section','schedule-section','employees-section'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
+  ['dashboard-section','rekap-section','schedule-section','employees-section','sp-section','lembur-section'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.add('hidden');
   });
   document.getElementById(sectionId).classList.remove('hidden');
 
   if(navEl){
     setActiveNav(navEl);
   }else{
-    document.querySelectorAll('.side-nav a').forEach((a, i) => {
-      const ids = ['dashboard-section','rekap-section','schedule-section','employees-section'];
-      a.classList.toggle('active', ids[i] === sectionId);
+    document.querySelectorAll('.side-nav a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('onclick')?.includes(sectionId));
     });
   }
+
+  if(sectionId === 'sp-section') loadSPAdmin();
+  if(sectionId === 'lembur-section') loadLemburAdmin();
 }
 function setActiveNav(el){
   document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
@@ -772,6 +859,9 @@ function enterApp(){
     loadSchedule();
     loadEmployees();
     loadIzinAdmin();
+    loadSPAdmin();
+    loadLemburAdmin();
+    setFeatureDefaults();
     document.getElementById('employee-role-field').style.display = user.role === 'admin' ? 'block' : 'none';
     if(user.role === 'supervisor'){
   document.getElementById('spv-presensi-card').style.display = 'block';
@@ -785,6 +875,8 @@ function enterApp(){
     document.getElementById('emp-role').textContent = user.departemen;
     loadEmployee();
     loadIzinSaya();
+    loadLemburSaya();
+    loadSPSaya();
   }
 }
 
@@ -1092,6 +1184,7 @@ async function loadScheduleData(){
     employeeList.forEach(k => {
       employeeSelect.innerHTML += `<option value="${k.id}">${k.nama} - ${k.nip}</option>`;
     });
+    setFeatureDefaults();
   }catch(err){ console.error('ERROR LOAD KARYAWAN:', err); }
 }
 
@@ -1323,6 +1416,212 @@ async function deleteEmployee(id){
     loadSchedule();
     loadRekap();
   }catch(err){ document.getElementById('employee-message').textContent = 'gagal menghapus: ' + err.message; }
+}
+
+
+/* SP & LEMBURAN */
+function setFeatureDefaults(){
+  const today = todayWIB();
+  const spTanggal = document.getElementById('sp-tanggal');
+  const lemburTanggal = document.getElementById('emp-lembur-tanggal');
+  if(spTanggal && !spTanggal.value) spTanggal.value = today;
+  if(lemburTanggal && !lemburTanggal.value) lemburTanggal.value = today;
+
+  const select = document.getElementById('sp-karyawan');
+  if(select){
+    select.innerHTML = '<option value="">pilih karyawan</option>';
+    employeeList.forEach(k => {
+      select.innerHTML += `<option value="${k.id}">${k.nama} - ${k.nip}</option>`;
+    });
+  }
+}
+
+function lemburStatusHtml(status){
+  if(status === 'disetujui') return '<span class="tag ok">disetujui</span>';
+  if(status === 'ditolak') return '<span class="tag late">ditolak</span>';
+  return '<span class="tag pending">menunggu</span>';
+}
+
+async function ajukanLembur(){
+  const tanggal = document.getElementById('emp-lembur-tanggal').value;
+  const jam_mulai = document.getElementById('emp-lembur-mulai').value;
+  const jam_selesai = document.getElementById('emp-lembur-selesai').value;
+  const alasan = document.getElementById('emp-lembur-alasan').value.trim();
+  const msg = document.getElementById('emp-lembur-message');
+
+  if(!tanggal || !jam_mulai || !jam_selesai){
+    msg.textContent = 'tanggal, jam mulai, dan jam selesai wajib diisi';
+    return;
+  }
+
+  try{
+    const result = await api('/lemburan', {
+      method:'POST',
+      body:JSON.stringify({ tanggal, jam_mulai, jam_selesai, alasan })
+    });
+    msg.textContent = result.message || 'pengajuan lembur berhasil';
+    document.getElementById('emp-lembur-mulai').value = '';
+    document.getElementById('emp-lembur-selesai').value = '';
+    document.getElementById('emp-lembur-alasan').value = '';
+    loadLemburSaya();
+  }catch(err){
+    msg.textContent = 'gagal mengajukan: ' + err.message;
+  }
+}
+
+async function loadLemburSaya(){
+  try{
+    const data = await api('/lemburan/saya');
+    const tbody = document.getElementById('emp-lembur-history');
+    if(!tbody) return;
+    if(!data.length){
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">belum ada pengajuan lembur</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td>${r.tanggal}</td>
+        <td>${r.jam_mulai} - ${r.jam_selesai}</td>
+        <td>${r.jumlah_jam} jam</td>
+        <td>${r.alasan || '-'}</td>
+        <td>${lemburStatusHtml(r.status)}</td>
+        <td>${r.status === 'pending' ? `<button class="btn-delete" onclick="hapusLembur(${r.id})">hapus</button>` : '-'}</td>
+      </tr>
+    `).join('');
+  }catch(err){ console.error('ERROR LEMBUR SAYA:', err); }
+}
+
+async function hapusLembur(id){
+  if(!confirm('hapus pengajuan lembur ini?')) return;
+  try{
+    await api('/lemburan/' + id, { method:'DELETE' });
+    loadLemburSaya();
+  }catch(err){ alert('gagal menghapus: ' + err.message); }
+}
+
+async function loadSPSaya(){
+  try{
+    const data = await api('/sp/saya');
+    const tbody = document.getElementById('emp-sp-history');
+    if(!tbody) return;
+    if(!data.length){
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-state">belum ada surat peringatan</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td><span class="tag late">${r.jenis}</span></td>
+        <td>${r.tanggal}</td>
+        <td>${r.alasan || '-'}</td>
+        <td>${r.keterangan || '-'}</td>
+      </tr>
+    `).join('');
+  }catch(err){ console.error('ERROR SP SAYA:', err); }
+}
+
+async function loadSPAdmin(){
+  try{
+    const data = await api('/sp');
+    const tbody = document.getElementById('admin-sp-table');
+    if(!tbody) return;
+    if(!data.length){
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-state">belum ada surat peringatan</td></tr>';
+    }else{
+      tbody.innerHTML = data.map(r => `
+        <tr>
+          <td><div class="employee-name">${r.nama || '-'}</div><div class="employee-nip">${r.nip || '-'}</div></td>
+          <td><span class="tag late">${r.jenis}</span></td>
+          <td>${r.tanggal}</td>
+          <td>${r.alasan || '-'}</td>
+          <td>${r.keterangan || '-'}</td>
+          <td>${user && user.role === 'admin' ? `<button class="btn-delete" onclick="hapusSP(${r.id})">hapus</button>` : '-'}</td>
+        </tr>
+      `).join('');
+    }
+    setFeatureDefaults();
+  }catch(err){
+    console.error('ERROR SP ADMIN:', err);
+    if(tbody) tbody.innerHTML = `<tr><td colspan="6" class="empty-state">gagal memuat: ${err.message}</td></tr>`;
+  }
+}
+
+async function tambahSP(){
+  const karyawan_id = document.getElementById('sp-karyawan').value;
+  const jenis = document.getElementById('sp-jenis').value;
+  const tanggal = document.getElementById('sp-tanggal').value;
+  const alasan = document.getElementById('sp-alasan').value.trim();
+  const keterangan = document.getElementById('sp-keterangan').value.trim();
+  const msg = document.getElementById('sp-message');
+
+  if(!karyawan_id || !jenis || !tanggal || !alasan){
+    msg.textContent = 'karyawan, jenis, tanggal, dan alasan wajib diisi';
+    return;
+  }
+
+  try{
+    const result = await api('/sp', {
+      method:'POST',
+      body:JSON.stringify({
+        karyawan_id:Number(karyawan_id), jenis, tanggal, alasan, keterangan
+      })
+    });
+    msg.textContent = result.message || 'SP berhasil ditambahkan';
+    document.getElementById('sp-karyawan').value = '';
+    document.getElementById('sp-alasan').value = '';
+    document.getElementById('sp-keterangan').value = '';
+    loadSPAdmin();
+  }catch(err){ msg.textContent = 'gagal menambahkan: ' + err.message; }
+}
+
+async function hapusSP(id){
+  if(!confirm('hapus SP ini?')) return;
+  try{
+    const result = await api('/sp/' + id, { method:'DELETE' });
+    alert(result.message || 'SP berhasil dihapus');
+    loadSPAdmin();
+  }catch(err){ alert('gagal menghapus: ' + err.message); }
+}
+
+async function loadLemburAdmin(){
+  try{
+    const data = await api('/lemburan');
+    const tbody = document.getElementById('admin-lembur-table');
+    if(!tbody) return;
+    if(!data.length){
+      tbody.innerHTML = '<tr><td colspan="7" class="empty-state">belum ada pengajuan lembur</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td><div class="employee-name">${r.nama || '-'}</div><div class="employee-nip">${r.nip || '-'}</div></td>
+        <td>${r.tanggal}</td>
+        <td>${r.jam_mulai} - ${r.jam_selesai}</td>
+        <td>${r.jumlah_jam} jam</td>
+        <td>${r.alasan || '-'}</td>
+        <td>${lemburStatusHtml(r.status)}</td>
+        <td>${r.status === 'pending' ? `
+          <button class="btn-edit" onclick="updateLembur(${r.id}, 'disetujui')">setujui</button>
+          <button class="btn-delete" onclick="updateLembur(${r.id}, 'ditolak')">tolak</button>
+        ` : '-'}</td>
+      </tr>
+    `).join('');
+  }catch(err){
+    console.error('ERROR LEMBUR ADMIN:', err);
+    if(tbody) tbody.innerHTML = `<tr><td colspan="7" class="empty-state">gagal memuat: ${err.message}</td></tr>`;
+  }
+}
+
+async function updateLembur(id, status){
+  const text = status === 'disetujui' ? 'setujui pengajuan lembur ini?' : 'tolak pengajuan lembur ini?';
+  if(!confirm(text)) return;
+  try{
+    const result = await api('/lemburan/' + id, {
+      method:'PUT',
+      body:JSON.stringify({ status })
+    });
+    alert(result.message || 'status lembur diperbarui');
+    loadLemburAdmin();
+  }catch(err){ alert('gagal memperbarui: ' + err.message); }
 }
 
 /* CLOCK */
