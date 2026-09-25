@@ -345,6 +345,7 @@ tbody tr:last-child td{ border-bottom:none; }
     <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
     <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
   </div>
+  <div style="margin-top:10px;font-size:13px;color:#666">jika gps hp bermasalah, jangan gunakan lokasi palsu. hubungi supervisor/admin untuk presensi manual.</div>
 
   <div class="card">
     <div class="section-title">riwayat presensi</div>
@@ -561,6 +562,20 @@ tbody tr:last-child td{ border-bottom:none; }
   <button onclick="showSection('sp-section')"><span>!</span> Kelola SP</button>
   <button onclick="showSection('lembur-section')"><span>◷</span> Kelola Lemburan</button>
 </div>
+
+        <div class="card">
+          <div class="section-title">presensi manual karena gps bermasalah</div>
+          <p style="margin:0 0 16px;color:#666">digunakan admin/supervisor jika gps hp karyawan tidak bisa digunakan. alasan wajib diisi dan data akan ditandai manual.</p>
+          <div class="filter-grid">
+            <div class="field"><label>karyawan</label><select id="manual-karyawan"><option value="">pilih karyawan</option></select></div>
+            <div class="field"><label>tanggal</label><input type="date" id="manual-tanggal"></div>
+            <div class="field"><label>jam masuk</label><input type="time" id="manual-jam-masuk"></div>
+            <div class="field"><label>jam pulang</label><input type="time" id="manual-jam-keluar"></div>
+            <div class="field full"><label>alasan</label><input type="text" id="manual-keterangan" placeholder="contoh: gps hp bermasalah / izin lokasi gagal"></div>
+            <button class="btn-primary" onclick="simpanPresensiManual()">simpan presensi manual</button>
+          </div>
+          <div id="manual-message" class="feature-message"></div>
+        </div>
       </section>
 
       <section id="rekap-section" class="dashboard-section hidden">
@@ -862,6 +877,8 @@ function enterApp(){
     loadSPAdmin();
     loadLemburAdmin();
     setFeatureDefaults();
+    setManualDefaults();
+    loadManualEmployees();
     document.getElementById('employee-role-field').style.display = user.role === 'admin' ? 'block' : 'none';
     if(user.role === 'supervisor'){
   document.getElementById('spv-presensi-card').style.display = 'block';
@@ -989,10 +1006,12 @@ async function loadSpvStatus(){
 }
 
 function locationError(error){
-  if(error.code === 1) alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
-  else if(error.code === 2) alert('lokasi tidak dapat ditemukan');
-  else if(error.code === 3) alert('pengambilan lokasi terlalu lama');
-  else alert('gagal mendapatkan lokasi');
+  let pesan = 'gagal mendapatkan lokasi. ';
+  if(error.code === 1) pesan += 'izin lokasi ditolak. aktifkan izin lokasi untuk presensi GPS.';
+  else if(error.code === 2) pesan += 'lokasi tidak dapat ditemukan. coba aktifkan GPS/lokasi presisi.';
+  else if(error.code === 3) pesan += 'pengambilan lokasi terlalu lama. coba di area terbuka lalu ulangi.';
+  else pesan += 'coba aktifkan GPS dan izin lokasi.';
+  alert(pesan + '\n\njika tetap gagal, hubungi supervisor/admin untuk presensi manual.');
 }
 
 /* EMPLOYEE */
@@ -1167,7 +1186,7 @@ function renderTable(){
         <td>${r.jam_keluar || '-'}</td>
         <td><span class="work-time">${work}</span></td>
         <td>${lateHtml}</td>
-        <td>${tagHtml(r.status)}</td>
+        <td>${tagHtml(r.status)} ${r.metode === 'manual' ? '<div style="margin-top:4px;font-size:11px">manual</div>' : ''}</td>
       </tr>
     `;
   }).join('');
@@ -1622,6 +1641,55 @@ async function updateLembur(id, status){
     alert(result.message || 'status lembur diperbarui');
     loadLemburAdmin();
   }catch(err){ alert('gagal memperbarui: ' + err.message); }
+}
+
+/* PRESENSI MANUAL */
+function setManualDefaults(){
+  const t = document.getElementById('manual-tanggal');
+  if(t && !t.value) t.value = todayWIB();
+}
+
+function loadManualEmployees(){
+  const select = document.getElementById('manual-karyawan');
+  if(!select) return;
+  const list = employeeList.filter(k => k.role === 'karyawan');
+  select.innerHTML = '<option value="">pilih karyawan</option>' + list.map(k =>
+    `<option value="${k.id}">${k.nama} - ${k.nip}</option>`
+  ).join('');
+}
+
+async function simpanPresensiManual(){
+  const karyawan_id = document.getElementById('manual-karyawan').value;
+  const tanggal = document.getElementById('manual-tanggal').value;
+  const jam_masuk = document.getElementById('manual-jam-masuk').value;
+  const jam_keluar = document.getElementById('manual-jam-keluar').value;
+  const keterangan = document.getElementById('manual-keterangan').value.trim();
+  const msg = document.getElementById('manual-message');
+
+  if(!karyawan_id || !tanggal || (!jam_masuk && !jam_keluar) || !keterangan){
+    msg.textContent = 'karyawan, tanggal, minimal jam masuk/pulang, dan alasan wajib diisi';
+    return;
+  }
+  if(jam_masuk && jam_keluar && jam_keluar < jam_masuk){
+    msg.textContent = 'jam pulang tidak boleh lebih awal dari jam masuk';
+    return;
+  }
+
+  try{
+    const result = await api('/presensi/manual', {
+      method:'POST',
+      body:JSON.stringify({
+        karyawan_id:Number(karyawan_id), tanggal, jam_masuk, jam_keluar, keterangan
+      })
+    });
+    msg.textContent = result.message || 'presensi manual berhasil disimpan';
+    document.getElementById('manual-jam-masuk').value = '';
+    document.getElementById('manual-jam-keluar').value = '';
+    document.getElementById('manual-keterangan').value = '';
+    loadRekap();
+  }catch(err){
+    msg.textContent = 'gagal menyimpan: ' + err.message;
+  }
 }
 
 /* CLOCK */
