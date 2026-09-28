@@ -452,6 +452,7 @@ tbody tr:last-child td{ border-bottom:none; }
   <a href="#" class="active" onclick="showSection('dashboard-section', this); return false;"><span class="nav-icon">▦</span> Dashboard</a>
   <a href="#" onclick="showSection('rekap-section', this); return false;"><span class="nav-icon">▤</span> Rekap Presensi</a>
   <a href="#" onclick="showSection('report-section', this); return false;"><span class="nav-icon">▥</span> Laporan HR</a>
+  <a href="#" onclick="showSection('payroll-section', this); return false;"><span class="nav-icon">Rp</span> Rekap Payroll</a>
   <a href="#" onclick="showSection('schedule-section', this); return false;"><span class="nav-icon">◫</span> Jadwal &amp; Shift</a>
   <a href="#" onclick="showSection('employees-section', this); return false;"><span class="nav-icon">♙</span> Data Karyawan</a>
   <a href="#" onclick="showSection('sp-section', this); return false;"><span class="nav-icon">!</span> Surat Peringatan</a>
@@ -622,6 +623,29 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
       </section>
 
+
+      <section id="payroll-section" class="dashboard-section hidden">
+        <div class="section-heading-main"><div><h2>Rekap Payroll Bulanan</h2><p>Gaji pokok, kehadiran, keterlambatan, dan lemburan yang sudah disetujui.</p></div></div>
+        <div class="card filter-card">
+          <div class="filter-title">Periode Payroll</div>
+          <div class="filter-grid" style="grid-template-columns:minmax(180px,260px) auto;justify-content:start">
+            <div class="field"><label>Bulan</label><input type="month" id="payroll-month"></div>
+            <button class="btn-primary" id="payroll-load-btn" onclick="loadPayroll()">Tampilkan Payroll</button>
+          </div>
+          <p class="report-note">gaji pokok harus diisi admin berdasarkan data HR. sistem tidak mengarang nominal potongan atau upah lembur. total gaji pokok tercatat bukan take-home pay.</p>
+        </div>
+        <div class="report-kpis">
+          <div class="report-kpi"><span>Karyawan</span><strong id="payroll-kpi-employees">0</strong></div>
+          <div class="report-kpi"><span>Total gaji pokok tercatat</span><strong id="payroll-kpi-salary">Rp0</strong></div>
+          <div class="report-kpi"><span>Total lembur disetujui</span><strong id="payroll-kpi-overtime">0 jam</strong></div>
+          <div class="report-kpi"><span>Total menit terlambat</span><strong id="payroll-kpi-late">0 menit</strong></div>
+        </div>
+        <div class="card table-card">
+          <div class="table-head"><div><h2>Rincian Payroll</h2><span id="payroll-caption">Pilih bulan untuk membuat rekap.</span></div><div class="report-actions"><button class="btn-refresh" onclick="exportPayrollCSV()">Ekspor CSV</button><button class="btn-primary" onclick="printPayroll()">Cetak / Simpan PDF</button></div></div>
+          <div class="overflow"><table id="payroll-table"><thead><tr><th>No</th><th>Nama / NIP</th><th>Departemen</th><th>Gaji Pokok (Rp)</th><th>Hadir</th><th>Terlambat</th><th>Menit Telat</th><th>Lembur Disetujui (Jam)</th><th>Status Gaji</th></tr></thead><tbody id="payroll-body"><tr><td colspan="9" class="empty-state">pilih bulan lalu klik Tampilkan Payroll</td></tr></tbody></table></div>
+        </div>
+      </section>
+
       <section id="schedule-section" class="dashboard-section hidden">
         <div class="section-heading-main"><div><h2>Jadwal &amp; Shift</h2><p>Atur jadwal kerja karyawan untuk setiap tanggal.</p></div></div>
         <div class="card schedule-card">
@@ -787,6 +811,8 @@ let user = null;
 let rekapData = [];
 let monthlyReportData = [];
 let monthlyReportPeriod = "";
+let payrollData = [];
+let payrollPeriod = "";
 let employeeList = [];
 let shiftList = [];
 let editingId = null;
@@ -798,7 +824,7 @@ function escAttr(str){
   return JSON.stringify(str).replace(/"/g, '&quot;');
 }
 function showSection(sectionId, navEl){
-  ['dashboard-section','rekap-section','report-section','schedule-section','employees-section','sp-section','lembur-section'].forEach(id => {
+  ['dashboard-section','rekap-section','report-section','payroll-section','schedule-section','employees-section','sp-section','lembur-section'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.add('hidden');
   });
@@ -814,6 +840,7 @@ function showSection(sectionId, navEl){
 
   if(sectionId === 'sp-section') loadSPAdmin();
   if(sectionId === 'lembur-section') loadLemburAdmin();
+  if(sectionId === 'payroll-section') loadPayroll();
 }
 function setActiveNav(el){
   document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
@@ -878,6 +905,7 @@ function enterApp(){
     const today = todayWIB();
     document.getElementById('filter-date').value = today;
     document.getElementById('report-month').value = today.slice(0,7);
+    document.getElementById('payroll-month').value = today.slice(0,7);
     document.getElementById('schedule-date').value = today;
     loadRekap();
     loadScheduleData();
@@ -1248,6 +1276,62 @@ function printMonthlyReport(){
   const table=document.getElementById('monthly-report-table').outerHTML;
   const win=window.open('','_blank'); if(!win){alert('izinkan pop-up browser untuk mencetak PDF');return;}
   win.document.write(`<!doctype html><html><head><title>Laporan HR ${monthlyReportPeriod}</title><style>body{font:12px Arial,sans-serif;padding:24px;color:#222}h1{font-size:20px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#edf3f0}button{display:none}@media print{body{padding:0}}</style></head><body><h1>Laporan HR Bulanan</h1><p>Presensi Hotel · Periode ${monthlyReportPeriod}</p>${table}<p>Dokumen dibuat dari sistem Presensi Hotel.</p><script>window.onload=()=>window.print()<\/script></body></html>`); win.document.close();
+}
+
+
+/* PAYROLL BULANAN */
+function formatRupiah(value){
+  return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(value)||0);
+}
+async function loadPayroll(){
+  const monthEl=document.getElementById('payroll-month');
+  const bulan=monthEl.value;
+  if(!bulan){ alert('pilih bulan terlebih dahulu'); return; }
+  const btn=document.getElementById('payroll-load-btn');
+  btn.disabled=true; btn.textContent='Memuat...';
+  document.getElementById('payroll-body').innerHTML='<tr><td colspan="9">mengambil data payroll...</td></tr>';
+  try{
+    const result=await api('/payroll?bulan='+encodeURIComponent(bulan));
+    payrollData=result.data||[]; payrollPeriod=bulan;
+    const totals=result.totals||{};
+    document.getElementById('payroll-kpi-employees').textContent=totals.karyawan||0;
+    document.getElementById('payroll-kpi-salary').textContent=formatRupiah(totals.gaji_pokok_tercatat||0);
+    document.getElementById('payroll-kpi-overtime').textContent=(Number(totals.jam_lembur_disetujui)||0).toLocaleString('id-ID')+' jam';
+    document.getElementById('payroll-kpi-late').textContent=(totals.menit_telat||0)+' menit';
+    document.getElementById('payroll-caption').textContent=`Periode ${bulan} · ${payrollData.length} karyawan`;
+    document.getElementById('payroll-body').innerHTML=payrollData.length?payrollData.map((p,i)=>{
+      const salary=Number(p.gaji_pokok)||0;
+      const salaryCell=user.role==='admin'
+        ? `<div style="display:flex;gap:6px;min-width:190px"><input aria-label="Gaji pokok ${escapeHtml(p.nama)}" id="payroll-salary-${p.karyawan_id}" type="number" min="0" step="1000" value="${salary}" style="width:125px;min-width:0;padding:7px;border:1px solid #d5ddd8;border-radius:7px"><button class="btn-edit" onclick="savePayrollSalary(${p.karyawan_id})">Simpan</button></div>`
+        : `<strong>${formatRupiah(salary)}</strong>`;
+      return `<tr><td>${i+1}</td><td><strong>${escapeHtml(p.nama)}</strong><div class="employee-nip">${escapeHtml(p.nip)}</div></td><td>${escapeHtml(p.departemen||'-')}</td><td>${salaryCell}</td><td>${Number(p.hadir)||0}</td><td>${Number(p.telat)||0}</td><td>${Number(p.menit_telat)||0}</td><td>${(Number(p.jam_lembur_disetujui)||0).toLocaleString('id-ID')}</td><td>${salary>0?'<span class="tag ok">gaji tercatat</span>':'<span class="tag late">belum diisi</span>'}</td></tr>`;
+    }).join(''):'<tr><td colspan="9" class="empty-state">tidak ada data karyawan</td></tr>';
+  }catch(err){
+    document.getElementById('payroll-body').innerHTML=`<tr><td colspan="9" style="color:var(--late);text-align:center;padding:30px">gagal memuat payroll: ${escapeHtml(err.message)}</td></tr>`;
+  }finally{btn.disabled=false;btn.textContent='Tampilkan Payroll';}
+}
+async function savePayrollSalary(id){
+  if(user.role!=='admin'){alert('hanya admin yang dapat mengubah gaji pokok');return;}
+  const input=document.getElementById('payroll-salary-'+id);
+  const value=input.value;
+  if(value===''||!Number.isFinite(Number(value))||Number(value)<0){alert('masukkan gaji pokok berupa angka nol atau lebih');return;}
+  try{
+    const result=await api('/payroll/gaji/'+id,{method:'PUT',body:JSON.stringify({bulan:payrollPeriod,gaji_pokok:Number(value)})});
+    alert(result.message||'gaji pokok disimpan');
+    await loadPayroll();
+  }catch(err){alert('gagal menyimpan gaji: '+err.message);}
+}
+function exportPayrollCSV(){
+  if(!payrollPeriod||!payrollData.length){alert('tampilkan payroll terlebih dahulu');return;}
+  const rows=[['Rekap Payroll Bulanan',payrollPeriod],['Catatan','Gaji pokok tercatat, bukan take-home pay. Upah lembur dan potongan HR belum dihitung.'],[],['No','Nama','NIP','Departemen','Gaji Pokok','Hadir','Terlambat','Menit Telat','Lembur Disetujui (Jam)'],...payrollData.map((p,i)=>[i+1,p.nama,p.nip,p.departemen,Number(p.gaji_pokok)||0,p.hadir,p.telat,p.menit_telat,p.jam_lembur_disetujui])];
+  const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));const a=document.createElement('a');a.href=url;a.download=`rekap-payroll-${payrollPeriod}.csv`;a.click();URL.revokeObjectURL(url);
+}
+function printPayroll(){
+  if(!payrollPeriod||!payrollData.length){alert('tampilkan payroll terlebih dahulu');return;}
+  const table=document.getElementById('payroll-table').outerHTML;
+  const win=window.open('','_blank');if(!win){alert('izinkan pop-up browser untuk mencetak PDF');return;}
+  win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Rekap Payroll ${payrollPeriod}</title><style>body{font:12px Arial,sans-serif;padding:24px;color:#222}h1{font-size:20px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ccc;padding:7px;text-align:left}th{background:#edf3f0}input,button{display:none!important}@media print{body{padding:0}}</style></head><body><h1>Rekap Payroll Bulanan</h1><p>Presensi Hotel · Periode ${payrollPeriod}</p><p>Gaji pokok tercatat bukan take-home pay. Nominal upah lembur dan potongan HR belum dihitung.</p>${table}<script>window.onload=()=>window.print()<\/script></body></html>`);win.document.close();
 }
 
 /* JADWAL & SHIFT */
