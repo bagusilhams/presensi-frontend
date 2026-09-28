@@ -294,6 +294,15 @@ tbody tr:last-child td{ border-bottom:none; }
 .modal-box h3{ margin:0 0 16px; font-size:15px; color:var(--ink); }
 .modal-actions{ display:flex; gap:10px; margin-top:6px; }
 .modal-actions button{ flex:1; }
+
+#view-employee{margin:0;min-height:100vh}
+.employee-section{margin-top:4px}
+.employee-section .section-heading-main{margin-bottom:15px}
+.employee-section .card{border-radius:9px}
+.employee-sidebar .employee-side-nav{margin-bottom:18px}
+.employee-sidebar .sidebar-logout{margin-top:8px}
+@media(max-width:760px){.employee-sidebar .sidebar-user{display:none}.employee-sidebar .sidebar-logout{display:none}.employee-sidebar .employee-side-nav{margin-bottom:0}}
+
 </style>
 </head>
 
@@ -328,16 +337,35 @@ tbody tr:last-child td{ border-bottom:none; }
      EMPLOYEE
 ========================= -->
 <div id="view-employee" class="hidden">
-
-  <div class="employee-top">
-    <div>
-      <h1 id="emp-name"></h1>
-      <span id="emp-role"></span>
-    </div>
-    <button class="logout" onclick="logout()">keluar</button>
-  </div>
-
-  <div class="card status-big">
+  <div class="admin-shell">
+    <aside class="sidebar employee-sidebar">
+      <div class="brand-box">
+        <div class="brand-mark">PH</div>
+        <div><strong>Presensi Hotel</strong><span>Employee Portal</span></div>
+      </div>
+      <div class="sidebar-label">Menu Karyawan</div>
+      <nav class="side-nav employee-side-nav">
+        <a href="#" class="active" onclick="showEmployeeSection('emp-dashboard-section', this); return false;"><span class="nav-icon">▦</span> Dashboard</a>
+        <a href="#" onclick="showEmployeeSection('emp-history-section', this); return false;"><span class="nav-icon">▤</span> Riwayat Presensi</a>
+        <a href="#" onclick="showEmployeeSection('emp-leave-section', this); return false;"><span class="nav-icon">▧</span> Izin &amp; Cuti</a>
+        <a href="#" onclick="showEmployeeSection('emp-overtime-section', this); return false;"><span class="nav-icon">◷</span> Lemburan</a>
+        <a href="#" onclick="showEmployeeSection('emp-sp-section', this); return false;"><span class="nav-icon">!</span> Surat Peringatan</a>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-user">
+        <div class="avatar" id="emp-avatar">K</div>
+        <div class="sidebar-user-info"><strong id="emp-sidebar-name">Karyawan</strong><span id="emp-sidebar-role">Karyawan</span></div>
+      </div>
+      <button class="sidebar-logout" onclick="logout()">↪ Keluar</button>
+    </aside>
+    <main class="dashboard-main">
+      <header class="topbar">
+        <div><div class="breadcrumb">Presensi Hotel / Portal Karyawan</div><h1 id="emp-page-title">Dashboard Karyawan</h1><p id="emp-page-description">pantau presensi dan aktivitas kerja kamu.</p></div>
+        <div class="topbar-right"><div class="live-date"><span>Hari ini</span><strong id="emp-today-date">-</strong></div><button class="top-logout" onclick="logout()">Keluar</button></div>
+      </header>
+      <section id="emp-dashboard-section" class="employee-section">
+        <div class="section-heading-main"><div><h2>Presensi Saya</h2><p>lakukan presensi masuk dan pulang dari sini.</p></div></div>
+        <div class="card status-big">
     <div class="clock" id="clock">--:--:--</div>
     <div class="status-label" id="today-status">memuat...</div>
   </div>
@@ -346,8 +374,10 @@ tbody tr:last-child td{ border-bottom:none; }
     <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
     <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
   </div>
-
-  <div class="card">
+      </section>
+      <section id="emp-history-section" class="employee-section hidden">
+        <div class="section-heading-main"><div><h2>Riwayat Presensi</h2><p>lihat catatan kehadiran yang tersimpan.</p></div></div>
+        <div class="card">
     <div class="section-title">riwayat presensi</div>
     <div class="overflow">
       <table>
@@ -356,9 +386,10 @@ tbody tr:last-child td{ border-bottom:none; }
       </table>
     </div>
   </div>
-
-  <!-- IZIN / SAKIT / CUTI -->
-  <div class="card">
+      </section>
+      <section id="emp-leave-section" class="employee-section hidden">
+        <div class="section-heading-main"><div><h2>Izin, Sakit &amp; Cuti</h2><p>ajukan izin dan pantau status pengajuan.</p></div></div>
+        <div class="card">
     <div class="section-title">pengajuan izin / sakit / cuti</div>
     <div class="leave-form">
       <div class="field">
@@ -386,8 +417,7 @@ tbody tr:last-child td{ border-bottom:none; }
     </div>
     <div id="izin-message" class="leave-message"></div>
   </div>
-
-  <div class="card">
+<div class="card">
     <div class="section-title">riwayat pengajuan</div>
     <div class="overflow leave-table">
       <table>
@@ -396,8 +426,10 @@ tbody tr:last-child td{ border-bottom:none; }
       </table>
     </div>
   </div>
-
-  <div class="card">
+      </section>
+      <section id="emp-overtime-section" class="employee-section hidden">
+        <div class="section-heading-main"><div><h2>Lemburan</h2><p>ajukan lemburan dan lihat hasil persetujuan.</p></div></div>
+        <div class="card">
     <div class="section-title">pengajuan lemburan</div>
     <div class="feature-form">
       <div class="field"><label>tanggal</label><input type="date" id="emp-lembur-tanggal"></div>
@@ -408,8 +440,7 @@ tbody tr:last-child td{ border-bottom:none; }
     </div>
     <div id="emp-lembur-message" class="feature-message"></div>
   </div>
-
-  <div class="card">
+<div class="card">
     <div class="section-title">riwayat lemburan</div>
     <div class="overflow leave-table">
       <table>
@@ -418,8 +449,10 @@ tbody tr:last-child td{ border-bottom:none; }
       </table>
     </div>
   </div>
-
-  <div class="card">
+      </section>
+      <section id="emp-sp-section" class="employee-section hidden">
+        <div class="section-heading-main"><div><h2>Surat Peringatan</h2><p>lihat catatan surat peringatan yang diterbitkan.</p></div></div>
+        <div class="card">
     <div class="section-title">surat peringatan</div>
     <div class="overflow leave-table">
       <table>
@@ -428,7 +461,10 @@ tbody tr:last-child td{ border-bottom:none; }
       </table>
     </div>
   </div>
-
+      </section>
+      <div class="dashboard-footer">Presensi Hotel · Portal Karyawan</div>
+    </main>
+  </div>
 </div>
 
 
@@ -842,6 +878,25 @@ function showSection(sectionId, navEl){
   if(sectionId === 'lembur-section') loadLemburAdmin();
   if(sectionId === 'payroll-section') loadPayroll();
 }
+function showEmployeeSection(sectionId, navEl){
+  ['emp-dashboard-section','emp-history-section','emp-leave-section','emp-overtime-section','emp-sp-section'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('hidden', id !== sectionId);
+  });
+  document.querySelectorAll('.employee-side-nav a').forEach(a=>a.classList.remove('active'));
+  if(navEl) navEl.classList.add('active');
+  const titles={
+    'emp-dashboard-section':['Dashboard Karyawan','pantau presensi dan aktivitas kerja kamu.'],
+    'emp-history-section':['Riwayat Presensi','lihat catatan kehadiran yang tersimpan.'],
+    'emp-leave-section':['Izin & Cuti','ajukan izin dan pantau status pengajuan.'],
+    'emp-overtime-section':['Lemburan','ajukan lemburan dan lihat hasil persetujuan.'],
+    'emp-sp-section':['Surat Peringatan','lihat catatan surat peringatan yang diterbitkan.']
+  };
+  const title=titles[sectionId]||titles['emp-dashboard-section'];
+  document.getElementById('emp-page-title').textContent=title[0];
+  document.getElementById('emp-page-description').textContent=title[1];
+}
+
 function setActiveNav(el){
   document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -925,8 +980,11 @@ function enterApp(){
 }
   }else{
     showView('view-employee');
-    document.getElementById('emp-name').textContent = user.nama;
-    document.getElementById('emp-role').textContent = user.departemen;
+    document.getElementById('emp-sidebar-name').textContent = user.nama || 'Karyawan';
+    document.getElementById('emp-sidebar-role').textContent = user.departemen || user.role || 'Karyawan';
+    document.getElementById('emp-avatar').textContent = (user.nama || 'K').trim().charAt(0).toUpperCase();
+    document.getElementById('emp-today-date').textContent = new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',weekday:'short',day:'numeric',month:'short',year:'numeric'}).format(new Date());
+    showEmployeeSection('emp-dashboard-section');
     loadEmployee();
     loadIzinSaya();
     loadLemburSaya();
