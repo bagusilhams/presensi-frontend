@@ -231,6 +231,7 @@ tbody tr:last-child td{ border-bottom:none; }
 .employee-message{ margin-top:10px; color:var(--sub); font-size:11px; }
 .employee-table{ margin-top:18px; }
 
+.report-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.report-kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:17px}.report-kpi span{display:block;color:var(--sub);font-size:11px}.report-kpi strong{display:block;color:var(--ink);font-size:25px;margin-top:8px}.report-actions{display:flex;gap:8px;flex-wrap:wrap}.report-actions button{min-height:40px}.report-note{font-size:11px;color:var(--sub);line-height:1.6;margin-top:10px}@media(max-width:760px){.report-kpis{grid-template-columns:1fr 1fr}}
 .dashboard-footer{ text-align:center; color:#9aa39f; font-size:9px; padding:28px 0 0; }
 
 @media(max-width:1050px){
@@ -345,7 +346,6 @@ tbody tr:last-child td{ border-bottom:none; }
     <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
     <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
   </div>
-  <div style="margin-top:10px;font-size:13px;color:#666">jika gps hp bermasalah, jangan gunakan lokasi palsu. hubungi supervisor/admin untuk presensi manual.</div>
 
   <div class="card">
     <div class="section-title">riwayat presensi</div>
@@ -451,6 +451,7 @@ tbody tr:last-child td{ border-bottom:none; }
       <nav class="side-nav">
   <a href="#" class="active" onclick="showSection('dashboard-section', this); return false;"><span class="nav-icon">▦</span> Dashboard</a>
   <a href="#" onclick="showSection('rekap-section', this); return false;"><span class="nav-icon">▤</span> Rekap Presensi</a>
+  <a href="#" onclick="showSection('report-section', this); return false;"><span class="nav-icon">▥</span> Laporan HR</a>
   <a href="#" onclick="showSection('schedule-section', this); return false;"><span class="nav-icon">◫</span> Jadwal &amp; Shift</a>
   <a href="#" onclick="showSection('employees-section', this); return false;"><span class="nav-icon">♙</span> Data Karyawan</a>
   <a href="#" onclick="showSection('sp-section', this); return false;"><span class="nav-icon">!</span> Surat Peringatan</a>
@@ -562,20 +563,6 @@ tbody tr:last-child td{ border-bottom:none; }
   <button onclick="showSection('sp-section')"><span>!</span> Kelola SP</button>
   <button onclick="showSection('lembur-section')"><span>◷</span> Kelola Lemburan</button>
 </div>
-
-        <div class="card">
-          <div class="section-title">presensi manual karena gps bermasalah</div>
-          <p style="margin:0 0 16px;color:#666">digunakan admin/supervisor jika gps hp karyawan tidak bisa digunakan. alasan wajib diisi dan data akan ditandai manual.</p>
-          <div class="filter-grid">
-            <div class="field"><label>karyawan</label><select id="manual-karyawan"><option value="">pilih karyawan</option></select></div>
-            <div class="field"><label>tanggal</label><input type="date" id="manual-tanggal"></div>
-            <div class="field"><label>jam masuk</label><input type="time" id="manual-jam-masuk"></div>
-            <div class="field"><label>jam pulang</label><input type="time" id="manual-jam-keluar"></div>
-            <div class="field full"><label>alasan</label><input type="text" id="manual-keterangan" placeholder="contoh: gps hp bermasalah / izin lokasi gagal"></div>
-            <button class="btn-primary" onclick="simpanPresensiManual()">simpan presensi manual</button>
-          </div>
-          <div id="manual-message" class="feature-message"></div>
-        </div>
       </section>
 
       <section id="rekap-section" class="dashboard-section hidden">
@@ -611,6 +598,27 @@ tbody tr:last-child td{ border-bottom:none; }
               <tbody id="admin-table"></tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <section id="report-section" class="dashboard-section hidden">
+        <div class="section-heading-main"><div><h2>Laporan HR Bulanan</h2><p>Rekap kehadiran karyawan berdasarkan data presensi yang tersimpan di sistem.</p></div></div>
+        <div class="card filter-card">
+          <div class="filter-title">Periode Laporan</div>
+          <div class="filter-grid" style="grid-template-columns:minmax(180px,260px) auto;justify-content:start">
+            <div class="field"><label>Bulan</label><input type="month" id="report-month"></div>
+            <button class="btn-primary" id="report-load-btn" onclick="loadMonthlyReport()">Tampilkan Laporan</button>
+          </div>
+          <p class="report-note">laporan mengambil rekap harian dari API presensi. hari tanpa jadwal atau tanpa data tidak otomatis dianggap mangkir.</p>
+        </div>
+        <div class="report-kpis">
+          <div class="report-kpi"><span>Total catatan hadir</span><strong id="report-present">0</strong></div>
+          <div class="report-kpi"><span>Tepat waktu</span><strong id="report-ontime">0</strong></div>
+          <div class="report-kpi"><span>Terlambat</span><strong id="report-late">0</strong></div>
+        </div>
+        <div class="card table-card">
+          <div class="table-head"><div><h2>Rekap per Karyawan</h2><span id="report-caption">Pilih bulan untuk membuat laporan.</span></div><div class="report-actions"><button class="btn-refresh" onclick="exportMonthlyCSV()">Ekspor Excel (CSV)</button><button class="btn-primary" onclick="printMonthlyReport()">Cetak / Simpan PDF</button></div></div>
+          <div class="overflow"><table id="monthly-report-table"><thead><tr><th>No</th><th>Nama Karyawan</th><th>NIP</th><th>Total Hadir</th><th>Tepat Waktu</th><th>Terlambat</th><th>Total Menit Telat</th><th>Persentase Tepat Waktu</th></tr></thead><tbody id="monthly-report-body"><tr><td colspan="8" class="empty-state">pilih bulan lalu klik Tampilkan Laporan</td></tr></tbody></table></div>
         </div>
       </section>
 
@@ -777,6 +785,8 @@ const API = 'https://presensi-backend-production-7382.up.railway.app/api';
 let token = null;
 let user = null;
 let rekapData = [];
+let monthlyReportData = [];
+let monthlyReportPeriod = "";
 let employeeList = [];
 let shiftList = [];
 let editingId = null;
@@ -788,7 +798,7 @@ function escAttr(str){
   return JSON.stringify(str).replace(/"/g, '&quot;');
 }
 function showSection(sectionId, navEl){
-  ['dashboard-section','rekap-section','schedule-section','employees-section','sp-section','lembur-section'].forEach(id => {
+  ['dashboard-section','rekap-section','report-section','schedule-section','employees-section','sp-section','lembur-section'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.add('hidden');
   });
@@ -867,6 +877,7 @@ function enterApp(){
     showView('view-admin');
     const today = todayWIB();
     document.getElementById('filter-date').value = today;
+    document.getElementById('report-month').value = today.slice(0,7);
     document.getElementById('schedule-date').value = today;
     loadRekap();
     loadScheduleData();
@@ -877,8 +888,6 @@ function enterApp(){
     loadSPAdmin();
     loadLemburAdmin();
     setFeatureDefaults();
-    setManualDefaults();
-    loadManualEmployees();
     document.getElementById('employee-role-field').style.display = user.role === 'admin' ? 'block' : 'none';
     if(user.role === 'supervisor'){
   document.getElementById('spv-presensi-card').style.display = 'block';
@@ -1006,12 +1015,10 @@ async function loadSpvStatus(){
 }
 
 function locationError(error){
-  let pesan = 'gagal mendapatkan lokasi. ';
-  if(error.code === 1) pesan += 'izin lokasi ditolak. aktifkan izin lokasi untuk presensi GPS.';
-  else if(error.code === 2) pesan += 'lokasi tidak dapat ditemukan. coba aktifkan GPS/lokasi presisi.';
-  else if(error.code === 3) pesan += 'pengambilan lokasi terlalu lama. coba di area terbuka lalu ulangi.';
-  else pesan += 'coba aktifkan GPS dan izin lokasi.';
-  alert(pesan + '\n\njika tetap gagal, hubungi supervisor/admin untuk presensi manual.');
+  if(error.code === 1) alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
+  else if(error.code === 2) alert('lokasi tidak dapat ditemukan');
+  else if(error.code === 3) alert('pengambilan lokasi terlalu lama');
+  else alert('gagal mendapatkan lokasi');
 }
 
 /* EMPLOYEE */
@@ -1186,10 +1193,61 @@ function renderTable(){
         <td>${r.jam_keluar || '-'}</td>
         <td><span class="work-time">${work}</span></td>
         <td>${lateHtml}</td>
-        <td>${tagHtml(r.status)} ${r.metode === 'manual' ? '<div style="margin-top:4px;font-size:11px">manual</div>' : ''}</td>
+        <td>${tagHtml(r.status)}</td>
       </tr>
     `;
   }).join('');
+}
+
+/* LAPORAN HR BULANAN */
+async function loadMonthlyReport(){
+  const month = document.getElementById('report-month').value;
+  if(!month){ alert('pilih bulan terlebih dahulu'); return; }
+  const btn = document.getElementById('report-load-btn');
+  btn.disabled = true; btn.textContent = 'Memuat...';
+  document.getElementById('monthly-report-body').innerHTML = '<tr><td colspan="8">mengambil data presensi...</td></tr>';
+  try{
+    const [year, mon] = month.split('-').map(Number);
+    const days = new Date(year, mon, 0).getDate();
+    const dates = Array.from({length:days}, (_,i) => `${month}-${String(i+1).padStart(2,'0')}`);
+    const results = await Promise.all(dates.map(async tanggal => {
+      try { const res = await api('/presensi/rekap?tanggal=' + tanggal); return {tanggal, rows:res.data || []}; }
+      catch(err){ console.warn('gagal memuat tanggal', tanggal, err); return {tanggal, rows:[], error:true}; }
+    }));
+    const people = new Map();
+    results.forEach(day => day.rows.forEach(r => {
+      const key = String(r.karyawan_id ?? r.nip ?? r.nama ?? 'unknown');
+      if(!people.has(key)) people.set(key,{nama:r.nama||'-',nip:r.nip||'-',hadir:0,tepat:0,telat:0,menitTelat:0});
+      const person = people.get(key);
+      if(r.status === 'tepat' || r.status === 'telat'){
+        person.hadir++;
+        const late = (r.jam_masuk && r.jam_mulai) ? Math.max(0, Number(calculateLate(r.jam_masuk,r.jam_mulai)) || 0) : 0;
+        if(r.status === 'telat' || late > 0){ person.telat++; person.menitTelat += late; } else person.tepat++;
+      }
+    }));
+    monthlyReportData = [...people.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+    monthlyReportPeriod = month;
+    const totals = monthlyReportData.reduce((a,p)=>({hadir:a.hadir+p.hadir,tepat:a.tepat+p.tepat,telat:a.telat+p.telat}),{hadir:0,tepat:0,telat:0});
+    document.getElementById('report-present').textContent = totals.hadir;
+    document.getElementById('report-ontime').textContent = totals.tepat;
+    document.getElementById('report-late').textContent = totals.telat;
+    document.getElementById('report-caption').textContent = `Periode ${month} · ${monthlyReportData.length} karyawan`; 
+    document.getElementById('monthly-report-body').innerHTML = monthlyReportData.length ? monthlyReportData.map((p,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(p.nama)}</strong></td><td>${escapeHtml(p.nip)}</td><td>${p.hadir}</td><td>${p.tepat}</td><td>${p.telat}</td><td>${p.menitTelat}</td><td>${p.hadir ? Math.round(p.tepat/p.hadir*100) : 0}%</td></tr>`).join('') : '<tr><td colspan="8" class="empty-state">tidak ada data presensi pada periode ini</td></tr>';
+  }catch(err){ alert('gagal membuat laporan: '+err.message); }
+  finally{ btn.disabled=false; btn.textContent='Tampilkan Laporan'; }
+}
+function escapeHtml(value){ return String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function exportMonthlyCSV(){
+  if(!monthlyReportPeriod || !monthlyReportData.length){ alert('tampilkan laporan terlebih dahulu'); return; }
+  const rows=[['Laporan HR Bulanan',monthlyReportPeriod],[],['No','Nama Karyawan','NIP','Total Hadir','Tepat Waktu','Terlambat','Total Menit Telat','Persentase Tepat Waktu'],...monthlyReportData.map((p,i)=>[i+1,p.nama,p.nip,p.hadir,p.tepat,p.telat,p.menitTelat,(p.hadir?Math.round(p.tepat/p.hadir*100):0)+'%'])];
+  const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); const a=document.createElement('a'); a.href=url; a.download=`laporan-hr-${monthlyReportPeriod}.csv`; a.click(); URL.revokeObjectURL(url);
+}
+function printMonthlyReport(){
+  if(!monthlyReportPeriod || !monthlyReportData.length){ alert('tampilkan laporan terlebih dahulu'); return; }
+  const table=document.getElementById('monthly-report-table').outerHTML;
+  const win=window.open('','_blank'); if(!win){alert('izinkan pop-up browser untuk mencetak PDF');return;}
+  win.document.write(`<!doctype html><html><head><title>Laporan HR ${monthlyReportPeriod}</title><style>body{font:12px Arial,sans-serif;padding:24px;color:#222}h1{font-size:20px}p{color:#555}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#edf3f0}button{display:none}@media print{body{padding:0}}</style></head><body><h1>Laporan HR Bulanan</h1><p>Presensi Hotel · Periode ${monthlyReportPeriod}</p>${table}<p>Dokumen dibuat dari sistem Presensi Hotel.</p><script>window.onload=()=>window.print()<\/script></body></html>`); win.document.close();
 }
 
 /* JADWAL & SHIFT */
@@ -1641,55 +1699,6 @@ async function updateLembur(id, status){
     alert(result.message || 'status lembur diperbarui');
     loadLemburAdmin();
   }catch(err){ alert('gagal memperbarui: ' + err.message); }
-}
-
-/* PRESENSI MANUAL */
-function setManualDefaults(){
-  const t = document.getElementById('manual-tanggal');
-  if(t && !t.value) t.value = todayWIB();
-}
-
-function loadManualEmployees(){
-  const select = document.getElementById('manual-karyawan');
-  if(!select) return;
-  const list = employeeList.filter(k => k.role === 'karyawan');
-  select.innerHTML = '<option value="">pilih karyawan</option>' + list.map(k =>
-    `<option value="${k.id}">${k.nama} - ${k.nip}</option>`
-  ).join('');
-}
-
-async function simpanPresensiManual(){
-  const karyawan_id = document.getElementById('manual-karyawan').value;
-  const tanggal = document.getElementById('manual-tanggal').value;
-  const jam_masuk = document.getElementById('manual-jam-masuk').value;
-  const jam_keluar = document.getElementById('manual-jam-keluar').value;
-  const keterangan = document.getElementById('manual-keterangan').value.trim();
-  const msg = document.getElementById('manual-message');
-
-  if(!karyawan_id || !tanggal || (!jam_masuk && !jam_keluar) || !keterangan){
-    msg.textContent = 'karyawan, tanggal, minimal jam masuk/pulang, dan alasan wajib diisi';
-    return;
-  }
-  if(jam_masuk && jam_keluar && jam_keluar < jam_masuk){
-    msg.textContent = 'jam pulang tidak boleh lebih awal dari jam masuk';
-    return;
-  }
-
-  try{
-    const result = await api('/presensi/manual', {
-      method:'POST',
-      body:JSON.stringify({
-        karyawan_id:Number(karyawan_id), tanggal, jam_masuk, jam_keluar, keterangan
-      })
-    });
-    msg.textContent = result.message || 'presensi manual berhasil disimpan';
-    document.getElementById('manual-jam-masuk').value = '';
-    document.getElementById('manual-jam-keluar').value = '';
-    document.getElementById('manual-keterangan').value = '';
-    loadRekap();
-  }catch(err){
-    msg.textContent = 'gagal menyimpan: ' + err.message;
-  }
 }
 
 /* CLOCK */
