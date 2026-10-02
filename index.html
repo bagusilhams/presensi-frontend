@@ -363,6 +363,125 @@ tbody tr:last-child td{ border-bottom:none; }
 @media(max-width:680px){.login-layout{display:block}.login-hero{min-height:220px;padding:0}.hero-copy{margin:37px 0 24px}.hero-copy h1{font-size:36px;letter-spacing:-1.2px}.hero-copy>p{font-size:12px}.hero-points{gap:13px;margin-top:22px}.hero-preview{display:none}.hero-footer{margin-top:27px;font-size:7px}.login-side{padding:32px 22px 18px}.login-side-inner{max-width:440px}.login-mobile-brand{display:flex}.login-heading{margin-bottom:22px}.login-icon{display:none}.login-heading h2{font-size:24px}.login-form-card{padding:20px}.login-copyright{margin-top:28px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
+
+/* ===== glass login: foto hotel di belakang form ===== */
+#view-login{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#102a31;
+}
+.login-layout{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  min-height:100vh;
+  padding:34px clamp(20px,5vw,76px);
+  overflow:hidden;
+}
+.login-hero{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  min-height:100vh;
+  padding:0;
+  background:
+    linear-gradient(90deg,rgba(8,22,27,.18) 0%,rgba(8,22,27,.34) 48%,rgba(8,22,27,.52) 100%),
+    url('https://www.ahstatic.com/photos/b151_ho_03_p_1024x768.jpg') center center/cover no-repeat;
+}
+.login-hero:before{display:none}
+.login-side{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex:0 1 600px;
+  width:min(600px,100%);
+  min-width:0;
+  margin-left:auto;
+  padding:clamp(26px,4vw,48px);
+  border:1px solid rgba(255,255,255,.38);
+  border-radius:20px;
+  background:rgba(28,39,48,.58);
+  box-shadow:0 24px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+  color:#fff;
+}
+.login-side-inner{width:100%;max-width:500px}
+.login-mobile-brand{display:none}
+.login-heading{margin-bottom:27px;text-align:center}
+.login-icon{display:none}
+.login-kicker{color:#d2e5df;font-size:10px;letter-spacing:.15em}
+.login-heading h2{
+  margin:12px 0;
+  color:#fff;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(28px,3vw,40px);
+  font-weight:500;
+  letter-spacing:-.6px;
+}
+.login-heading p{color:rgba(255,255,255,.82);font-size:13px}
+.login-form-card{
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.login-form-card .field{margin-bottom:17px}
+.login-form-card label{color:rgba(255,255,255,.9);font-size:11px}
+.input-with-icon>span{color:rgba(255,255,255,.85)}
+.input-with-icon input{
+  height:52px;
+  border:1px solid rgba(255,255,255,.38);
+  border-radius:9px;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  font-size:13px;
+}
+.input-with-icon input::placeholder{color:rgba(255,255,255,.65)}
+.input-with-icon input:focus{
+  border-color:rgba(190,232,216,.9);
+  background:rgba(255,255,255,.15);
+  box-shadow:0 0 0 3px rgba(190,232,216,.12);
+}
+.login-submit{
+  height:52px;
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:9px;
+  background:#087f70;
+  box-shadow:none;
+}
+.login-submit:hover{background:#07917f}
+.login-security{color:rgba(255,255,255,.72);font-size:10px}
+.security-lock{background:rgba(255,255,255,.15);color:#c8f1df}
+.login-help{color:rgba(255,255,255,.72);font-size:11px}
+.login-copyright{margin-top:25px;color:rgba(255,255,255,.58)}
+#view-login .err{color:#7e211b}
+@media(max-width:680px){
+  .login-layout{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px 14px}
+  .login-hero{min-height:100vh;background-position:center;background-image:linear-gradient(rgba(8,22,27,.40),rgba(8,22,27,.58)),url('https://www.ahstatic.com/photos/b151_ho_03_p_1024x768.jpg')}
+  .login-side{
+    flex:0 1 500px;
+    width:100%;
+    margin:0;
+    padding:26px 22px;
+    border-radius:16px;
+    background:rgba(28,39,48,.68);
+    -webkit-backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);
+  }
+  .login-mobile-brand{display:flex;justify-content:center;margin-bottom:22px}
+  .login-mobile-brand strong{color:#fff}
+  .login-mobile-brand span{color:rgba(255,255,255,.72)}
+  .login-heading{margin-bottom:22px}
+  .login-heading h2{font-size:29px}
+  .login-form-card{padding:0}
+  .login-copyright{margin-top:20px}
+}
+
 </style>
 </head>
 
@@ -380,11 +499,11 @@ tbody tr:last-child td{ border-bottom:none; }
 
     <section class="login-side">
       <div class="login-side-inner">
-        <div class="login-mobile-brand"><div class="hero-brand-mark">P&amp;C</div><div><strong>Human &amp; Resources</strong><span>Mercure Jakarta Gatot Subroto</span></div></div>
+        <div class="login-mobile-brand"><div class="hero-brand-mark">P&amp;C</div><div><strong>People &amp; Culture</strong><span>Mercure Jakarta Gatot Subroto</span></div></div>
         <div class="login-heading">
           <div class="login-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 19 6v5.2c0 4.5-2.9 7.4-7 9.3-4.1-1.9-7-4.8-7-9.3V6l7-2.5Z" stroke="currentColor" stroke-width="1.6"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div class="login-kicker">MERCURE JAKARTA GATOT SUBROTO</div>
-          <h2>Human &amp; Resources</h2>
+          <h2>People &amp; Culture</h2>
           <p>Portal internal karyawan</p>
         </div>
         <div class="login-form-card">
@@ -402,7 +521,7 @@ tbody tr:last-child td{ border-bottom:none; }
         </div>
         <div class="login-help">Mengalami kendala masuk? Hubungi administrator atau tim HR hotel.</div>
       </div>
-      <div class="login-copyright">© <span id="login-year"></span> Human &amp; Resources · Mercure Jakarta Gatot Subroto.</div>
+      <div class="login-copyright">© <span id="login-year"></span> People &amp; Culture · Mercure Jakarta Gatot Subroto.</div>
     </section>
   </div>
 </div>
