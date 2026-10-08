@@ -248,33 +248,51 @@ tbody tr:last-child td{ border-bottom:none; }
 }
 @media(max-width:760px){
   .admin-shell{ display:block; }
-  .sidebar{ position:static; width:100%; min-width:100%; max-width:100%; flex:0 0 auto; min-height:auto; max-height:none; padding:12px 14px; }
+  .sidebar{ position:static; width:100%; min-width:100%; max-width:100%; flex:0 0 auto; min-height:auto; max-height:none; padding:14px 16px; }
   .brand-box{ padding-bottom:12px; }
   .sidebar-label, .sidebar-spacer, .sidebar-user, .sidebar-logout{ display:none; }
-  .side-nav{ display:flex; overflow-x:auto; padding-top:10px; }
-  .side-nav a{ white-space:nowrap; }
-  .dashboard-main{ padding:0 14px 45px; }
-  .topbar{ align-items:flex-start; flex-direction:column; }
-  .topbar-right{ width:100%; justify-content:space-between; }
-  .summary{ grid-template-columns:1fr 1fr; }
-  .quick-actions{ flex-wrap:wrap; }
-  .quick-title{ width:100%; margin-right:0; }
-  .filter-grid{ grid-template-columns:1fr; }
+  .side-nav{ display:flex; overflow-x:auto; gap:6px; padding:10px 0 4px; -webkit-overflow-scrolling:touch; }
+  .side-nav a{ white-space:nowrap; padding:9px 12px; font-size:12px; }
+  .dashboard-main{ padding:0 16px 50px; }
+  .topbar{ align-items:flex-start; flex-direction:column; gap:14px; padding:20px 0 16px; margin-bottom:16px; }
+  .topbar h1{ font-size:22px; line-height:1.25; }
+  .topbar p{ font-size:11.5px; margin-top:3px; }
+  .topbar-right{ width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .live-date{ text-align:left; }
+  .card{ padding:18px 16px; margin-bottom:16px; border-radius:16px; }
+  .summary{ grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .summary-card{ padding:14px 16px; min-height:auto; border-radius:16px; }
+  .summary-card .number{ font-size:26px; margin-top:8px; }
+  .summary-card .small{ margin-top:5px; font-size:11px; }
+  .dashboard-grid{ grid-template-columns:1fr; gap:16px; margin-bottom:16px; }
+  .attendance-card, .status-card{ padding:20px 18px; border-radius:16px; }
+  .panel-heading{ margin-bottom:16px; }
+  .mini-chart{ margin-top:18px; gap:11px; }
+  .status-row{ padding:13px 0; font-size:13px; }
+  .quick-actions{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:16px; margin-bottom:16px; border-radius:16px; }
+  .quick-title{ grid-column:1 / -1; width:100%; margin:0 0 4px; font-size:11px; }
+  .quick-actions button{ width:100%; min-height:42px; padding:10px 12px; font-size:12px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+  .filter-grid{ grid-template-columns:1fr; gap:10px; }
   .filter-new .btn-primary{ width:100%; }
+  .table-head{ flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px; }
   .wrap{ padding:0; }
   #view-login{ margin:60px auto; }
   .employee-buttons{ grid-template-columns:1fr; }
   .schedule-form{ grid-template-columns:1fr; }
   .employee-crud-form{ grid-template-columns:1fr; }
+  .feature-form{ grid-template-columns:1fr; }
   .clock{ font-size:36px; }
-  .card{ padding:18px; }
   .leave-form{ grid-template-columns:1fr; }
   .leave-form .full{ grid-column:auto; }
 }
 @media(max-width:480px){
-  .summary{ grid-template-columns:1fr; }
-  .summary-card .number{ font-size:26px; }
-  .topbar h1{ font-size:21px; }
+  .topbar h1{ font-size:20px; }
+  .topbar-right{ flex-wrap:wrap; }
+  .report-kpis{ grid-template-columns:1fr !important; }
+}
+@media(max-width:389px){
+  .summary{ grid-template-columns:1fr; gap:12px; }
+  .quick-actions{ grid-template-columns:1fr; }
 }
 
 /* SP & lemburan */
