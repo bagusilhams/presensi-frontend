@@ -59,6 +59,7 @@ button:active{ transform:translateY(1px); }
 .btn-primary:disabled{ opacity:.45; cursor:not-allowed; }
 .btn-refresh{ background:#fff; color:#454b53; border:1px solid var(--line); }
 .btn-refresh:hover{ background:#f5f6f7; }
+.btn-refresh:disabled{ opacity:.55; cursor:not-allowed; }
 .err{ margin-top:10px; color:var(--late); font-size:12px; }
 
 /* employee header */
@@ -749,12 +750,13 @@ tbody tr:last-child td{ border-bottom:none; }
             <span>Data Hari Ini</span>
             <strong id="dashboard-date">-</strong>
           </div>
-          <button class="btn-refresh top-refresh" onclick="loadRekap()">↻ Refresh</button>
+          <button class="btn-refresh top-refresh" id="top-refresh-btn" onclick="loadRekap()">↻ Refresh</button>
           <button class="top-logout" onclick="logout()">keluar</button>
         </div>
       </header>
 
       <section id="dashboard-section">
+        <div id="dashboard-error-msg" class="err hidden" style="margin-bottom:14px;padding:11px 14px;background:#fde8e6;border:1px solid #f4d6d3;border-radius:8px;color:var(--danger);font-size:12px;"></div>
         <div class="card" id="spv-presensi-card" style="display:none">
   <div class="section-title">presensi saya</div>
   <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
@@ -1412,18 +1414,48 @@ async function loadIzinSaya(){
 
 /* LOAD REKAP */
 async function loadRekap(){
-  const tanggal = document.getElementById('filter-date').value;
-  if(!tanggal) return;
+  const refreshBtn = document.getElementById('top-refresh-btn');
+  const dashErr = document.getElementById('dashboard-error-msg');
+
+  if(refreshBtn){
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '↻ Memuat...';
+  }
+  if(dashErr) dashErr.classList.add('hidden');
+
+  let tanggal = document.getElementById('filter-date') ? document.getElementById('filter-date').value : '';
+  if(!tanggal){
+    tanggal = todayWIB();
+    const filterInput = document.getElementById('filter-date');
+    if(filterInput) filterInput.value = tanggal;
+  }
+
   try{
     const result = await api('/presensi/rekap?tanggal=' + tanggal);
     rekapData = result.data || [];
-    document.getElementById('dashboard-date').textContent = tanggal;
+    const dateEl = document.getElementById('dashboard-date');
+    if(dateEl) dateEl.textContent = tanggal;
     updateSummary();
     renderTable();
+    if(user && user.role === 'supervisor'){
+      await loadSpvStatus().catch(() => {});
+    }
   }catch(err){
     console.error('ERROR REKAP:', err);
-    document.getElementById('admin-table').innerHTML =
-      `<tr><td colspan="8" style="color:var(--late)">gagal memuat rekap: ${err.message}</td></tr>`;
+    if(dashErr){
+      dashErr.textContent = 'Gagal memuat rekap presensi: ' + (err.message || 'Terjadi kesalahan jaringan');
+      dashErr.classList.remove('hidden');
+    }
+    const tableEl = document.getElementById('admin-table');
+    if(tableEl){
+      tableEl.innerHTML =
+        `<tr><td colspan="8" style="color:var(--late)">gagal memuat rekap: ${err.message}</td></tr>`;
+    }
+  }finally{
+    if(refreshBtn){
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '↻ Refresh';
+    }
   }
 }
 
