@@ -152,12 +152,11 @@ tbody tr:last-child td{ border-bottom:none; }
 .topbar h1{ font-size:24px; margin:0; color:#20312d; letter-spacing:-.4px; }
 .topbar p{ margin:5px 0 0; color:#7a8582; font-size:11px; }
 .topbar-right{ display:flex; align-items:center; gap:12px; }
-.live-date{ text-align:right; }
-.live-date span{ display:block; color:#8a9491; font-size:9px; text-transform:uppercase; letter-spacing:.07em; }
-.live-date strong{ display:block; margin-top:3px; color:#263c36; font-size:12px; }
+.live-date{ text-align:right; background:rgba(19,107,99,.06); padding:6px 14px; border-radius:8px; border:1px solid rgba(19,107,99,.12); }
+.live-date span{ display:block; color:var(--brand); font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; }
+.live-date strong{ display:block; margin-top:2px; color:#20312d; font-size:12.5px; font-weight:700; }
 .top-refresh{ height:38px; }
-.top-logout{ height:38px; background:#fff; color:#454b53; border:1px solid var(--line); }
-.top-logout:hover{ background:#f5f6f7; }
+.top-logout{ display:none; }
 
 .summary{ display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:14px; width:100%; }
 .summary-card{ position:relative; background:var(--panel); border:1px solid var(--line); border-radius:9px; box-shadow:var(--shadow); padding:17px 18px; min-height:116px; }
@@ -260,7 +259,7 @@ tbody tr:last-child td{ border-bottom:none; }
   .topbar{ align-items:flex-start; flex-direction:column; gap:14px; padding:20px 0 16px; margin-bottom:16px; }
   .topbar h1{ font-size:22px; line-height:1.25; }
   .topbar p{ font-size:11.5px; margin-top:3px; }
-  .topbar-right{ width:100%; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .topbar-right{ width:100%; display:flex; justify-content:flex-start; align-items:center; gap:12px; }
   .live-date{ text-align:left; }
   .card{ padding:18px 16px; margin-bottom:16px; border-radius:16px; }
   .summary{ grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
@@ -392,10 +391,79 @@ tbody tr:last-child td{ border-bottom:none; }
     border: none;
   }
 }
-#attendance-map {
+#attendance-map, #spv-attendance-map {
   width: 100%;
   height: 100%;
   z-index: 1;
+}
+
+/* ========================================================
+   LEAFLET DARK MODE (STANDAR OPENSTREETMAP DENGAN STYLING GELAP)
+   100% Free, Tanpa API Key, Bebas Masalah "API KEY REQUIRED"
+   ======================================================== */
+.leaflet-control-attribution {
+  font-size: 9px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  color: #475569 !important;
+  padding: 1px 6px !important;
+  line-height: 1.4 !important;
+  border-top-left-radius: 4px;
+}
+.dark-map .leaflet-tile-pane {
+  filter: brightness(0.65) invert(1) contrast(2.8) hue-rotate(200deg) saturate(0.35) brightness(0.75);
+}
+.dark-map .leaflet-container {
+  background: #151a21 !important;
+}
+.dark-map .leaflet-control-attribution {
+  background: rgba(21, 26, 33, 0.85) !important;
+  color: #94a3b8 !important;
+}
+.dark-map .leaflet-control-attribution a {
+  color: #38bdf8 !important;
+}
+.dark-map .map-circle-btn,
+.dark-map .map-locate-btn,
+.dark-map .map-zoom-box {
+  background: #1e2631;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+}
+.dark-map .map-circle-btn svg,
+.dark-map .map-locate-btn svg {
+  stroke: #e2e8f0;
+}
+.dark-map .map-zoom-btn {
+  color: #f1f5f9;
+}
+.dark-map .map-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.dark-map .map-zoom-divider {
+  background: rgba(255, 255, 255, 0.12);
+}
+.dark-map .map-status-bar {
+  background: rgba(21, 26, 33, 0.92);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+}
+.dark-map .map-clock {
+  color: #38bdf8;
+}
+.dark-map .map-distance-badge {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+.dark-map .map-distance-badge.out-of-range {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+.dark-map .leaflet-popup-content-wrapper,
+.dark-map .leaflet-popup-tip {
+  background: #1e2631;
+  color: #f8fafc;
 }
 
 /* Map Overlays */
@@ -1023,7 +1091,12 @@ tbody tr:last-child td{ border-bottom:none; }
     <main class="dashboard-main">
       <header class="topbar">
         <div><div class="breadcrumb">Presensi Hotel / Portal Karyawan</div><h1 id="emp-page-title">Dashboard Karyawan</h1><p id="emp-page-description">pantau presensi dan aktivitas kerja kamu.</p></div>
-        <div class="topbar-right"><div class="live-date"><span>Hari ini</span><strong id="emp-today-date">-</strong></div><button class="top-logout" onclick="logout()">Keluar</button></div>
+        <div class="topbar-right">
+          <div class="live-date">
+            <span>Hari ini</span>
+            <strong id="emp-today-date">-</strong>
+          </div>
+        </div>
       </header>
       <section id="emp-dashboard-section" class="employee-section">
         <!-- Status Bar -->
@@ -1220,6 +1293,26 @@ tbody tr:last-child td{ border-bottom:none; }
      ADMIN
 ========================= -->
 <div id="view-admin" class="hidden">
+  <!-- Mobile Appbar (Sesuai Desain Mobile: Kembali, Refresh, Dark Mode, Logout) -->
+  <div class="mobile-appbar" id="admin-mobile-appbar">
+    <div class="appbar-left">
+      <button class="appbar-btn" onclick="handleHeaderBack('admin')" title="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <span class="appbar-title" id="admin-mobile-title">Kehadiran</span>
+    </div>
+    <div class="appbar-right">
+      <button class="appbar-btn" onclick="refreshAttendanceView()" title="Muat Ulang Status">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/></svg>
+      </button>
+      <button class="appbar-btn" onclick="toggleMapTheme('spv')" title="Ganti Mode Peta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <button class="appbar-btn" onclick="logout()" title="Keluar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </div>
   <div class="admin-shell">
 
     <aside class="sidebar">
@@ -1271,7 +1364,6 @@ tbody tr:last-child td{ border-bottom:none; }
             <strong id="dashboard-date">-</strong>
           </div>
           <button class="btn-refresh top-refresh" id="top-refresh-btn" onclick="loadRekap()">↻ Refresh</button>
-          <button class="top-logout" onclick="logout()">keluar</button>
         </div>
       </header>
 
@@ -2035,12 +2127,18 @@ function initAttendanceMap(roleKey = 'emp') {
 
     inst.map = L.map(containerId, {
       zoomControl: false,
-      attributionControl: false
+      attributionControl: true
     }).setView([HOTEL_LAT, HOTEL_LNG], 17);
 
     inst.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
     }).addTo(inst.map);
+
+    const container = document.getElementById(containerId);
+    if (container && inst.isDark) {
+      container.classList.add('dark-map');
+    }
 
     const hotelIcon = L.divIcon({
       html: hotelSvg,
@@ -2140,30 +2238,47 @@ function resetMapNorth(role = 'emp') {
   const inst = mapInstances[role] || mapInstances['emp'];
   if (inst && inst.map) inst.map.setView([HOTEL_LAT, HOTEL_LNG], 17, { animate: true });
 }
-function toggleMapLayer(role = 'emp') {
-  const inst = mapInstances[role] || mapInstances['emp'];
-  if (!inst || !inst.map) return;
-  if (inst.layerType === 'osm') {
-    inst.map.removeLayer(inst.tileLayer);
-    inst.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(inst.map);
-    inst.layerType = 'voyager';
-  } else {
-    inst.map.removeLayer(inst.tileLayer);
-    inst.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(inst.map);
-    inst.layerType = 'osm';
-  }
-}
-function toggleMapTheme(role = 'emp') {
-  const inst = mapInstances[role] || mapInstances['emp'];
-  if (!inst || !inst.map) return;
+function toggleMapTheme(role = null) {
+  const currentKey = role || (user && user.role === 'supervisor' ? 'spv' : 'emp');
+  const inst = mapInstances[currentKey] || mapInstances['emp'];
+  if (!inst) return;
+
   inst.isDark = !inst.isDark;
-  inst.map.removeLayer(inst.tileLayer);
-  if (inst.isDark) {
-    inst.tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(inst.map);
-  } else {
-    inst.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(inst.map);
-    inst.layerType = 'osm';
+
+  // Toggle class dark-map pada container peta
+  const mapId = currentKey === 'spv' ? 'spv-attendance-map' : 'attendance-map';
+  const container = document.getElementById(mapId);
+  if (container) {
+    container.classList.toggle('dark-map', inst.isDark);
   }
+
+  // Sinkronkan peran lainnya agar konsisten saat berpindah tampilan
+  const otherKey = currentKey === 'spv' ? 'emp' : 'spv';
+  const otherInst = mapInstances[otherKey];
+  if (otherInst) {
+    otherInst.isDark = inst.isDark;
+    const otherContainer = document.getElementById(otherKey === 'spv' ? 'spv-attendance-map' : 'attendance-map');
+    if (otherContainer) {
+      otherContainer.classList.toggle('dark-map', inst.isDark);
+    }
+  }
+
+  // Pastikan tileLayer selalu OpenStreetMap resmi tanpa API key pihak ketiga
+  ['emp', 'spv'].forEach(key => {
+    const item = mapInstances[key];
+    if (item && item.map && (!item.tileLayer || !item.tileLayer._url || !item.tileLayer._url.includes('openstreetmap.org'))) {
+      if (item.tileLayer) item.map.removeLayer(item.tileLayer);
+      item.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      }).addTo(item.map);
+    }
+  });
+}
+
+function toggleMapLayer(role = null) {
+  // Mengubah tampilan mode peta (terang/gelap) secara aman tanpa memerlukan API key
+  toggleMapTheme(role);
 }
 
 // Compact Floating Toast Notification Handler (3-4 detik, responsif mobile)
@@ -2208,13 +2323,21 @@ function showAttendanceNotification(type, title, desc) {
   }, 3500);
 }
 
-function handleHeaderBack() {
-  const empDash = document.getElementById('emp-dashboard-section');
-  if (empDash && empDash.classList.contains('hidden')) {
-    showEmployeeSection('emp-dashboard-section');
+function handleHeaderBack(view = null) {
+  if (view === 'admin' || (user && (user.role === 'admin' || user.role === 'supervisor'))) {
+    const adminDash = document.getElementById('dashboard-section');
+    if (adminDash && adminDash.classList.contains('hidden')) {
+      showSection('dashboard-section');
+      return;
+    }
   } else {
-    alert('Tekan tombol keluar di kanan atas jika ingin logout.');
+    const empDash = document.getElementById('emp-dashboard-section');
+    if (empDash && empDash.classList.contains('hidden')) {
+      showEmployeeSection('emp-dashboard-section');
+      return;
+    }
   }
+  alert('Tekan tombol logout (ikon pintu/panah) di header kanan atas jika ingin keluar.');
 }
 
 function refreshAttendanceView() {
