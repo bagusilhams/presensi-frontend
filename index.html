@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css" onerror="this.onerror=null;this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';"/>
+<script src="vendor/leaflet/leaflet.js"></script>
 
 <style>
 :root{
@@ -324,6 +326,390 @@ tbody tr:last-child td{ border-bottom:none; }
 .employee-sidebar .sidebar-logout{margin-top:8px}
 @media(max-width:760px){.employee-sidebar .sidebar-user{display:none}.employee-sidebar .sidebar-logout{display:none}.employee-sidebar .employee-side-nav{margin-bottom:0}}
 
+/* ========================================================
+   ATTENDANCE MAP & APPBAR (SESUAI DESAIN SCREENSHOT)
+   ======================================================== */
+.mobile-appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #136b63;
+  color: #ffffff;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.appbar-left, .appbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.appbar-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.appbar-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.appbar-btn:active {
+  transform: scale(0.95);
+}
+.appbar-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+}
+
+/* Map Container */
+.map-attendance-container {
+  position: relative;
+  width: 100%;
+  height: 530px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  border: 1px solid var(--line);
+  margin-top: 10px;
+  background: #f1f5f9;
+}
+@media (max-width: 760px) {
+  .map-attendance-container {
+    height: calc(100vh - 180px);
+    min-height: 460px;
+    border-radius: 0;
+    margin: 0 -16px;
+    border: none;
+  }
+}
+#attendance-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Map Overlays */
+.map-overlay-topleft {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 500;
+  display: flex;
+  gap: 8px;
+}
+.map-circle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.map-circle-btn:hover {
+  background: #f8fafc;
+  transform: scale(1.05);
+}
+
+.map-overlay-bottomleft {
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  z-index: 500;
+}
+.map-locate-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.map-locate-btn:hover {
+  background: #f8fafc;
+  transform: scale(1.05);
+}
+
+.map-overlay-bottomright {
+  position: absolute;
+  bottom: 24px;
+  right: 16px;
+  z-index: 500;
+}
+.map-zoom-box {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.16);
+  border: 1px solid rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.map-zoom-btn {
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  border: none;
+  font-size: 20px;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.map-zoom-btn:hover {
+  background: #f1f5f9;
+}
+.map-zoom-divider {
+  height: 1px;
+  background: #e2e8f0;
+  width: 100%;
+}
+
+/* Bottom Center In & Out Action Controls */
+.map-action-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  pointer-events: none;
+}
+.map-btn-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  pointer-events: auto;
+}
+.map-btn-wrapper .wave-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.in-wrapper .wave-1 {
+  width: 96px;
+  height: 96px;
+  background: rgba(30, 41, 59, 0.14);
+}
+.in-wrapper .wave-2 {
+  width: 114px;
+  height: 114px;
+  background: rgba(30, 41, 59, 0.07);
+}
+.btn-circle-in {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #1c2430;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  z-index: 2;
+}
+.btn-circle-in:hover:not(:disabled) {
+  transform: scale(1.06);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.45);
+}
+.btn-circle-in:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.btn-circle-in:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #475569;
+}
+
+.out-wrapper .wave-1 {
+  width: 96px;
+  height: 96px;
+  background: rgba(230, 0, 126, 0.18);
+}
+.out-wrapper .wave-2 {
+  width: 114px;
+  height: 114px;
+  background: rgba(230, 0, 126, 0.08);
+}
+.btn-circle-out {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #e6007e;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(230, 0, 126, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+  z-index: 2;
+}
+.btn-circle-out:hover:not(:disabled) {
+  transform: scale(1.06);
+  box-shadow: 0 6px 22px rgba(230, 0, 126, 0.6);
+}
+.btn-circle-out:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.btn-circle-out:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #9d174d;
+}
+
+/* Floating Notification Toast */
+.attendance-toast {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 30px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.25);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  animation: toast-slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 90%;
+  white-space: nowrap;
+}
+@keyframes toast-slide-down {
+  from { transform: translate(-50%, -20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+.toast-success {
+  background: #16734a;
+}
+.toast-error {
+  background: #b42318;
+}
+.toast-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Floating Status Pill */
+.map-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.status-clock {
+  font-weight: 700;
+  color: var(--brand-dark);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.status-text {
+  color: #4b5563;
+  font-weight: 500;
+}
+.map-distance-badge {
+  background: var(--ok-soft);
+  color: var(--ok);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.map-distance-badge.out-of-range {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* Hotel & User Markers */
+.hotel-marker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+}
+.user-marker-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-pulse-dot {
+  width: 16px;
+  height: 16px;
+  background: #0284c7;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.6);
+  position: relative;
+}
+.user-pulse-dot::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.25);
+  animation: pulse-ring 1.8s infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
 
 /* ===== landing/login refresh ===== */
 .wrap:has(#view-login:not(.hidden)){max-width:none;padding:0;min-height:100vh}
@@ -552,6 +938,26 @@ tbody tr:last-child td{ border-bottom:none; }
      EMPLOYEE
 ========================= -->
 <div id="view-employee" class="hidden">
+  <!-- Mobile Appbar (Sesuai Screenshot: < Kehadiran, Refresh, Mode, Logout) -->
+  <div class="mobile-appbar" id="emp-mobile-appbar">
+    <div class="appbar-left">
+      <button class="appbar-btn" onclick="handleHeaderBack()" title="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <span class="appbar-title" id="emp-mobile-title">Kehadiran</span>
+    </div>
+    <div class="appbar-right">
+      <button class="appbar-btn" onclick="refreshAttendanceView()" title="Muat Ulang Status">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/></svg>
+      </button>
+      <button class="appbar-btn" onclick="toggleMapTheme()" title="Ganti Mode Peta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <button class="appbar-btn" onclick="logout()" title="Keluar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </div>
   <div class="admin-shell">
     <aside class="sidebar employee-sidebar">
       <div class="brand-box">
@@ -580,16 +986,89 @@ tbody tr:last-child td{ border-bottom:none; }
         <div class="topbar-right"><div class="live-date"><span>Hari ini</span><strong id="emp-today-date">-</strong></div><button class="top-logout" onclick="logout()">Keluar</button></div>
       </header>
       <section id="emp-dashboard-section" class="employee-section">
-        <div class="section-heading-main"><div><h2>Presensi Saya</h2><p>lakukan presensi masuk dan pulang dari sini.</p></div></div>
-        <div class="card status-big">
-    <div class="clock" id="clock">--:--:--</div>
-    <div class="status-label" id="today-status">memuat...</div>
-  </div>
+        <!-- Status Bar -->
+        <div class="map-status-bar">
+          <div class="status-clock" id="map-clock">--:--:-- WIB</div>
+          <div class="status-text" id="today-status">memuat status presensi...</div>
+          <div class="map-distance-badge" id="map-distance-info" style="display:none;">
+            <span id="map-distance-text">Jarak: -</span>
+          </div>
+          <!-- Hidden fallback clock element for script compatibility -->
+          <span id="clock" style="display:none;"></span>
+        </div>
 
-  <div class="employee-buttons">
-    <button class="btn-primary" id="btn-in" onclick="checkIn()">absen masuk</button>
-    <button class="btn-primary" id="btn-out" onclick="checkOut()">absen pulang</button>
-  </div>
+        <!-- Peta Interaktif Presensi Berbasis Lokasi Hotel -->
+        <div class="map-attendance-container" id="map-attendance-container">
+          <div id="attendance-map"></div>
+
+          <!-- Floating Notification Toast (Presensi Berhasil / Diluar Jangkauan Hotel) -->
+          <div id="attendance-notification" class="attendance-toast">
+            <span class="toast-icon" id="toast-icon">✓</span>
+            <div class="toast-content">
+              <strong id="toast-title">Presensi Berhasil</strong>
+              <span id="toast-subtitle">Lokasi di dalam jangkauan hotel</span>
+            </div>
+          </div>
+
+          <!-- Top-Left Map Controls: Compass & Layer -->
+          <div class="map-overlay-topleft">
+            <button class="map-circle-btn" id="btn-map-compass" onclick="resetMapNorth()" title="Arah Utara / Lokasi Hotel">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <polygon points="12 2 15 11 12 9 9 11 12 2" fill="#ef4444"/>
+                <polygon points="12 22 15 13 12 15 9 13 12 22" fill="#94a3b8"/>
+                <circle cx="12" cy="12" r="1.5" fill="#1e293b"/>
+              </svg>
+            </button>
+            <button class="map-circle-btn" id="btn-map-layer" onclick="toggleMapLayer()" title="Ubah Tipe Tampilan Peta">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Bottom-Left Map Control: Locate Me / GPS Target -->
+          <div class="map-overlay-bottomleft">
+            <button class="map-locate-btn" id="btn-locate-me" onclick="locateUser(true)" title="Deteksi Lokasi Saya">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="7"></circle>
+                <line x1="12" y1="2" x2="12" y2="5"></line>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+                <line x1="2" y1="12" x2="5" y2="12"></line>
+                <line x1="19" y1="12" x2="22" y2="12"></line>
+                <circle cx="12" cy="12" r="2" fill="#0d9488"></circle>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Bottom-Right Map Control: Zoom In & Zoom Out -->
+          <div class="map-overlay-bottomright">
+            <div class="map-zoom-box">
+              <button class="map-zoom-btn" onclick="mapZoomIn()" title="Perbesar">+</button>
+              <div class="map-zoom-divider"></div>
+              <button class="map-zoom-btn" onclick="mapZoomOut()" title="Perkecil">−</button>
+            </div>
+          </div>
+
+          <!-- Bottom-Center Map Controls: Tombol Bulat IN dan OUT dengan Gelombang Ripple -->
+          <div class="map-action-controls">
+            <div class="map-btn-wrapper in-wrapper">
+              <div class="wave-ring wave-1"></div>
+              <div class="wave-ring wave-2"></div>
+              <button class="btn-circle-action btn-circle-in" id="btn-in" onclick="checkIn()" title="Absen Masuk">
+                <span>In</span>
+              </button>
+            </div>
+            <div class="map-btn-wrapper out-wrapper">
+              <div class="wave-ring wave-1"></div>
+              <div class="wave-ring wave-2"></div>
+              <button class="btn-circle-action btn-circle-out" id="btn-out" onclick="checkOut()" title="Absen Pulang">
+                <span>Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
       <section id="emp-history-section" class="employee-section hidden">
         <div class="section-heading-main"><div><h2>Riwayat Presensi</h2><p>lihat catatan kehadiran yang tersimpan.</p></div></div>
@@ -1187,7 +1666,7 @@ function showEmployeeSection(sectionId, navEl){
   document.querySelectorAll('.employee-side-nav a').forEach(a=>a.classList.remove('active'));
   if(navEl) navEl.classList.add('active');
   const titles={
-    'emp-dashboard-section':['Dashboard Karyawan','pantau presensi dan aktivitas kerja kamu.'],
+    'emp-dashboard-section':['Kehadiran','pantau presensi dan aktivitas kerja kamu.'],
     'emp-history-section':['Riwayat Presensi','lihat catatan kehadiran yang tersimpan.'],
     'emp-leave-section':['Izin & Cuti','ajukan izin dan pantau status pengajuan.'],
     'emp-overtime-section':['Lemburan','ajukan lemburan dan lihat hasil persetujuan.'],
@@ -1195,8 +1674,19 @@ function showEmployeeSection(sectionId, navEl){
     'emp-slip-section':['Slip Gaji','lihat dan cetak slip gaji bulanan kamu.']
   };
   const title=titles[sectionId]||titles['emp-dashboard-section'];
-  document.getElementById('emp-page-title').textContent=title[0];
-  document.getElementById('emp-page-description').textContent=title[1];
+  const tEl = document.getElementById('emp-page-title');
+  const dEl = document.getElementById('emp-page-description');
+  const mTitleEl = document.getElementById('emp-mobile-title');
+  if(tEl) tEl.textContent=title[0];
+  if(dEl) dEl.textContent=title[1];
+  if(mTitleEl) mTitleEl.textContent=title[0];
+
+  if(sectionId === 'emp-dashboard-section'){
+    setTimeout(() => {
+      initAttendanceMap();
+      if(attendanceMap) attendanceMap.invalidateSize();
+    }, 150);
+  }
   if(sectionId === 'emp-slip-section') loadEmployeeSlip();
 }
 
@@ -1254,6 +1744,12 @@ function showView(viewId){
 function logout(){
   token = null;
   user = null;
+  if(userMarker && attendanceMap){
+    try{ attendanceMap.removeLayer(userMarker); userMarker = null; }catch(e){}
+  }
+  if(userAccuracyCircle && attendanceMap){
+    try{ attendanceMap.removeLayer(userAccuracyCircle); userAccuracyCircle = null; }catch(e){}
+  }
   showView('view-login');
 }
 
@@ -1329,50 +1825,332 @@ function calculateWorkDuration(jamMasuk, jamKeluar){
   return `${hours}j ${minutes}m`;
 }
 
+/* ========================================================
+   LOGIKA PETA PRESENSI, GPS, DAN KONTROL KEHADIRAN
+   ======================================================== */
+let attendanceMap = null;
+let hotelMarker = null;
+let hotelCircle = null;
+let userMarker = null;
+let userAccuracyCircle = null;
+let mapTileLayer = null;
+let isDarkMap = false;
+let currentLayerType = 'osm';
+
+// Koordinat default hotel dari backend .env
+let HOTEL_LAT = -6.329;
+let HOTEL_LNG = 106.716;
+let HOTEL_RADIUS = 100;
+
+async function loadHotelConfig() {
+  try {
+    const res = await api('/presensi/config');
+    if (res && typeof res.lat === 'number' && typeof res.lng === 'number') {
+      HOTEL_LAT = res.lat;
+      HOTEL_LNG = res.lng;
+      HOTEL_RADIUS = res.radius || 100;
+    }
+  } catch (e) {
+    // Fallback default aman
+  }
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
+function initAttendanceMap() {
+  const mapEl = document.getElementById('attendance-map');
+  if (!mapEl || typeof L === 'undefined') return;
+
+  if (attendanceMap) {
+    attendanceMap.invalidateSize();
+    return;
+  }
+
+  loadHotelConfig().then(() => {
+    if (attendanceMap) return;
+
+    attendanceMap = L.map('attendance-map', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView([HOTEL_LAT, HOTEL_LNG], 17);
+
+    // OpenStreetMap standard tiles
+    mapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(attendanceMap);
+
+    // Hotel Building SVG Marker (sesuai ilustrasi pada screenshot)
+    const hotelSvg = `
+    <div class="hotel-marker-container">
+      <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+        <rect x="8" y="14" width="20" height="26" rx="2" fill="#3B82F6"/>
+        <rect x="12" y="18" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="20" y="18" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="12" y="25" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="20" y="25" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="12" y="32" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="20" y="32" width="4" height="4" rx="1" fill="#FFFFFF"/>
+        <rect x="24" y="20" width="16" height="20" rx="2" fill="#F59E0B"/>
+        <rect x="28" y="24" width="3" height="3" rx="0.5" fill="#FFFFFF"/>
+        <rect x="33" y="24" width="3" height="3" rx="0.5" fill="#FFFFFF"/>
+        <rect x="28" y="30" width="3" height="3" rx="0.5" fill="#FFFFFF"/>
+        <rect x="33" y="30" width="3" height="3" rx="0.5" fill="#FFFFFF"/>
+        <path d="M36 6C33.2 6 31 8.2 31 11C31 14.5 36 21 36 21C36 21 41 14.5 41 11C41 8.2 38.8 6 36 6Z" fill="#EF4444"/>
+        <circle cx="36" cy="11" r="2" fill="#FFFFFF"/>
+      </svg>
+    </div>`;
+
+    const hotelIcon = L.divIcon({
+      html: hotelSvg,
+      className: '',
+      iconSize: [46, 46],
+      iconAnchor: [23, 42],
+      popupAnchor: [0, -38]
+    });
+
+    hotelMarker = L.marker([HOTEL_LAT, HOTEL_LNG], { icon: hotelIcon }).addTo(attendanceMap);
+    hotelMarker.bindPopup('<b>Lokasi Hotel</b><br>Radius Presensi: ' + HOTEL_RADIUS + ' meter');
+
+    // Lingkaran radius hijau transparan 100 meter
+    hotelCircle = L.circle([HOTEL_LAT, HOTEL_LNG], {
+      radius: HOTEL_RADIUS,
+      color: '#4ade80',
+      fillColor: '#86efac',
+      fillOpacity: 0.45,
+      weight: 2
+    }).addTo(attendanceMap);
+
+    // Otomatis cek posisi pengguna
+    locateUser(false);
+  });
+}
+
+function locateUser(panToUser) {
+  if (!navigator.geolocation) {
+    if (panToUser) alert('GPS tidak didukung pada perangkat ini.');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    const accuracy = pos.coords.accuracy;
+    const dist = calculateDistance(lat, lng, HOTEL_LAT, HOTEL_LNG);
+
+    if (attendanceMap) {
+      if (!userMarker) {
+        const userIcon = L.divIcon({
+          className: 'user-marker-container',
+          html: `<div class="user-pulse-dot"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+        userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(attendanceMap);
+        userAccuracyCircle = L.circle([lat, lng], {
+          radius: Math.max(accuracy, 15),
+          color: '#38bdf8',
+          fillColor: '#bae6fd',
+          fillOpacity: 0.25,
+          weight: 1
+        }).addTo(attendanceMap);
+      } else {
+        userMarker.setLatLng([lat, lng]);
+        if (userAccuracyCircle) {
+          userAccuracyCircle.setLatLng([lat, lng]);
+          userAccuracyCircle.setRadius(Math.max(accuracy, 15));
+        }
+      }
+
+      if (panToUser) {
+        attendanceMap.setView([lat, lng], 17, { animate: true });
+      }
+    }
+
+    const distEl = document.getElementById('map-distance-info');
+    const distText = document.getElementById('map-distance-text');
+    if (distEl && distText) {
+      distEl.style.display = 'block';
+      const inRange = dist <= HOTEL_RADIUS;
+      distEl.className = 'map-distance-badge ' + (inRange ? '' : 'out-of-range');
+      distText.textContent = `Jarak: ${dist}m (${inRange ? 'Di dalam radius' : 'Di luar radius'})`;
+    }
+  }, (err) => {
+    if (panToUser) locationError(err);
+  }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 });
+}
+
+function mapZoomIn() {
+  if (attendanceMap) attendanceMap.zoomIn();
+}
+function mapZoomOut() {
+  if (attendanceMap) attendanceMap.zoomOut();
+}
+function resetMapNorth() {
+  if (attendanceMap) attendanceMap.setView([HOTEL_LAT, HOTEL_LNG], 17, { animate: true });
+}
+function toggleMapLayer() {
+  if (!attendanceMap) return;
+  if (currentLayerType === 'osm') {
+    attendanceMap.removeLayer(mapTileLayer);
+    mapTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(attendanceMap);
+    currentLayerType = 'voyager';
+  } else {
+    attendanceMap.removeLayer(mapTileLayer);
+    mapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(attendanceMap);
+    currentLayerType = 'osm';
+  }
+}
+function toggleMapTheme() {
+  if (!attendanceMap) return;
+  isDarkMap = !isDarkMap;
+  attendanceMap.removeLayer(mapTileLayer);
+  if (isDarkMap) {
+    mapTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(attendanceMap);
+  } else {
+    mapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(attendanceMap);
+    currentLayerType = 'osm';
+  }
+}
+
+function showAttendanceNotification(isSuccess, title, subtitle) {
+  const toast = document.getElementById('attendance-notification');
+  const icon = document.getElementById('toast-icon');
+  const tTitle = document.getElementById('toast-title');
+  const tSub = document.getElementById('toast-subtitle');
+  if (!toast) return;
+
+  toast.className = 'attendance-toast ' + (isSuccess ? 'toast-success' : 'toast-error');
+  if (icon) icon.textContent = isSuccess ? '✓' : '✕';
+  if (tTitle) tTitle.textContent = title;
+  if (tSub) tSub.textContent = subtitle || '';
+  toast.style.display = 'flex';
+
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    toast.style.display = 'none';
+  }, 4500);
+}
+
+function handleHeaderBack() {
+  const empDash = document.getElementById('emp-dashboard-section');
+  if (empDash && empDash.classList.contains('hidden')) {
+    showEmployeeSection('emp-dashboard-section');
+  } else {
+    alert('Tekan tombol keluar di kanan atas jika ingin logout.');
+  }
+}
+
+function refreshAttendanceView() {
+  loadEmployee();
+  locateUser(false);
+  if (attendanceMap) attendanceMap.invalidateSize();
+}
+
 /* ABSEN MASUK */
 async function checkIn(){
-  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
+  if(!navigator.geolocation){
+    showAttendanceNotification(false, 'GPS Tidak Tersedia', 'Perangkat tidak mendukung geolokasi');
+    alert('GPS tidak tersedia di perangkat ini');
+    return;
+  }
+  const btnIn = document.getElementById('btn-in');
+  if(btnIn) btnIn.disabled = true;
+
   navigator.geolocation.getCurrentPosition(async(position)=>{
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
+
+    if(attendanceMap){
+      if(!userMarker){
+        const userIcon = L.divIcon({ className:'user-marker-container', html:`<div class="user-pulse-dot"></div>`, iconSize:[24,24], iconAnchor:[12,12] });
+        userMarker = L.marker([lat, lng], { icon:userIcon }).addTo(attendanceMap);
+      } else {
+        userMarker.setLatLng([lat, lng]);
+      }
+      attendanceMap.setView([lat, lng], 17, { animate:true });
+    }
+
     if(accuracy > 100){
+      showAttendanceNotification(false, 'GPS Belum Akurat', 'Akurasi ' + Math.round(accuracy) + 'm (maksimal 100m)');
       alert('GPS belum akurat.\n\nAkurasi saat ini: ' + Math.round(accuracy) + ' meter\nSilakan aktifkan lokasi presisi, GPS, dan coba di area terbuka.');
+      loadEmployee();
       return;
     }
     try{
       const result = await api('/presensi/masuk', { method:'POST', body:JSON.stringify({ lokasi:{ lat, lng, accuracy } }) });
+      showAttendanceNotification(true, 'Presensi Berhasil', 'Absen masuk tercatat: ' + (result.jam_masuk || 'sekarang'));
       alert(result.message || 'Presensi Berhasil');
       loadEmployee();
     }catch(err){
       if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        showAttendanceNotification(false, 'Diluar Jangkauan Hotel', err.message);
         alert('Diluar Jangkauan Hotel');
       } else {
+        showAttendanceNotification(false, 'Presensi Gagal', err.message || 'Terjadi kesalahan');
         alert(err.message || 'Presensi Gagal');
       }
+      loadEmployee();
     }
-  }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
+  }, (err) => {
+    locationError(err);
+    loadEmployee();
+  }, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
 
 /* ABSEN PULANG */
 async function checkOut(){
-  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
+  if(!navigator.geolocation){
+    showAttendanceNotification(false, 'GPS Tidak Tersedia', 'Perangkat tidak mendukung geolokasi');
+    alert('GPS tidak tersedia di perangkat ini');
+    return;
+  }
+  const btnOut = document.getElementById('btn-out');
+  if(btnOut) btnOut.disabled = true;
+
   navigator.geolocation.getCurrentPosition(async(position)=>{
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
+
+    if(attendanceMap){
+      if(!userMarker){
+        const userIcon = L.divIcon({ className:'user-marker-container', html:`<div class="user-pulse-dot"></div>`, iconSize:[24,24], iconAnchor:[12,12] });
+        userMarker = L.marker([lat, lng], { icon:userIcon }).addTo(attendanceMap);
+      } else {
+        userMarker.setLatLng([lat, lng]);
+      }
+      attendanceMap.setView([lat, lng], 17, { animate:true });
+    }
+
     try{
       const result = await api('/presensi/keluar', { method:'POST', body:JSON.stringify({ lokasi:{ lat, lng, accuracy } }) });
+      showAttendanceNotification(true, 'Presensi Berhasil', 'Absen pulang tercatat: ' + (result.jam_keluar || 'sekarang'));
       alert(result.message || 'Presensi Berhasil');
       loadEmployee();
     }catch(err){
       if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        showAttendanceNotification(false, 'Diluar Jangkauan Hotel', err.message);
         alert('Diluar Jangkauan Hotel');
       } else {
+        showAttendanceNotification(false, 'Presensi Gagal', err.message || 'Terjadi kesalahan');
         alert(err.message || 'Presensi Gagal');
       }
+      loadEmployee();
     }
-  }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
+  }, (err) => {
+    locationError(err);
+    loadEmployee();
+  }, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
 
 async function spvCheckIn(){
@@ -1452,16 +2230,24 @@ async function loadEmployee(){
     const data = await api('/presensi/saya');
     const today = todayWIB();
     const rec = data.find(d => d.tanggal === today);
-    document.getElementById('btn-in').disabled = !!(rec && rec.jam_masuk);
-    document.getElementById('btn-out').disabled = !(rec && rec.jam_masuk) || !!(rec && rec.jam_keluar);
-    document.getElementById('today-status').textContent =
+    const btnIn = document.getElementById('btn-in');
+    const btnOut = document.getElementById('btn-out');
+    if(btnIn) btnIn.disabled = !!(rec && rec.jam_masuk);
+    if(btnOut) btnOut.disabled = !(rec && rec.jam_masuk) || !!(rec && rec.jam_keluar);
+    const statusText =
       !rec || !rec.jam_masuk ? 'belum absen masuk hari ini' :
       !rec.jam_keluar ? 'sudah masuk jam ' + rec.jam_masuk :
       'selesai — masuk ' + rec.jam_masuk + ', pulang ' + rec.jam_keluar;
 
-    document.getElementById('emp-history').innerHTML =
-      data.map(r => `<tr><td>${r.tanggal}</td><td>${r.jam_masuk || '-'}</td><td>${r.jam_keluar || '-'}</td><td>${tagHtml(r.status)}</td></tr>`).join('')
-      || `<tr><td colspan="4" class="empty-state">belum ada riwayat</td></tr>`;
+    const todayStatusEl = document.getElementById('today-status');
+    if(todayStatusEl) todayStatusEl.textContent = statusText;
+
+    const histEl = document.getElementById('emp-history');
+    if(histEl) {
+      histEl.innerHTML =
+        data.map(r => `<tr><td>${r.tanggal}</td><td>${r.jam_masuk || '-'}</td><td>${r.jam_keluar || '-'}</td><td>${tagHtml(r.status)}</td></tr>`).join('')
+        || `<tr><td colspan="4" class="empty-state">belum ada riwayat</td></tr>`;
+    }
   }catch(err){ console.error('ERROR EMPLOYEE:', err); }
 }
 
@@ -2397,10 +3183,13 @@ async function updateLembur(id, status){
 
 /* CLOCK */
 function updateClock(){
+  const wibTime = new Date().toLocaleTimeString('id-ID', { timeZone:'Asia/Jakarta' });
   const clock = document.getElementById('clock');
-  if(clock) clock.textContent = new Date().toLocaleTimeString('id-ID', { timeZone:'Asia/Jakarta' });
+  if(clock) clock.textContent = wibTime;
+  const mapClock = document.getElementById('map-clock');
+  if(mapClock) mapClock.textContent = wibTime + ' WIB';
   const spvClock = document.getElementById('spv-clock');
-if(spvClock) spvClock.textContent = new Date().toLocaleTimeString('id-ID', { timeZone:'Asia/Jakarta' });
+  if(spvClock) spvClock.textContent = wibTime;
 }
 const loginYear = document.getElementById('login-year');
 if(loginYear) loginYear.textContent = new Date().getFullYear();
