@@ -979,11 +979,12 @@ tbody tr:last-child td{ border-bottom:none; }
           </div>
         </div>
 
-        <div class="card">
-          <div class="section-title">pengajuan karyawan</div>
+        <div class="card" id="card-validasi-izin">
+          <div class="section-title">Validasi Pengajuan Izin / Cuti Karyawan</div>
+          <p style="font-size:11px;color:var(--sub);margin:-8px 0 14px">Supervisor dan Admin/HRD dapat memeriksa serta memvalidasi (menyetujui atau menolak) permohonan izin/cuti karyawan.</p>
           <div class="overflow">
             <table>
-              <thead><tr><th>karyawan</th><th>jenis</th><th>tanggal</th><th>keterangan</th><th>status</th><th>aksi</th></tr></thead>
+              <thead><tr><th>Karyawan</th><th>NIP</th><th>Departemen</th><th>Jenis</th><th>Tanggal</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead>
               <tbody id="admin-izin-table"></tbody>
             </table>
           </div>
@@ -992,7 +993,7 @@ tbody tr:last-child td{ border-bottom:none; }
 
 
       <section id="sp-section" class="dashboard-section hidden">
-        <div class="section-heading-main"><div><h2>Surat Peringatan</h2><p>Kelola surat peringatan karyawan.</p></div></div>
+        <div class="section-heading-main"><div><h2>Surat Peringatan</h2><p>Kelola dan perbarui surat peringatan karyawan.</p></div></div>
         <div class="card">
           <div class="section-title">tambah surat peringatan</div>
           <div class="feature-form">
@@ -1017,12 +1018,45 @@ tbody tr:last-child td{ border-bottom:none; }
       </section>
 
       <section id="lembur-section" class="dashboard-section hidden">
-        <div class="section-heading-main"><div><h2>Lemburan</h2><p>Kelola pengajuan dan persetujuan lembur karyawan.</p></div></div>
+        <div class="section-heading-main"><div><h2>Persetujuan & Pengajuan Lemburan</h2><p>Pemeriksaan dan pengajuan lemburan oleh Supervisor serta keputusan persetujuan akhir oleh Admin/HRD.</p></div></div>
+        
+        <div class="card" id="spv-lembur-form-card">
+          <div class="section-title">Form Pengajuan Lemburan Karyawan (Melalui Akun Supervisor)</div>
+          <p style="font-size:11px;color:var(--sub);margin:-8px 0 14px">Supervisor memeriksa dan meneruskan pengajuan lemburan karyawan kepada Admin/HRD untuk keputusan akhir.</p>
+          <div class="feature-form">
+            <div class="field">
+              <label>Pilih Karyawan</label>
+              <select id="lembur-employee-select"><option value="">Pilih Karyawan</option></select>
+            </div>
+            <div class="field">
+              <label>Tanggal Lembur</label>
+              <input type="date" id="admin-lembur-tanggal">
+            </div>
+            <div class="field">
+              <label>Jam Mulai</label>
+              <input type="time" id="admin-lembur-mulai">
+            </div>
+            <div class="field">
+              <label>Jam Selesai</label>
+              <input type="time" id="admin-lembur-selesai">
+            </div>
+            <div class="field full">
+              <label>Alasan Lemburan</label>
+              <input type="text" id="admin-lembur-alasan" placeholder="Alasan lembur operasional hotel">
+            </div>
+            <div class="field full">
+              <button class="btn-primary" onclick="submitLemburBySpv()">Ajukan & Teruskan ke HRD</button>
+            </div>
+          </div>
+          <div id="admin-lembur-message" class="feature-message"></div>
+        </div>
+
         <div class="card">
-          <div class="section-title">daftar pengajuan lembur</div>
+          <div class="section-title">Daftar Pengajuan Lemburan</div>
+          <p style="font-size:11px;color:var(--sub);margin:-8px 0 14px">Supervisor memantau status pengajuan. Keputusan akhir (Setujui/Tolak) dilakukan oleh Admin/HRD.</p>
           <div class="overflow">
             <table>
-              <thead><tr><th>karyawan</th><th>tanggal</th><th>jam</th><th>jumlah</th><th>alasan</th><th>status</th><th>aksi</th></tr></thead>
+              <thead><tr><th>Karyawan</th><th>Tanggal</th><th>Jam</th><th>Jumlah</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead>
               <tbody id="admin-lembur-table"></tbody>
             </table>
           </div>
@@ -1034,6 +1068,43 @@ tbody tr:last-child td{ border-bottom:none; }
   </div>
 </div>
 
+</div>
+
+<!-- MODAL EDIT SURAT PERINGATAN (SP) -->
+<div id="edit-sp-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Edit Surat Peringatan (SP)</h3>
+    <input type="hidden" id="edit-sp-id">
+    <div class="field">
+      <label>Karyawan</label>
+      <select id="edit-sp-karyawan"></select>
+    </div>
+    <div class="field">
+      <label>Jenis SP</label>
+      <select id="edit-sp-jenis">
+        <option value="SP1">SP1</option>
+        <option value="SP2">SP2</option>
+        <option value="SP3">SP3</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tanggal</label>
+      <input type="date" id="edit-sp-tanggal">
+    </div>
+    <div class="field">
+      <label>Alasan</label>
+      <input type="text" id="edit-sp-alasan" placeholder="Alasan pemberian SP">
+    </div>
+    <div class="field">
+      <label>Keterangan Tambahan (Opsional)</label>
+      <input type="text" id="edit-sp-keterangan" placeholder="Keterangan tambahan">
+    </div>
+    <div id="edit-sp-message" class="err"></div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-refresh" onclick="closeEditSPModal()">Batal</button>
+      <button class="btn-primary" onclick="saveEditSP()">Simpan Perubahan</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL EDIT KARYAWAN -->
@@ -1260,62 +1331,97 @@ function calculateWorkDuration(jamMasuk, jamKeluar){
 
 /* ABSEN MASUK */
 async function checkIn(){
-  if(!navigator.geolocation){ alert('gps tidak tersedia di perangkat ini'); return; }
+  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
   navigator.geolocation.getCurrentPosition(async(position)=>{
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
     if(accuracy > 100){
-      alert('gps belum akurat.\n\nakurasi saat ini: ' + Math.round(accuracy) + ' meter\nsilakan aktifkan lokasi presisi, gps, dan coba di area terbuka.');
+      alert('GPS belum akurat.\n\nAkurasi saat ini: ' + Math.round(accuracy) + ' meter\nSilakan aktifkan lokasi presisi, GPS, dan coba di area terbuka.');
       return;
     }
     try{
       const result = await api('/presensi/masuk', { method:'POST', body:JSON.stringify({ lokasi:{ lat, lng, accuracy } }) });
-      alert(result.message || 'absen masuk berhasil');
+      alert(result.message || 'Presensi Berhasil');
       loadEmployee();
-    }catch(err){ alert('ERROR: ' + err.message); }
+    }catch(err){
+      if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        alert('Diluar Jangkauan Hotel');
+      } else {
+        alert(err.message || 'Presensi Gagal');
+      }
+    }
   }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
 
 /* ABSEN PULANG */
 async function checkOut(){
-  if(!navigator.geolocation){ alert('gps tidak tersedia di perangkat ini'); return; }
+  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
   navigator.geolocation.getCurrentPosition(async(position)=>{
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const accuracy = position.coords.accuracy;
     try{
       const result = await api('/presensi/keluar', { method:'POST', body:JSON.stringify({ lokasi:{ lat, lng, accuracy } }) });
-      alert(result.message || 'absen pulang berhasil');
+      alert(result.message || 'Presensi Berhasil');
       loadEmployee();
-    }catch(err){ alert(err.message || 'gagal absen pulang'); }
+    }catch(err){
+      if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        alert('Diluar Jangkauan Hotel');
+      } else {
+        alert(err.message || 'Presensi Gagal');
+      }
+    }
   }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
+
 async function spvCheckIn(){
-  if(!navigator.geolocation){ alert('gps tidak tersedia'); return; }
+  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
   navigator.geolocation.getCurrentPosition(async(position)=>{
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
+    if(accuracy > 100){
+      alert('GPS belum akurat.\n\nAkurasi saat ini: ' + Math.round(accuracy) + ' meter\nSilakan aktifkan lokasi presisi, GPS, dan coba di area terbuka.');
+      return;
+    }
     try{
       const result = await api('/presensi/masuk', {
         method:'POST',
-        body:JSON.stringify({ lokasi:{ lat:position.coords.latitude, lng:position.coords.longitude, accuracy:position.coords.accuracy } })
+        body:JSON.stringify({ lokasi:{ lat, lng, accuracy } })
       });
-      alert(result.message || 'absen masuk berhasil');
+      alert(result.message || 'Presensi Berhasil');
       loadSpvStatus();
-    }catch(err){ alert('ERROR: ' + err.message); }
+    }catch(err){
+      if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        alert('Diluar Jangkauan Hotel');
+      } else {
+        alert(err.message || 'Presensi Gagal');
+      }
+    }
   }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
 
 async function spvCheckOut(){
-  if(!navigator.geolocation){ alert('gps tidak tersedia'); return; }
+  if(!navigator.geolocation){ alert('GPS tidak tersedia di perangkat ini'); return; }
   navigator.geolocation.getCurrentPosition(async(position)=>{
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = position.coords.accuracy;
     try{
       const result = await api('/presensi/keluar', {
         method:'POST',
-        body:JSON.stringify({ lokasi:{ lat:position.coords.latitude, lng:position.coords.longitude, accuracy:position.coords.accuracy } })
+        body:JSON.stringify({ lokasi:{ lat, lng, accuracy } })
       });
-      alert(result.message || 'absen pulang berhasil');
+      alert(result.message || 'Presensi Berhasil');
       loadSpvStatus();
-    }catch(err){ alert(err.message || 'gagal absen pulang'); }
+    }catch(err){
+      if(err.message && (err.message.includes('di luar') || err.message.includes('Diluar') || err.message.includes('area'))){
+        alert('Diluar Jangkauan Hotel');
+      } else {
+        alert(err.message || 'Presensi Gagal');
+      }
+    }
   }, locationError, { enableHighAccuracy:true, timeout:30000, maximumAge:0 });
 }
 
@@ -1334,10 +1440,10 @@ async function loadSpvStatus(){
 }
 
 function locationError(error){
-  if(error.code === 1) alert('izin lokasi ditolak. aktifkan lokasi untuk melakukan presensi');
-  else if(error.code === 2) alert('lokasi tidak dapat ditemukan');
-  else if(error.code === 3) alert('pengambilan lokasi terlalu lama');
-  else alert('gagal mendapatkan lokasi');
+  if(error.code === 1) alert('Izin akses lokasi ditolak. Silakan aktifkan izin lokasi di browser/perangkat Anda.');
+  else if(error.code === 2) alert('Lokasi GPS tidak tersedia. Pastikan sinyal GPS aktif pada perangkat.');
+  else if(error.code === 3) alert('Waktu pencarian lokasi GPS habis. Silakan coba lagi.');
+  else alert('Gagal mendapatkan lokasi GPS. Pastikan izin lokasi aktif.');
 }
 
 /* EMPLOYEE */
@@ -1839,36 +1945,57 @@ async function loadIzinAdmin(){
   try{
     const data = await api('/izin');
     const tbody = document.getElementById('admin-izin-table');
+    if(!tbody) return;
     if(!data.length){
-      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">belum ada pengajuan</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-state">belum ada pengajuan izin / cuti</td></tr>`;
       return;
     }
-    tbody.innerHTML = data.map(i => `
-      <tr>
-        <td>${i.nama || '-'}</td>
-        <td>${i.jenis || '-'}</td>
-        <td>${i.tanggal_mulai} - ${i.tanggal_selesai}</td>
-        <td>${i.keterangan || '-'}</td>
-        <td>${i.status}</td>
-        <td>
-          ${i.status === 'pending' ? `
-            <button class="btn-edit" onclick="updateIzin(${i.id}, 'disetujui')">setujui</button>
-            <button class="btn-delete" onclick="updateIzin(${i.id}, 'ditolak')">tolak</button>
-          ` : '-'}
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = data.map(i => {
+      const isPending = i.status === 'pending' || i.status === 'menunggu';
+      const statusTag = i.status === 'disetujui'
+        ? '<span class="tag ok">Disetujui</span>'
+        : i.status === 'ditolak'
+        ? '<span class="tag late">Ditolak</span>'
+        : '<span class="tag pending">Menunggu Persetujuan</span>';
+
+      const jenisTag = i.jenis === 'sakit'
+        ? '<span class="tag late">Sakit</span>'
+        : i.jenis === 'cuti'
+        ? '<span class="tag pending">Cuti</span>'
+        : '<span class="tag ok">Izin</span>';
+
+      let aksiHtml = `<span style="font-size:11px;color:var(--sub)">Selesai</span>`;
+      if(isPending){
+        aksiHtml = `
+          <button class="btn-approve" onclick="updateIzin(${i.id}, 'disetujui')">Setujui</button>
+          <button class="btn-reject" onclick="updateIzin(${i.id}, 'ditolak')">Tolak</button>
+        `;
+      }
+
+      return `
+        <tr>
+          <td><div class="employee-name">${escapeHtml(i.nama || '-')}</div></td>
+          <td>${escapeHtml(i.nip || '-')}</td>
+          <td>${escapeHtml(i.departemen || '-')}</td>
+          <td>${jenisTag}</td>
+          <td>${escapeHtml(i.tanggal_mulai)} s/d ${escapeHtml(i.tanggal_selesai)}</td>
+          <td>${escapeHtml(i.keterangan || '-')}</td>
+          <td>${statusTag}</td>
+          <td>${aksiHtml}</td>
+        </tr>
+      `;
+    }).join('');
   }catch(err){ console.error('ERROR LOAD IZIN ADMIN:', err); }
 }
 
 async function updateIzin(id, status){
-  const text = status === 'disetujui' ? 'setujui pengajuan ini?' : 'tolak pengajuan ini?';
+  const text = status === 'disetujui' ? 'Setujui pengajuan izin/cuti ini?' : 'Tolak pengajuan izin/cuti ini?';
   if(!confirm(text)) return;
   try{
     const result = await api('/izin/' + id, { method:'PUT', body:JSON.stringify({ status }) });
-    alert(result.message || 'status pengajuan diperbarui');
+    alert(result.message || 'Status pengajuan berhasil diperbarui');
     loadIzinAdmin();
-  }catch(err){ alert('gagal memperbarui: ' + err.message); }
+  }catch(err){ alert('Gagal memperbarui: ' + err.message); }
 }
 
 async function saveEmployee(){
@@ -1957,8 +2084,10 @@ function setFeatureDefaults(){
   const today = todayWIB();
   const spTanggal = document.getElementById('sp-tanggal');
   const lemburTanggal = document.getElementById('emp-lembur-tanggal');
+  const adminLemburTanggal = document.getElementById('admin-lembur-tanggal');
   if(spTanggal && !spTanggal.value) spTanggal.value = today;
   if(lemburTanggal && !lemburTanggal.value) lemburTanggal.value = today;
+  if(adminLemburTanggal && !adminLemburTanggal.value) adminLemburTanggal.value = today;
 
   const select = document.getElementById('sp-karyawan');
   if(select){
@@ -1967,12 +2096,20 @@ function setFeatureDefaults(){
       select.innerHTML += `<option value="${k.id}">${k.nama} - ${k.nip}</option>`;
     });
   }
+
+  const lemburSelect = document.getElementById('lembur-employee-select');
+  if(lemburSelect){
+    lemburSelect.innerHTML = '<option value="">Pilih Karyawan</option>';
+    employeeList.forEach(k => {
+      lemburSelect.innerHTML += `<option value="${k.id}">${k.nama} - ${k.nip}</option>`;
+    });
+  }
 }
 
 function lemburStatusHtml(status){
-  if(status === 'disetujui') return '<span class="tag ok">disetujui</span>';
-  if(status === 'ditolak') return '<span class="tag late">ditolak</span>';
-  return '<span class="tag pending">menunggu</span>';
+  if(status === 'disetujui') return '<span class="tag ok">Disetujui</span>';
+  if(status === 'ditolak') return '<span class="tag late">Ditolak</span>';
+  return '<span class="tag pending">Menunggu Persetujuan</span>';
 }
 
 async function ajukanLembur(){
@@ -1992,7 +2129,7 @@ async function ajukanLembur(){
       method:'POST',
       body:JSON.stringify({ tanggal, jam_mulai, jam_selesai, alasan })
     });
-    msg.textContent = result.message || 'pengajuan lembur berhasil';
+    msg.textContent = result.message || 'pengajuan lembur berhasil dibuat dan diteruskan ke Admin/HRD';
     document.getElementById('emp-lembur-mulai').value = '';
     document.getElementById('emp-lembur-selesai').value = '';
     document.getElementById('emp-lembur-alasan').value = '';
@@ -2013,12 +2150,12 @@ async function loadLemburSaya(){
     }
     tbody.innerHTML = data.map(r => `
       <tr>
-        <td>${r.tanggal}</td>
-        <td>${r.jam_mulai} - ${r.jam_selesai}</td>
+        <td>${escapeHtml(r.tanggal)}</td>
+        <td>${escapeHtml(r.jam_mulai)} - ${escapeHtml(r.jam_selesai)}</td>
         <td>${r.jumlah_jam} jam</td>
-        <td>${r.alasan || '-'}</td>
+        <td>${escapeHtml(r.alasan || '-')}</td>
         <td>${lemburStatusHtml(r.status)}</td>
-        <td>${r.status === 'pending' ? `<button class="btn-delete" onclick="hapusLembur(${r.id})">hapus</button>` : '-'}</td>
+        <td>${r.status === 'pending' || r.status === 'menunggu persetujuan' ? `<button class="btn-delete" onclick="hapusLembur(${r.id})">hapus</button>` : '-'}</td>
       </tr>
     `).join('');
   }catch(err){ console.error('ERROR LEMBUR SAYA:', err); }
@@ -2043,10 +2180,10 @@ async function loadSPSaya(){
     }
     tbody.innerHTML = data.map(r => `
       <tr>
-        <td><span class="tag late">${r.jenis}</span></td>
-        <td>${r.tanggal}</td>
-        <td>${r.alasan || '-'}</td>
-        <td>${r.keterangan || '-'}</td>
+        <td><span class="tag late">${escapeHtml(r.jenis)}</span></td>
+        <td>${escapeHtml(r.tanggal)}</td>
+        <td>${escapeHtml(r.alasan || '-')}</td>
+        <td>${escapeHtml(r.keterangan || '-')}</td>
       </tr>
     `).join('');
   }catch(err){ console.error('ERROR SP SAYA:', err); }
@@ -2062,12 +2199,15 @@ async function loadSPAdmin(){
     }else{
       tbody.innerHTML = data.map(r => `
         <tr>
-          <td><div class="employee-name">${r.nama || '-'}</div><div class="employee-nip">${r.nip || '-'}</div></td>
-          <td><span class="tag late">${r.jenis}</span></td>
-          <td>${r.tanggal}</td>
-          <td>${r.alasan || '-'}</td>
-          <td>${r.keterangan || '-'}</td>
-          <td>${user && user.role === 'admin' ? `<button class="btn-delete" onclick="hapusSP(${r.id})">hapus</button>` : '-'}</td>
+          <td><div class="employee-name">${escapeHtml(r.nama || '-')}</div><div class="employee-nip">${escapeHtml(r.nip || '-')}</div></td>
+          <td><span class="tag late">${escapeHtml(r.jenis)}</span></td>
+          <td>${escapeHtml(r.tanggal)}</td>
+          <td>${escapeHtml(r.alasan || '-')}</td>
+          <td>${escapeHtml(r.keterangan || '-')}</td>
+          <td>${user && user.role === 'admin' ? `
+            <button class="btn-edit" onclick="editSP(${r.id}, ${r.karyawan_id}, '${r.jenis}', '${r.tanggal}', ${escAttr(r.alasan || '')}, ${escAttr(r.keterangan || '')})">edit</button>
+            <button class="btn-delete" onclick="hapusSP(${r.id})">hapus</button>
+          ` : '-'}</td>
         </tr>
       `).join('');
     }
@@ -2106,6 +2246,56 @@ async function tambahSP(){
   }catch(err){ msg.textContent = 'gagal menambahkan: ' + err.message; }
 }
 
+function editSP(id, karyawanId, jenis, tanggal, alasan, keterangan){
+  document.getElementById('edit-sp-id').value = id;
+  const select = document.getElementById('edit-sp-karyawan');
+  select.innerHTML = '';
+  employeeList.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k.id;
+    opt.textContent = `${k.nama} - ${k.nip}`;
+    if(k.id == karyawanId) opt.selected = true;
+    select.appendChild(opt);
+  });
+  document.getElementById('edit-sp-jenis').value = jenis;
+  document.getElementById('edit-sp-tanggal').value = tanggal;
+  document.getElementById('edit-sp-alasan').value = alasan || '';
+  document.getElementById('edit-sp-keterangan').value = keterangan || '';
+  document.getElementById('edit-sp-message').textContent = '';
+  document.getElementById('edit-sp-modal').classList.remove('hidden');
+}
+
+function closeEditSPModal(){
+  document.getElementById('edit-sp-modal').classList.add('hidden');
+}
+
+async function saveEditSP(){
+  const id = document.getElementById('edit-sp-id').value;
+  const karyawan_id = document.getElementById('edit-sp-karyawan').value;
+  const jenis = document.getElementById('edit-sp-jenis').value;
+  const tanggal = document.getElementById('edit-sp-tanggal').value;
+  const alasan = document.getElementById('edit-sp-alasan').value.trim();
+  const keterangan = document.getElementById('edit-sp-keterangan').value.trim();
+  const errEl = document.getElementById('edit-sp-message');
+
+  if(!karyawan_id || !jenis || !tanggal || !alasan){
+    errEl.textContent = 'Karyawan, jenis SP, tanggal, dan alasan wajib diisi';
+    return;
+  }
+
+  try{
+    const result = await api('/sp/' + id, {
+      method:'PUT',
+      body:JSON.stringify({ karyawan_id: Number(karyawan_id), jenis, tanggal, alasan, keterangan })
+    });
+    alert(result.message || 'Data SP berhasil diperbarui');
+    closeEditSPModal();
+    loadSPAdmin();
+  }catch(err){
+    errEl.textContent = 'Gagal menyimpan perubahan: ' + err.message;
+  }
+}
+
 async function hapusSP(id){
   if(!confirm('hapus SP ini?')) return;
   try{
@@ -2113,6 +2303,35 @@ async function hapusSP(id){
     alert(result.message || 'SP berhasil dihapus');
     loadSPAdmin();
   }catch(err){ alert('gagal menghapus: ' + err.message); }
+}
+
+async function submitLemburBySpv(){
+  const karyawan_id = document.getElementById('lembur-employee-select').value;
+  const tanggal = document.getElementById('admin-lembur-tanggal').value;
+  const jam_mulai = document.getElementById('admin-lembur-mulai').value;
+  const jam_selesai = document.getElementById('admin-lembur-selesai').value;
+  const alasan = document.getElementById('admin-lembur-alasan').value.trim();
+  const msg = document.getElementById('admin-lembur-message');
+
+  if(!karyawan_id || !tanggal || !jam_mulai || !jam_selesai){
+    msg.textContent = 'Karyawan, tanggal, jam mulai, dan jam selesai wajib diisi';
+    return;
+  }
+
+  try{
+    const result = await api('/lemburan', {
+      method:'POST',
+      body:JSON.stringify({ karyawan_id: Number(karyawan_id), tanggal, jam_mulai, jam_selesai, alasan })
+    });
+    alert(result.message || 'Pengajuan lembur berhasil dibuat dan diteruskan ke Admin/HRD');
+    msg.textContent = '';
+    document.getElementById('admin-lembur-mulai').value = '';
+    document.getElementById('admin-lembur-selesai').value = '';
+    document.getElementById('admin-lembur-alasan').value = '';
+    loadLemburAdmin();
+  }catch(err){
+    msg.textContent = 'Gagal mengajukan: ' + err.message;
+  }
 }
 
 async function loadLemburAdmin(){
@@ -2124,20 +2343,39 @@ async function loadLemburAdmin(){
       tbody.innerHTML = '<tr><td colspan="7" class="empty-state">belum ada pengajuan lembur</td></tr>';
       return;
     }
-    tbody.innerHTML = data.map(r => `
-      <tr>
-        <td><div class="employee-name">${r.nama || '-'}</div><div class="employee-nip">${r.nip || '-'}</div></td>
-        <td>${r.tanggal}</td>
-        <td>${r.jam_mulai} - ${r.jam_selesai}</td>
-        <td>${r.jumlah_jam} jam</td>
-        <td>${r.alasan || '-'}</td>
-        <td>${lemburStatusHtml(r.status)}</td>
-        <td>${r.status === 'pending' ? `
-          <button class="btn-edit" onclick="updateLembur(${r.id}, 'disetujui')">setujui</button>
-          <button class="btn-delete" onclick="updateLembur(${r.id}, 'ditolak')">tolak</button>
-        ` : '-'}</td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = data.map(r => {
+      let aksiHtml = '-';
+      const isPending = r.status === 'pending' || r.status === 'menunggu persetujuan' || r.status === 'menunggu';
+
+      if(user && user.role === 'admin'){
+        if(isPending){
+          aksiHtml = `
+            <button class="btn-approve" onclick="updateLembur(${r.id}, 'disetujui')">Setujui</button>
+            <button class="btn-reject" onclick="updateLembur(${r.id}, 'ditolak')">Tolak</button>
+          `;
+        } else {
+          aksiHtml = `<span style="font-size:11px;color:var(--sub)">Selesai</span>`;
+        }
+      } else if(user && user.role === 'supervisor'){
+        if(isPending){
+          aksiHtml = `<span style="font-size:11px;color:var(--pending);font-weight:600">Menunggu Keputusan HRD</span>`;
+        } else {
+          aksiHtml = `<span style="font-size:11px;color:var(--sub)">Selesai</span>`;
+        }
+      }
+
+      return `
+        <tr>
+          <td><div class="employee-name">${escapeHtml(r.nama || '-')}</div><div class="employee-nip">${escapeHtml(r.nip || '-')}</div></td>
+          <td>${escapeHtml(r.tanggal)}</td>
+          <td>${escapeHtml(r.jam_mulai)} - ${escapeHtml(r.jam_selesai)}</td>
+          <td>${r.jumlah_jam} jam</td>
+          <td>${escapeHtml(r.alasan || '-')}</td>
+          <td>${lemburStatusHtml(r.status)}</td>
+          <td>${aksiHtml}</td>
+        </tr>
+      `;
+    }).join('');
   }catch(err){
     console.error('ERROR LEMBUR ADMIN:', err);
     if(tbody) tbody.innerHTML = `<tr><td colspan="7" class="empty-state">gagal memuat: ${err.message}</td></tr>`;
@@ -2145,16 +2383,16 @@ async function loadLemburAdmin(){
 }
 
 async function updateLembur(id, status){
-  const text = status === 'disetujui' ? 'setujui pengajuan lembur ini?' : 'tolak pengajuan lembur ini?';
+  const text = status === 'disetujui' ? 'Setujui pengajuan lembur ini?' : 'Tolak pengajuan lembur ini?';
   if(!confirm(text)) return;
   try{
     const result = await api('/lemburan/' + id, {
       method:'PUT',
       body:JSON.stringify({ status })
     });
-    alert(result.message || 'status lembur diperbarui');
+    alert(result.message || 'Status lembur diperbarui');
     loadLemburAdmin();
-  }catch(err){ alert('gagal memperbarui: ' + err.message); }
+  }catch(err){ alert('Gagal memperbarui: ' + err.message); }
 }
 
 /* CLOCK */
